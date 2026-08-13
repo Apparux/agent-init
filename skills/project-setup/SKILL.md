@@ -1,0 +1,24 @@
+---
+name: project-setup
+description: Set up or reconcile an existing repository's minimal, evidence-based Agent environment for Claude Code and Codex. Use when initializing project Agent instructions, scoped project Skills, or agent documentation, and when repository changes require those assets to be reconciled.
+---
+
+# Project Setup
+
+Build the repository plane from current evidence. The phases are ordered gates: complete each phase before entering the next. Preflight and Explore are strictly read-only. There are no file writes until the user explicitly approves an exact Proposal; after approval, only its exact approved `CREATE` and `UPDATE` action IDs may write.
+
+## Workflow
+
+1. **Preflight.** Resolve the working directory and repository root; record Git staged, unstaged, and untracked baseline when Git exists; inventory existing Agent assets and requested scope. A dirty or non-Git repository may continue, but an Agent target already being edited requires conservative handling. Read `references/detection-guidelines.md` when starting Preflight or deciding exploration scope. Complete when the read-only baseline and existing-asset inventory are recorded.
+2. **Explore.** Search indicators, read only relevant sources, cross-check independent evidence, and record conflicts and Unknowns. Sensitive files are presence-only unless the user explicitly authorizes a necessary value read. Read `references/detection-guidelines.md` when exploring, building the Project Profile, or recording the Evidence Ledger. Complete when each confirmed conclusion is traceable and unsupported facts remain Unknown.
+3. **Project Profile.** Build a runtime-only profile of repository shape, languages, runtimes, build/package systems, verification, existing Agent assets, workflows, and Unknowns. Do not persist the profile or ledger as a second facts database.
+4. **Classify Knowledge.** Assign exactly one persistence scope and separately set the deterministic-enforcement flag. Read `references/classification.md` when classifying evidence, choosing a destination, or evaluating architecture/guardrail value. Complete when every candidate has evidence, scope, flag, destination, and reason—or is Unknown/`NONE`.
+5. **Detect Project Skills.** Find task-specific, repeated, project-specific procedures with clear triggers and verification. Read `references/skills-guidelines.md` when evaluating, creating, updating, preserving, or sharing a project Skill. Complete when each candidate is evidence-backed or explicitly `SKIP`ped with reason.
+6. **Proposal.** Show the detected summary, evidence-backed facts, Unknowns, warnings, exact actions, non-goals, fingerprints, and validation plan. The only actions are `CREATE`, `UPDATE`, `KEEP`, `SKIP`, and `RECOMMEND`; `CLAUDE.md` normally remains the thin `@AGENTS.md` adapter. Read `references/proposal-guidelines.md` when constructing, revising, approving, or fingerprinting a Proposal. Read `references/agents-guidelines.md` when proposing `AGENTS.md`, `CLAUDE.md`, or existing-instruction changes. Complete when full content is shown for every `CREATE`, an exact diff for every `UPDATE`, and each action has target, evidence, reason, baseline, and validation.
+7. **Approval gate.** Ask for an explicit decision naming the Proposal ID, revision, and approved action IDs. Vague acknowledgment, rejection, partial or changed scope, a revised Proposal, or fingerprint drift leaves Apply locked; issue a new Proposal revision where needed.
+8. **Apply.** Recheck exact target fingerprints and physical containment without following target ancestors. Apply only approved `CREATE`/`UPDATE` actions, in the documented order. `KEEP`, `SKIP`, and `RECOMMEND` never write. Read `references/reconciliation-guidelines.md` when applying, preserving existing configuration, checking physical scope, handling partial failure, or reconciling a prior setup. Complete when actual changed paths equal the exact approved write targets or a partial-state report names every changed and unchanged target.
+9. **Validate.** Verify exact scope, evidence traceability, preservation, minimal shared context, canonical Skill sharing, Unknowns, and forbidden-path absence; compare Git delta to Preflight when Git exists. Run a second read-only reconcile and require zero write actions when semantics and evidence are unchanged. Complete only when validation passes; otherwise report the failed invariant and remediation without claiming completion.
+
+## Output boundary
+
+Local static tests can validate this instruction contract, deterministic helper behavior, fixture schemas, recorded-run invariants, and filesystem safety evidence. They do not prove fresh Claude Code or Codex discovery, invocation, approval behavior, or generated-output quality. Read `references/evaluation-guidelines.md` when running or reporting external acceptance in a live Harness. Report external checks with named evidence, or explicitly as not run.

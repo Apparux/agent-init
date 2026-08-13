@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "id": "10-mixed-monorepo",
+  "repository": "repository",
+  "purpose": "Cross-check mixed-language evidence without guessing one repository-wide runtime, rewriting CI, or proposing a production architecture refactor.",
+  "coverage": ["mixed-evidence-unknowns", "deterministic-recommendation-only", "architecture-defer"],
+  "architectureDecision": {
+    "status": "EVALUATED / DEFER",
+    "reason": "Build descriptors establish multiple components but provide insufficient coupling and public-interface evidence for positive architecture guidance."
+  },
+  "evidence": [
+    {
+      "id": "ev-mixed-pnpm",
+      "fact": "The root package declares pnpm 9.",
+      "sourcePath": "package.json",
+      "sourceLocation": "packageManager",
+      "observation": "packageManager is pnpm@9.0.0",
+      "whyItMatters": "The root JavaScript workflow has a deterministic package-manager constraint."
+    },
+    {
+      "id": "ev-python-runtime",
+      "fact": "The Python project requires Python 3.12 or newer.",
+      "sourcePath": "pyproject.toml",
+      "sourceLocation": "project.requires-python",
+      "observation": "requires-python is >=3.12",
+      "whyItMatters": "The Python component has a distinct runtime constraint."
+    },
+    {
+      "id": "ev-java-component",
+      "fact": "A Maven API component exists.",
+      "sourcePath": "services/api/pom.xml",
+      "sourceLocation": "project.artifactId",
+      "observation": "artifactId is mixed-api; no Java version or verified invocation is declared",
+      "whyItMatters": "This proves a Java component while keeping unsupported details Unknown."
+    },
+    {
+      "id": "ev-ci-path",
+      "fact": "CI invokes the root pnpm test script.",
+      "sourcePath": ".github/workflows/verify.yml",
+      "sourceLocation": "jobs.verify.steps[0].run",
+      "observation": "CI run is pnpm test",
+      "whyItMatters": "CI corroborates the root verification command but remains recommendation-only for writes."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-package-manager", "value": "pnpm@9.0.0", "status": "confirmed", "evidenceIds": ["ev-mixed-pnpm"]},
+      {"id": "fact-python-runtime", "value": ">=3.12", "status": "confirmed", "evidenceIds": ["ev-python-runtime"]},
+      {"id": "fact-java-component", "value": "mixed-api", "status": "confirmed", "evidenceIds": ["ev-java-component"]}
+    ],
+    "unknowns": ["java-version", "repository-wide-verification-command", "deployment-command", "module-coupling"],
+    "classifications": [
+      {"factId": "fact-package-manager", "persistenceScope": "GLOBAL", "deterministicEnforcementCandidate": true, "destination": "AGENTS.md"},
+      {"factId": "fact-python-runtime", "persistenceScope": "GLOBAL", "deterministicEnforcementCandidate": true, "destination": "AGENTS.md"},
+      {"factId": "fact-java-component", "persistenceScope": "DISCOVERABLE", "deterministicEnforcementCandidate": false, "destination": null}
+    ],
+    "skillDecisions": [
+      {"name": "mixed-monorepo", "action": "SKIP", "reason": "Multiple technologies are repository shape, not a task-specific procedure."}
+    ],
+    "allowedActions": [
+      {"action": "CREATE", "target": "AGENTS.md"},
+      {"action": "CREATE", "target": "CLAUDE.md"},
+      {"action": "SKIP", "target": ".agents/skills/mixed-monorepo/SKILL.md"},
+      {"action": "RECOMMEND", "target": "package-manager enforcement"}
+    ],
+    "forbiddenPaths": ["package.json", "pyproject.toml", "services/api/pom.xml", ".github/workflows/verify.yml", "src/", "docs/agents/architecture.md"],
+    "preservation": [
+      {"path": ".github/workflows/verify.yml", "mode": "exact"}
+    ],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["package.json", "pyproject.toml", "services/api/pom.xml"],
+      "lockFiles": ["pnpm-lock.yaml"],
+      "agentConfigPaths": [],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

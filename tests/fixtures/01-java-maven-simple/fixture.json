@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "01-java-maven-simple",
+  "repository": "repository",
+  "purpose": "Prove that a Java/Maven indicator supports evidenced runtime knowledge but not a stack-label Skill or speculative architecture guidance.",
+  "coverage": ["stack-is-not-skill", "architecture-defer"],
+  "architectureDecision": {
+    "status": "EVALUATED / DEFER",
+    "reason": "A minimal build descriptor does not provide enough module-seam or coupling evidence for durable architecture guidance."
+  },
+  "evidence": [
+    {
+      "id": "ev-java-release",
+      "fact": "The Maven build declares Java 17 release compatibility.",
+      "sourcePath": "pom.xml",
+      "sourceLocation": "project.properties.maven.compiler.release",
+      "observation": "maven.compiler.release is 17",
+      "whyItMatters": "The declared Java release is a pre-action repository constraint."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-java-release", "value": "17", "status": "confirmed", "evidenceIds": ["ev-java-release"]}
+    ],
+    "unknowns": ["verification-command", "deployment-command", "module-seams"],
+    "classifications": [
+      {"factId": "fact-java-release", "persistenceScope": "GLOBAL", "deterministicEnforcementCandidate": true, "destination": "AGENTS.md"}
+    ],
+    "skillDecisions": [
+      {"name": "java-backend", "action": "SKIP", "reason": "Java is a stack label, not an evidenced project workflow."}
+    ],
+    "allowedActions": [
+      {"action": "CREATE", "target": "AGENTS.md"},
+      {"action": "CREATE", "target": "CLAUDE.md"},
+      {"action": "SKIP", "target": ".agents/skills/java-backend/SKILL.md"},
+      {"action": "RECOMMEND", "target": "Java release enforcement"}
+    ],
+    "forbiddenPaths": ["pom.xml", "src/", ".github/", "docs/agents/architecture.md"],
+    "preservation": [],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["pom.xml"],
+      "lockFiles": [],
+      "agentConfigPaths": [],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

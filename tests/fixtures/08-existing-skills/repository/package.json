@@ -1,0 +1,7 @@
+{
+  "name": "existing-skills-fixture",
+  "private": true,
+  "scripts": {
+    "release:check": "node scripts/release-check.js"
+  }
+}

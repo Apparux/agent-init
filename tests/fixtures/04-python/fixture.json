@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "04-python",
+  "repository": "repository",
+  "purpose": "Keep an evidenced Python runtime constraint separate from discoverable pytest configuration and guessed commands.",
+  "coverage": ["stack-is-not-skill", "mixed-evidence-unknowns"],
+  "evidence": [
+    {
+      "id": "ev-python-version",
+      "fact": "The repository pins Python 3.12.",
+      "sourcePath": ".python-version",
+      "sourceLocation": "line 1",
+      "observation": "version text is 3.12",
+      "whyItMatters": "The runtime version constrains repository actions."
+    },
+    {
+      "id": "ev-pytest-config",
+      "fact": "Pytest is configured to discover tests under tests.",
+      "sourcePath": "pyproject.toml",
+      "sourceLocation": "tool.pytest.ini_options.testpaths",
+      "observation": "testpaths contains tests; no installation or deployment command is declared",
+      "whyItMatters": "Test layout is discoverable, while executable commands remain Unknown."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-python-version", "value": "3.12", "status": "confirmed", "evidenceIds": ["ev-python-version"]},
+      {"id": "fact-test-path", "value": "tests", "status": "confirmed", "evidenceIds": ["ev-pytest-config"]}
+    ],
+    "unknowns": ["install-command", "verification-command", "deployment-command"],
+    "classifications": [
+      {"factId": "fact-python-version", "persistenceScope": "GLOBAL", "deterministicEnforcementCandidate": true, "destination": "AGENTS.md"},
+      {"factId": "fact-test-path", "persistenceScope": "DISCOVERABLE", "deterministicEnforcementCandidate": false, "destination": null}
+    ],
+    "skillDecisions": [
+      {"name": "python-backend", "action": "SKIP", "reason": "Python and pytest configuration do not establish a project-specific procedure."}
+    ],
+    "allowedActions": [
+      {"action": "CREATE", "target": "AGENTS.md"},
+      {"action": "CREATE", "target": "CLAUDE.md"},
+      {"action": "SKIP", "target": ".agents/skills/python-backend/SKILL.md"}
+    ],
+    "forbiddenPaths": ["pyproject.toml", ".python-version", "src/", "tests/", ".github/"],
+    "preservation": [],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["pyproject.toml"],
+      "lockFiles": [],
+      "agentConfigPaths": [],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

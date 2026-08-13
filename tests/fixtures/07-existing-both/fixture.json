@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "id": "07-existing-both",
+  "repository": "repository",
+  "purpose": "Keep AGENTS as the shared source, preserve a thin Claude adapter extension, and retain existing architecture documentation.",
+  "coverage": ["cross-agent-preservation", "architecture-defer"],
+  "architectureDecision": {
+    "status": "EVALUATED / DEFER",
+    "reason": "Existing user-authored architecture documentation is authoritative; fixture evidence does not justify replacement or a new document."
+  },
+  "evidence": [
+    {
+      "id": "ev-shared-rule",
+      "fact": "AGENTS.md contains a shared wrapper rule.",
+      "sourcePath": "AGENTS.md",
+      "sourceLocation": "paragraph 1",
+      "observation": "the repository requires its provided wrapper",
+      "whyItMatters": "This shared pre-action constraint must remain canonical."
+    },
+    {
+      "id": "ev-claude-adapter",
+      "fact": "CLAUDE.md imports AGENTS.md and contains a Claude-only note.",
+      "sourcePath": "CLAUDE.md",
+      "sourceLocation": "line 1 and Claude-specific section",
+      "observation": "line 1 is @AGENTS.md and a Claude-specific note follows",
+      "whyItMatters": "The existing single-source adapter pattern should be preserved."
+    },
+    {
+      "id": "ev-architecture-doc",
+      "fact": "A user-authored architecture note exists.",
+      "sourcePath": "docs/agents/architecture.md",
+      "sourceLocation": "paragraph 1",
+      "observation": "a module seam description is present",
+      "whyItMatters": "Existing durable knowledge must not be regenerated."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-wrapper", "value": "repository-provided wrapper", "status": "confirmed", "evidenceIds": ["ev-shared-rule"]},
+      {"id": "fact-adapter", "value": "@AGENTS.md", "status": "confirmed", "evidenceIds": ["ev-claude-adapter"]}
+    ],
+    "unknowns": ["verification-command", "architecture-currentness"],
+    "classifications": [
+      {"factId": "fact-wrapper", "persistenceScope": "GLOBAL", "deterministicEnforcementCandidate": true, "destination": "AGENTS.md"},
+      {"factId": "fact-adapter", "persistenceScope": "GLOBAL", "deterministicEnforcementCandidate": false, "destination": "CLAUDE.md"}
+    ],
+    "skillDecisions": [],
+    "allowedActions": [
+      {"action": "KEEP", "target": "AGENTS.md"},
+      {"action": "KEEP", "target": "CLAUDE.md"},
+      {"action": "KEEP", "target": "docs/agents/architecture.md"}
+    ],
+    "forbiddenPaths": ["pom.xml", "docs/agents/architecture.md", "src/", ".github/"],
+    "preservation": [
+      {"path": "AGENTS.md", "mode": "exact"},
+      {"path": "CLAUDE.md", "mode": "exact"},
+      {"path": "docs/agents/architecture.md", "mode": "exact"}
+    ],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["pom.xml"],
+      "lockFiles": [],
+      "agentConfigPaths": ["AGENTS.md", "CLAUDE.md", "docs/agents"],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

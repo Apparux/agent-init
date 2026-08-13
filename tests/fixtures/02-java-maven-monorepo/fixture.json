@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "02-java-maven-monorepo",
+  "repository": "repository",
+  "purpose": "Separate discoverable Maven module shape from an Unknown invocation and avoid inventing a workflow command.",
+  "coverage": ["mixed-evidence-unknowns", "stack-is-not-skill"],
+  "evidence": [
+    {
+      "id": "ev-maven-module",
+      "fact": "The root Maven project declares an API module.",
+      "sourcePath": "pom.xml",
+      "sourceLocation": "project.modules.module[0]",
+      "observation": "module is services/api",
+      "whyItMatters": "This establishes repository shape without making the module list global context."
+    },
+    {
+      "id": "ev-verify-profile",
+      "fact": "The API module declares a verification-named Maven profile.",
+      "sourcePath": "services/api/pom.xml",
+      "sourceLocation": "project.profiles.profile[0].id",
+      "observation": "profile id is verify-api; no invocation command is declared",
+      "whyItMatters": "The profile is evidence, while its intended invocation remains Unknown."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-module", "value": "services/api", "status": "confirmed", "evidenceIds": ["ev-maven-module"]},
+      {"id": "fact-verify-profile", "value": "verify-api", "status": "confirmed", "evidenceIds": ["ev-verify-profile"]}
+    ],
+    "unknowns": ["verification-command", "java-version", "deployment-command"],
+    "classifications": [
+      {"factId": "fact-module", "persistenceScope": "DISCOVERABLE", "deterministicEnforcementCandidate": false, "destination": null},
+      {"factId": "fact-verify-profile", "persistenceScope": "NONE", "deterministicEnforcementCandidate": false, "destination": null}
+    ],
+    "skillDecisions": [
+      {"name": "api-verification", "action": "SKIP", "reason": "No exact repository-supported invocation or complete workflow is evidenced."},
+      {"name": "java-monorepo", "action": "SKIP", "reason": "Repository shape alone is not a project workflow."}
+    ],
+    "allowedActions": [
+      {"action": "SKIP", "target": ".agents/skills/api-verification/SKILL.md"},
+      {"action": "SKIP", "target": ".agents/skills/java-monorepo/SKILL.md"}
+    ],
+    "forbiddenPaths": ["pom.xml", "services/api/pom.xml", "services/api/src/", ".github/"],
+    "preservation": [],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["pom.xml", "services/api/pom.xml"],
+      "lockFiles": [],
+      "agentConfigPaths": [],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

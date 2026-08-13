@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "03-node-pnpm",
+  "repository": "repository",
+  "purpose": "Exercise a global package-manager constraint, an exact repeated verification workflow, and recommendation-only enforcement.",
+  "coverage": ["project-workflow-skill", "deterministic-recommendation-only", "stack-is-not-skill"],
+  "evidence": [
+    {
+      "id": "ev-pnpm",
+      "fact": "The repository declares pnpm 9.",
+      "sourcePath": "package.json",
+      "sourceLocation": "packageManager",
+      "observation": "packageManager is pnpm@9.0.0",
+      "whyItMatters": "Agents must choose the declared package manager before running commands."
+    },
+    {
+      "id": "ev-verify",
+      "fact": "The repository declares an exact verification workflow.",
+      "sourcePath": "package.json",
+      "sourceLocation": "scripts.verify",
+      "observation": "verify script is pnpm lint && pnpm test",
+      "whyItMatters": "Repeated code changes need the project-defined verification sequence."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-package-manager", "value": "pnpm@9.0.0", "status": "confirmed", "evidenceIds": ["ev-pnpm"]},
+      {"id": "fact-verify", "value": "pnpm lint && pnpm test", "status": "confirmed", "evidenceIds": ["ev-verify"]}
+    ],
+    "unknowns": ["deployment-command"],
+    "classifications": [
+      {"factId": "fact-package-manager", "persistenceScope": "GLOBAL", "deterministicEnforcementCandidate": true, "destination": "AGENTS.md"},
+      {"factId": "fact-verify", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": false, "destination": ".agents/skills/build-verify/SKILL.md"}
+    ],
+    "skillDecisions": [
+      {"name": "build-verify", "action": "CREATE", "reason": "The exact project workflow is repeated, task-specific, and verifiable."},
+      {"name": "node-backend", "action": "SKIP", "reason": "Node is a stack label rather than a workflow."}
+    ],
+    "allowedActions": [
+      {"action": "CREATE", "target": "AGENTS.md"},
+      {"action": "CREATE", "target": "CLAUDE.md"},
+      {"action": "CREATE", "target": ".agents/skills/build-verify/SKILL.md"},
+      {"action": "CREATE", "target": ".claude/skills/build-verify"},
+      {"action": "SKIP", "target": ".agents/skills/node-backend/SKILL.md"},
+      {"action": "RECOMMEND", "target": "package-manager enforcement"}
+    ],
+    "forbiddenPaths": ["package.json", "pnpm-lock.yaml", ".github/", "src/", ".claude/settings.json"],
+    "preservation": [],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["package.json"],
+      "lockFiles": ["pnpm-lock.yaml"],
+      "agentConfigPaths": [],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

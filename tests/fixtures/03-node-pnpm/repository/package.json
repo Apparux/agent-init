@@ -1,0 +1,13 @@
+{
+  "name": "node-pnpm-fixture",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "node --test",
+    "verify": "pnpm lint && pnpm test"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "08-existing-skills",
+  "repository": "repository",
+  "purpose": "Preserve an existing canonical Skill and reject replacement merely because a similarly named workflow is detected.",
+  "coverage": ["existing-skill-preservation", "cross-agent-preservation"],
+  "evidence": [
+    {
+      "id": "ev-release-script",
+      "fact": "The repository declares a release check script.",
+      "sourcePath": "package.json",
+      "sourceLocation": "scripts.release:check",
+      "observation": "release:check is node scripts/release-check.js",
+      "whyItMatters": "Release work may have a project-specific workflow."
+    },
+    {
+      "id": "ev-existing-skill",
+      "fact": "A user-authored canonical release Skill already exists.",
+      "sourcePath": ".agents/skills/release/SKILL.md",
+      "sourceLocation": "frontmatter and body",
+      "observation": "the release Skill requests exact preservation of its workflow",
+      "whyItMatters": "Existing Skill intent takes precedence over regeneration."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-release-script", "value": "node scripts/release-check.js", "status": "confirmed", "evidenceIds": ["ev-release-script"]},
+      {"id": "fact-existing-skill", "value": "release", "status": "confirmed", "evidenceIds": ["ev-existing-skill"]}
+    ],
+    "unknowns": ["complete-release-procedure"],
+    "classifications": [
+      {"factId": "fact-release-script", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": false, "destination": ".agents/skills/release/SKILL.md"},
+      {"factId": "fact-existing-skill", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": false, "destination": ".agents/skills/release/SKILL.md"}
+    ],
+    "skillDecisions": [
+      {"name": "release", "action": "KEEP", "reason": "The existing Skill is user-authored and evidence is insufficient for a safe merge."}
+    ],
+    "allowedActions": [
+      {"action": "KEEP", "target": ".agents/skills/release/SKILL.md"},
+      {"action": "KEEP", "target": ".claude/skills/release"}
+    ],
+    "forbiddenPaths": ["package.json", ".agents/skills/release/SKILL.md", ".claude/skills/release", "scripts/"],
+    "preservation": [
+      {"path": ".agents/skills/release/SKILL.md", "mode": "exact"},
+      {"path": ".claude/skills/release", "mode": "exact"}
+    ],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["package.json"],
+      "lockFiles": [],
+      "agentConfigPaths": [".agents", ".claude"],
+      "skillDirectories": [".agents/skills/release", ".claude/skills/release"]
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

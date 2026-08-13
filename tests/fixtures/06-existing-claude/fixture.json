@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "id": "06-existing-claude",
+  "repository": "repository",
+  "purpose": "Preserve Claude, local, settings, Cursor, and Copilot instructions while surfacing adapter conflicts instead of replacing them.",
+  "coverage": ["existing-claude-preservation"],
+  "evidence": [
+    {
+      "id": "ev-claude-note",
+      "fact": "CLAUDE.md contains an existing Claude-specific troubleshooting note.",
+      "sourcePath": "CLAUDE.md",
+      "sourceLocation": "paragraph 1",
+      "observation": "the file requests preservation of its Claude-specific note",
+      "whyItMatters": "The adapter cannot discard existing harness-specific intent."
+    },
+    {
+      "id": "ev-settings",
+      "fact": "Claude settings contain an existing Hook configuration.",
+      "sourcePath": ".claude/settings.json",
+      "sourceLocation": "hooks.PreToolUse",
+      "observation": "a PreToolUse Hook array is present",
+      "whyItMatters": "Hooks and settings are presence/context evidence and recommendation-only write targets."
+    },
+    {
+      "id": "ev-local",
+      "fact": "A local Claude instruction file exists.",
+      "sourcePath": "CLAUDE.local.md",
+      "sourceLocation": "paragraph 1",
+      "observation": "local experiment guidance is present",
+      "whyItMatters": "Local instructions must remain untouched."
+    },
+    {
+      "id": "ev-cursor",
+      "fact": "Cursor instructions exist.",
+      "sourcePath": ".cursor/rules.txt",
+      "sourceLocation": "line 1",
+      "observation": "Cursor-specific instructions are present",
+      "whyItMatters": "Other Agent configuration must be explored and preserved."
+    },
+    {
+      "id": "ev-copilot",
+      "fact": "Copilot instructions exist.",
+      "sourcePath": ".github/copilot-instructions.md",
+      "sourceLocation": "line 1",
+      "observation": "Copilot-specific instructions are present",
+      "whyItMatters": "Other Agent configuration must be explored and preserved."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-claude-note", "value": "existing Claude-specific note", "status": "confirmed", "evidenceIds": ["ev-claude-note"]}
+    ],
+    "unknowns": ["shared-agent-rules", "verification-command"],
+    "classifications": [
+      {"factId": "fact-claude-note", "persistenceScope": "GLOBAL", "deterministicEnforcementCandidate": false, "destination": "CLAUDE.md"}
+    ],
+    "skillDecisions": [],
+    "allowedActions": [
+      {"action": "KEEP", "target": "CLAUDE.md"},
+      {"action": "KEEP", "target": "CLAUDE.local.md"},
+      {"action": "KEEP", "target": ".claude/settings.json"},
+      {"action": "KEEP", "target": ".cursor/rules.txt"},
+      {"action": "KEEP", "target": ".github/copilot-instructions.md"}
+    ],
+    "forbiddenPaths": ["CLAUDE.local.md", ".claude/settings.json", ".cursor/", ".github/", "pyproject.toml"],
+    "preservation": [
+      {"path": "CLAUDE.md", "mode": "exact"},
+      {"path": "CLAUDE.local.md", "mode": "exact"},
+      {"path": ".claude/settings.json", "mode": "exact"},
+      {"path": ".cursor/rules.txt", "mode": "exact"},
+      {"path": ".github/copilot-instructions.md", "mode": "exact"}
+    ],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["pyproject.toml"],
+      "lockFiles": [],
+      "agentConfigPaths": [".claude", ".claude/settings.json", ".cursor", ".github/copilot-instructions.md", "CLAUDE.local.md", "CLAUDE.md"],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

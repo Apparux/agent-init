@@ -1,0 +1,1 @@
+Preserve Copilot-specific instructions.

@@ -1,0 +1,19 @@
+{
+  "name": "@apparux/agent-project-setup",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "agent-project-setup": "./bin/agent-project-setup.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "skills"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

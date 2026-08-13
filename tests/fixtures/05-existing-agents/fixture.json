@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "id": "05-existing-agents",
+  "repository": "repository",
+  "purpose": "Require a conservative AGENTS.md merge while preserving shared prose and an override file.",
+  "coverage": ["existing-agents-preservation"],
+  "evidence": [
+    {
+      "id": "ev-existing-rule",
+      "fact": "AGENTS.md contains a user-authored deployment safety rule.",
+      "sourcePath": "AGENTS.md",
+      "sourceLocation": "paragraph 1",
+      "observation": "the file requires preserving its deployment safety rule",
+      "whyItMatters": "Existing documented intent must survive reconciliation."
+    },
+    {
+      "id": "ev-npm",
+      "fact": "The repository declares npm 11.",
+      "sourcePath": "package.json",
+      "sourceLocation": "packageManager",
+      "observation": "packageManager is npm@11.0.0",
+      "whyItMatters": "The package manager is a global pre-action constraint."
+    },
+    {
+      "id": "ev-override",
+      "fact": "An AGENTS override file contains a fixture validation constraint.",
+      "sourcePath": "AGENTS.override.md",
+      "sourceLocation": "paragraph 1",
+      "observation": "the override requires the isolated test environment",
+      "whyItMatters": "Override intent must be explored and preserved exactly."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-existing-rule", "value": "deployment safety rule", "status": "confirmed", "evidenceIds": ["ev-existing-rule"]},
+      {"id": "fact-package-manager", "value": "npm@11.0.0", "status": "confirmed", "evidenceIds": ["ev-npm"]}
+    ],
+    "unknowns": ["deployment-command"],
+    "classifications": [
+      {"factId": "fact-existing-rule", "persistenceScope": "GLOBAL", "deterministicEnforcementCandidate": false, "destination": "AGENTS.md"},
+      {"factId": "fact-package-manager", "persistenceScope": "GLOBAL", "deterministicEnforcementCandidate": true, "destination": "AGENTS.md"}
+    ],
+    "skillDecisions": [],
+    "allowedActions": [
+      {"action": "UPDATE", "target": "AGENTS.md"},
+      {"action": "CREATE", "target": "CLAUDE.md"},
+      {"action": "KEEP", "target": "AGENTS.override.md"}
+    ],
+    "forbiddenPaths": ["package.json", "AGENTS.override.md", ".github/", "src/"],
+    "preservation": [
+      {"path": "AGENTS.md", "mode": "contains", "requiredText": ["Keep this user-authored deployment safety rule."]},
+      {"path": "AGENTS.override.md", "mode": "exact"}
+    ],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["package.json"],
+      "lockFiles": [],
+      "agentConfigPaths": ["AGENTS.md", "AGENTS.override.md"],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

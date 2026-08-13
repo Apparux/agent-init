@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "id": "09-no-git",
+  "repository": "repository",
+  "purpose": "Prove setup can proceed without Git using target fingerprints while sensitive values remain presence-only.",
+  "coverage": ["no-git-baseline", "mixed-evidence-unknowns"],
+  "evidence": [
+    {
+      "id": "ev-make-verify",
+      "fact": "The Makefile declares a verify target.",
+      "sourcePath": "Makefile",
+      "sourceLocation": "target verify",
+      "observation": "a verify target exists",
+      "whyItMatters": "It is direct workflow evidence, but its placeholder body is not enough for a durable Skill."
+    },
+    {
+      "id": "ev-env-presence",
+      "fact": "A potentially sensitive environment file exists.",
+      "sourcePath": ".env",
+      "sourceLocation": "presence",
+      "observation": ".env exists; values were not read",
+      "whyItMatters": "Exploration must record presence without persisting credential values.",
+      "sensitivity": "presence-only"
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-verify-target", "value": "verify", "status": "confirmed", "evidenceIds": ["ev-make-verify"]}
+    ],
+    "unknowns": ["git-baseline", "runtime", "deployment-command"],
+    "classifications": [
+      {"factId": "fact-verify-target", "persistenceScope": "NONE", "deterministicEnforcementCandidate": false, "destination": null}
+    ],
+    "skillDecisions": [
+      {"name": "build-verify", "action": "SKIP", "reason": "The fixture does not establish a substantial repeated procedure."}
+    ],
+    "allowedActions": [
+      {"action": "SKIP", "target": ".agents/skills/build-verify/SKILL.md"}
+    ],
+    "forbiddenPaths": ["Makefile", ".env", "src/", ".github/"],
+    "preservation": [
+      {"path": ".env", "mode": "exact"}
+    ],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["Makefile"],
+      "lockFiles": [],
+      "agentConfigPaths": [],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}
