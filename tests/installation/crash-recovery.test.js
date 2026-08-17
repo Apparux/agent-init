@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { cp, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
@@ -14,7 +14,7 @@ import {
 
 const lifecycleUrl = pathToFileURL(
   path.resolve(
-    path.dirname(new URL(import.meta.url).pathname),
+    path.dirname(fileURLToPath(import.meta.url)),
     '../../src/installation/lifecycle.js',
   ),
 ).href;
@@ -107,6 +107,31 @@ for (const mutationPoint of [
     await assertSentinelsUnchanged(sentinels);
   });
 }
+
+test('fresh-install recovery accepts a legacy link completion without linkText', async (t) => {
+  const { homeDir, runtime, sentinels } = await createInstallationFixture(t);
+  const child = crashLifecycle(runtime, 'install', 'install:codex-published');
+  assert.equal(child.status, 77, child.stderr);
+
+  const journalNames = (await readdir(homeDir))
+    .filter((name) => name.includes('.journal-') && name.endsWith('.json'))
+    .sort();
+  const latestJournalPath = path.join(homeDir, journalNames.at(-1));
+  const journal = JSON.parse(await readFile(latestJournalPath, 'utf8'));
+  const completion = journal.completed.find(
+    (record) => record.action === 'create-target-link' && record.name === 'codex',
+  );
+  assert.ok(completion);
+  delete completion.linkText;
+  await writeFile(latestJournalPath, `${JSON.stringify(journal, null, 2)}\n`);
+
+  const retried = await executeLifecycle({ operation: 'install' }, runtime);
+
+  assert.equal(retried.ok, true);
+  assert.equal(retried.outcome, 'installed');
+  assert.equal((await executeLifecycle({ operation: 'doctor' }, runtime)).ok, true);
+  await assertSentinelsUnchanged(sentinels);
+});
 
 test('retry removes validated canonical staging after a fresh-install crash', async (t) => {
   const { runtime, sentinels } = await createInstallationFixture(t);

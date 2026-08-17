@@ -26,6 +26,31 @@ function resolveLinkDestination(targetPath, linkText) {
   return path.resolve(path.dirname(targetPath), linkText);
 }
 
+async function physicalPathOrMissing(entryPath) {
+  try {
+    return await realpath(entryPath);
+  } catch (error) {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  }
+}
+
+export async function linkResolvesToCanonical(paths, targetPath, linkText) {
+  if (typeof linkText !== 'string' || linkText.length === 0) return false;
+
+  const [targetPhysical, canonicalPhysical] = await Promise.all([
+    physicalPathOrMissing(targetPath),
+    physicalPathOrMissing(paths.canonicalSkill),
+  ]);
+  if (targetPhysical !== null || canonicalPhysical !== null) {
+    return targetPhysical !== null &&
+      canonicalPhysical !== null &&
+      targetPhysical === canonicalPhysical;
+  }
+
+  return resolveLinkDestination(targetPath, linkText) === paths.canonicalSkill;
+}
+
 function markerPath(targetPath) {
   return path.join(targetPath, OWNER_MARKER);
 }
@@ -89,10 +114,16 @@ export async function inspectTarget(paths, name, manifestRecord, manifest) {
         reason: 'Managed symlink was replaced by another entry type.',
       };
     }
-    const destination = resolveLinkDestination(targetPath, fingerprint.linkText);
+    const destinationMatches = await linkResolvesToCanonical(
+      paths,
+      targetPath,
+      fingerprint.linkText,
+    );
     if (
-      destination !== paths.canonicalSkill ||
-      fingerprint.identity !== manifestRecord.entryIdentity
+      !destinationMatches ||
+      fingerprint.identity !== manifestRecord.entryIdentity ||
+      (manifestRecord.linkText != null &&
+        fingerprint.linkText !== manifestRecord.linkText)
     ) {
       return {
         name,
@@ -227,7 +258,7 @@ async function createSymlinkTarget(
     if (
       published.type !== 'symlink' ||
       !published.identity ||
-      published.linkText !== linkText
+      !(await linkResolvesToCanonical(paths, targetPath, published.linkText))
     ) {
       throw new InstallationError(
         'OWNERSHIP_MISMATCH',
@@ -240,6 +271,7 @@ async function createSymlinkTarget(
       name,
       path: targetPath,
       entryIdentity: published.identity,
+      linkText: published.linkText,
     });
     return {
       path: targetPath,
@@ -247,6 +279,7 @@ async function createSymlinkTarget(
       source: paths.canonicalSkill,
       targetId,
       entryIdentity: published.identity,
+      linkText: published.linkText,
       digest: null,
     };
   } catch (error) {
@@ -382,7 +415,7 @@ export async function removeOwnedTarget(spec) {
         detached.type === 'symlink' &&
         detached.identity === initial.fingerprint.identity &&
         detached.linkText === initial.fingerprint.linkText &&
-        resolveLinkDestination(initial.path, detached.linkText) === paths.canonicalSkill;
+        (await linkResolvesToCanonical(paths, quarantine, detached.linkText));
     } else {
       const marker = await readMarker(quarantine);
       detachedValid =

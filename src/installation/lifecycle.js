@@ -37,6 +37,7 @@ import {
 import { compareVersions, validatePackagePayload } from './payload.js';
 import {
   inspectTarget,
+  linkResolvesToCanonical,
   materializeTarget,
   removeOwnedTarget,
 } from './targets.js';
@@ -2117,9 +2118,15 @@ function validateFreshInstallJournal(paths, descriptor, journal) {
     }
     const intent = copyIntent ?? linkIntent;
     const completion = copyIntent ? copyCompletion : linkCompletion;
-    if (completion && typeof completion.entryIdentity !== 'string') {
+    if (
+      completion &&
+      (typeof completion.entryIdentity !== 'string' ||
+        (linkCompletion &&
+          completion.linkText !== undefined &&
+          typeof completion.linkText !== 'string'))
+    ) {
       throw ambiguousRecovery(
-        `Fresh-install ${name} target completion has no stable identity.`,
+        `Fresh-install ${name} target completion has invalid identity evidence.`,
         journalPath,
       );
     }
@@ -2245,6 +2252,7 @@ function freshManifestMatchesEvidence(manifest, evidence, paths) {
     if (
       targetEvidence.mode === 'symlink'
         ? record.entryIdentity !== targetEvidence.completion.entryIdentity ||
+          record.linkText !== targetEvidence.completion.linkText ||
           record.digest !== null
         : record.entryIdentity !== null ||
           record.digest !== targetEvidence.intent.digest
@@ -2410,17 +2418,31 @@ async function recoverInterruptedInstall(paths, runtime, control) {
     );
     const stagingFingerprint = await entryFingerprint(staging);
     if (targetEvidence?.completion) {
-      if (
-        targetState.identity !== targetEvidence.completion.entryIdentity ||
-        (targetEvidence.mode === 'symlink' &&
-          (targetState.type !== 'symlink' ||
-            targetState.linkText !== targetEvidence.intent.linkText))
-      ) {
+      if (targetState.identity !== targetEvidence.completion.entryIdentity) {
         throw ambiguousRecovery(
           `Interrupted fresh-install ${name} target changed.`,
           descriptor.journalPath,
           paths.targets[name],
         );
+      }
+      if (targetEvidence.mode === 'symlink') {
+        const completionLinkText = targetEvidence.completion.linkText;
+        if (
+          targetState.type !== 'symlink' ||
+          (completionLinkText !== undefined &&
+            targetState.linkText !== completionLinkText) ||
+          !(await linkResolvesToCanonical(
+            paths,
+            paths.targets[name],
+            targetState.linkText,
+          ))
+        ) {
+          throw ambiguousRecovery(
+            `Interrupted fresh-install ${name} target changed.`,
+            descriptor.journalPath,
+            paths.targets[name],
+          );
+        }
       }
       if (targetEvidence.mode === 'copy') {
         const copy = await validateManagedCopyDirectory(
@@ -2893,9 +2915,8 @@ async function validateUninstallTargetEntry(
   if (record.mode === 'symlink') {
     return (
       fingerprint.type === 'symlink' &&
-      fingerprint.linkText ===
-        (path.relative(path.dirname(livePath), paths.canonicalSkill) || '.') &&
-      path.resolve(path.dirname(livePath), fingerprint.linkText) === paths.canonicalSkill
+      (record.linkText == null || fingerprint.linkText === record.linkText) &&
+      (await linkResolvesToCanonical(paths, entryPath, fingerprint.linkText))
     );
   }
   const copy = await validateManagedCopyDirectory(entryPath, manifest, record);

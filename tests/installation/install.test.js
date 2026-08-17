@@ -1,5 +1,14 @@
 import assert from 'node:assert/strict';
-import { lstat, readFile, readlink, realpath, unlink } from 'node:fs/promises';
+import {
+  lstat,
+  mkdir,
+  readFile,
+  readlink,
+  realpath,
+  symlink,
+  unlink,
+  writeFile,
+} from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 
@@ -47,6 +56,94 @@ test('fresh install materializes one canonical skill and two managed targets', a
     assert.equal(path.resolve(path.dirname(target.path), await readlink(target.path)), canonicalSkill);
   }
 
+  await assertSentinelsUnchanged(sentinels);
+});
+
+test('absolute junction-style link text is accepted when it resolves to the canonical skill', async (t) => {
+  const { runtime, sentinels } = await createInstallationFixture(t);
+  runtime.createDirectorySymlink = async (_linkText, targetPath, type) => {
+    await symlink(
+      path.join(
+        runtime.homeDir,
+        '.agent-project-setup',
+        'current',
+        'skills',
+        'project-setup',
+      ),
+      targetPath,
+      type,
+    );
+  };
+
+  const installed = await executeLifecycle({ operation: 'install' }, runtime);
+
+  assert.equal(installed.ok, true);
+  assert.equal(installed.outcome, 'installed');
+  for (const target of Object.values(installed.manifest.targets)) {
+    assert.equal(target.mode, 'symlink');
+    assert.equal(
+      path.resolve(path.dirname(target.path), await readlink(target.path)),
+      installed.manifest.canonical.skillPath,
+    );
+  }
+  assert.equal((await executeLifecycle({ operation: 'doctor' }, runtime)).ok, true);
+  await assertSentinelsUnchanged(sentinels);
+});
+
+test('rejects a lexically canonical link that physically resolves to a foreign tree', async (t) => {
+  const { disposableRoot, runtime, sentinels } = await createInstallationFixture(t);
+  const foreignRoot = path.join(disposableRoot, 'foreign');
+  const foreignMount = path.join(foreignRoot, 'mounted');
+  const foreignSkill = path.join(
+    foreignRoot,
+    '.agent-project-setup',
+    'current',
+    'skills',
+    'project-setup',
+  );
+  await mkdir(foreignMount, { recursive: true });
+  await mkdir(foreignSkill, { recursive: true });
+  const foreignSentinel = path.join(foreignSkill, 'foreign.txt');
+  await writeFile(foreignSentinel, 'must survive\n');
+
+  const alias = path.join(runtime.homeDir, 'link-alias-parent');
+  await symlink(foreignMount, alias, 'dir');
+  const deceptiveLinkText = [
+    '..',
+    '..',
+    'link-alias-parent',
+    '..',
+    '.agent-project-setup',
+    'current',
+    'skills',
+    'project-setup',
+  ].join(path.sep);
+  runtime.createDirectorySymlink = async (_linkText, targetPath, type) => {
+    await symlink(deceptiveLinkText, targetPath, type);
+  };
+
+  const result = await executeLifecycle({ operation: 'install' }, runtime);
+
+  assert.equal(result.ok, false);
+  assert.equal(result.error.code, 'OWNERSHIP_MISMATCH');
+  assert.equal(await readFile(foreignSentinel, 'utf8'), 'must survive\n');
+  await assertSentinelsUnchanged(sentinels);
+});
+
+test('schema-1 manifests without linkText remain readable and safely removable', async (t) => {
+  const { homeDir, runtime, sentinels } = await createInstallationFixture(t);
+  const installed = await executeLifecycle({ operation: 'install' }, runtime);
+  assert.equal(installed.ok, true);
+
+  const manifestPath = path.join(homeDir, '.agent-project-setup', 'install.json');
+  const legacyManifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+  for (const target of Object.values(legacyManifest.targets)) delete target.linkText;
+  await writeFile(manifestPath, `${JSON.stringify(legacyManifest, null, 2)}\n`);
+
+  const doctor = await executeLifecycle({ operation: 'doctor' }, runtime);
+  assert.equal(doctor.ok, true);
+  const uninstalled = await executeLifecycle({ operation: 'uninstall' }, runtime);
+  assert.equal(uninstalled.ok, true);
   await assertSentinelsUnchanged(sentinels);
 });
 
