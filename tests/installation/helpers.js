@@ -65,7 +65,9 @@ export async function assertSentinelsUnchanged(sentinels) {
       throw new Error(`Foreign sentinel changed: ${sentinelPath}`);
     }
     const stat = await lstat(sentinelPath);
-    if (!stat.isFile() || (stat.mode & 0o777) !== 0o640) {
+    const modeChanged =
+      process.platform !== 'win32' && (stat.mode & 0o777) !== 0o640;
+    if (!stat.isFile() || modeChanged) {
       throw new Error(`Foreign sentinel type or mode changed: ${sentinelPath}`);
     }
   }
