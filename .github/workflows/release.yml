@@ -55,26 +55,276 @@ jobs:
       - run: npm test
       - name: Build release artifact
         run: |
-          mkdir .release-artifact
-          npm pack --json --pack-destination .release-artifact > .release-artifact/pack.json
+          mkdir -p .release-artifact/unpacked
+          npm pack --ignore-scripts --json --pack-destination .release-artifact > .release-artifact/pack.json
+          tar -xzf .release-artifact/apparux-agent-project-setup-0.1.0.tgz -C .release-artifact/unpacked
       - name: Verify release artifact
+        id: artifact
         run: |
           node --input-type=module <<'NODE'
-          import { readFileSync } from 'node:fs';
-          const [artifact] = JSON.parse(readFileSync('.release-artifact/pack.json', 'utf8'));
-          const expected = {
-            filename: 'apparux-agent-project-setup-0.1.0.tgz',
-            shasum: '8576a93b58088850c1a388a790445ea2cfbe8154',
-            integrity: 'sha512-XRDEW8Vy1cVSvxYDdcUJBzJQ3Um/vTBumCXgH1ciZjAL3WlOc81fMNajFSkJWVG09W03SDM/H+zojcqf+xqLmg==',
-            entryCount: 22,
+          import { createHash } from 'node:crypto';
+          import { appendFileSync, readFileSync } from 'node:fs';
+          import { lstat, readFile, readdir } from 'node:fs/promises';
+          import path from 'node:path';
+
+          const addField = (hash, value) => {
+            const bytes = Buffer.isBuffer(value)
+              ? value
+              : Buffer.from(String(value));
+            hash.update(String(bytes.length));
+            hash.update(':');
+            hash.update(bytes);
+            hash.update(';');
           };
-          for (const [field, value] of Object.entries(expected)) {
-            if (artifact[field] !== value) {
-              throw new Error(`Release artifact ${field} mismatch: expected ${value}, received ${artifact[field]}`);
+          const digestUnpackedTree = async (root) => {
+            const entries = [];
+            const visit = async (directory, relativeDirectory = '') => {
+              const names = await readdir(directory);
+              names.sort((left, right) => left.localeCompare(right, 'en'));
+              for (const name of names) {
+                const relativePath = relativeDirectory
+                  ? `${relativeDirectory}/${name}`
+                  : name;
+                const absolutePath = path.join(directory, name);
+                const stat = await lstat(absolutePath);
+                if (stat.isSymbolicLink()) {
+                  throw new Error(
+                    `Unsupported symlink in release artifact: ${relativePath}`,
+                  );
+                }
+                if (stat.isDirectory()) {
+                  entries.push({ relativePath, type: 'directory' });
+                  await visit(absolutePath, relativePath);
+                } else if (stat.isFile()) {
+                  entries.push({
+                    relativePath,
+                    type: 'file',
+                    executable: (stat.mode & 0o111) !== 0,
+                    content: await readFile(absolutePath),
+                  });
+                } else {
+                  throw new Error(
+                    `Unsupported entry type in release artifact: ${relativePath}`,
+                  );
+                }
+              }
+            };
+            await visit(root);
+            entries.sort((left, right) =>
+              left.relativePath.localeCompare(right.relativePath, 'en'),
+            );
+            const hash = createHash('sha256');
+            addField(hash, 'agent-project-setup-tree-v1');
+            for (const entry of entries) {
+              addField(hash, entry.type);
+              addField(hash, entry.relativePath);
+              if (entry.type === 'file') {
+                addField(hash, entry.executable ? 'executable' : 'regular');
+                addField(hash, entry.content);
+              }
+            }
+            return `sha256:${hash.digest('hex')}`;
+          };
+
+          const [artifact] = JSON.parse(
+            readFileSync('.release-artifact/pack.json', 'utf8'),
+          );
+          const expected = {
+            name: '@apparux/agent-project-setup',
+            version: '0.1.0',
+            filename: 'apparux-agent-project-setup-0.1.0.tgz',
+            entryCount: 22,
+            treeDigest:
+              'sha256:cb8cc23baf4ba29b0b7e75d39037a7a4d99c496cd5de7b63466088a12558673f',
+          };
+          for (const field of ['name', 'version', 'filename', 'entryCount']) {
+            if (artifact?.[field] !== expected[field]) {
+              throw new Error(
+                `Release artifact ${field} mismatch: expected ${expected[field]}, received ${artifact?.[field]}`,
+              );
             }
           }
+
+          const expectedFiles = [
+            ['LICENSE', 0o644],
+            ['README.md', 0o644],
+            ['bin/agent-project-setup.js', 0o755],
+            ['package.json', 0o644],
+            ['skills/project-setup/SKILL.md', 0o644],
+            ['skills/project-setup/references/agents-guidelines.md', 0o644],
+            ['skills/project-setup/references/classification.md', 0o644],
+            ['skills/project-setup/references/detection-guidelines.md', 0o644],
+            ['skills/project-setup/references/evaluation-guidelines.md', 0o644],
+            ['skills/project-setup/references/proposal-guidelines.md', 0o644],
+            ['skills/project-setup/references/reconciliation-guidelines.md', 0o644],
+            ['skills/project-setup/references/skills-guidelines.md', 0o644],
+            ['skills/project-setup/scripts/detect-project.js', 0o644],
+            ['src/cli/output.js', 0o644],
+            ['src/cli/run.js', 0o644],
+            ['src/installation/filesystem.js', 0o644],
+            ['src/installation/lifecycle.js', 0o644],
+            ['src/installation/manifest.js', 0o644],
+            ['src/installation/paths.js', 0o644],
+            ['src/installation/payload.js', 0o644],
+            ['src/installation/targets.js', 0o644],
+            ['src/installation/transaction.js', 0o644],
+          ].sort(([left], [right]) => left.localeCompare(right, 'en'));
+          const actualFiles = artifact.files
+            .map(({ path, mode }) => [path, mode])
+            .sort(([left], [right]) => left.localeCompare(right, 'en'));
+          if (JSON.stringify(actualFiles) !== JSON.stringify(expectedFiles)) {
+            throw new Error(
+              `Release artifact file manifest mismatch: ${JSON.stringify(actualFiles)}`,
+            );
+          }
+
+          const unpackedPackage = JSON.parse(
+            readFileSync(
+              '.release-artifact/unpacked/package/package.json',
+              'utf8',
+            ),
+          );
+          if (
+            unpackedPackage.name !== expected.name ||
+            unpackedPackage.version !== expected.version ||
+            unpackedPackage.publishConfig?.access !== 'public'
+          ) {
+            throw new Error(
+              `Packed metadata mismatch: ${JSON.stringify({
+                name: unpackedPackage.name,
+                version: unpackedPackage.version,
+                access: unpackedPackage.publishConfig?.access,
+              })}`,
+            );
+          }
+
+          const treeDigest = await digestUnpackedTree(
+            '.release-artifact/unpacked/package',
+          );
+          if (treeDigest !== expected.treeDigest) {
+            throw new Error(
+              `Release artifact tree digest mismatch: expected ${expected.treeDigest}, received ${treeDigest}`,
+            );
+          }
+          if (!/^[a-f0-9]{40}$/.test(artifact.shasum)) {
+            throw new Error(`Invalid artifact shasum: ${artifact.shasum}`);
+          }
+          if (!/^sha512-[A-Za-z0-9+/]+={0,2}$/.test(artifact.integrity)) {
+            throw new Error(`Invalid artifact integrity: ${artifact.integrity}`);
+          }
+
+          appendFileSync(
+            process.env.GITHUB_OUTPUT,
+            `shasum=${artifact.shasum}\nintegrity=${artifact.integrity}\n`,
+          );
+          console.log(`Verified tree digest: ${treeDigest}`);
+          console.log(`Runner artifact shasum: ${artifact.shasum}`);
+          console.log(`Runner artifact integrity: ${artifact.integrity}`);
           NODE
       - name: Publish npm package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish .release-artifact/apparux-agent-project-setup-0.1.0.tgz --access public --tag latest
+      - name: Verify published registry artifact
+        env:
+          EXPECTED_SHASUM: ${{ steps.artifact.outputs.shasum }}
+          EXPECTED_INTEGRITY: ${{ steps.artifact.outputs.integrity }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { setTimeout as delay } from 'node:timers/promises';
+
+          const packageName = '@apparux/agent-project-setup';
+          const version = '0.1.0';
+          const registryRoot = `https://registry.npmjs.org/${encodeURIComponent(packageName)}`;
+          const getJson = async (url) => {
+            const response = await fetch(url, {
+              headers: {
+                accept: 'application/json',
+                'cache-control': 'no-cache',
+              },
+            });
+            if (!response.ok) {
+              throw new Error(`Registry returned HTTP ${response.status} for ${url}`);
+            }
+            return response.json();
+          };
+
+          let published;
+          let latest;
+          let lastError;
+          for (let attempt = 1; attempt <= 12; attempt += 1) {
+            try {
+              [published, latest] = await Promise.all([
+                getJson(`${registryRoot}/${version}`),
+                getJson(`${registryRoot}/latest`),
+              ]);
+              break;
+            } catch (error) {
+              lastError = error;
+              if (attempt < 12) await delay(5_000);
+            }
+          }
+          if (!published || !latest) {
+            throw new Error(
+              `Published package was not visible after 12 attempts: ${lastError?.message}`,
+            );
+          }
+          if (
+            published.name !== packageName ||
+            published.version !== version ||
+            latest.version !== version
+          ) {
+            throw new Error(
+              `Registry metadata mismatch: ${JSON.stringify({
+                name: published.name,
+                version: published.version,
+                latest: latest.version,
+              })}`,
+            );
+          }
+          if (
+            published.dist?.shasum !== process.env.EXPECTED_SHASUM ||
+            published.dist?.integrity !== process.env.EXPECTED_INTEGRITY
+          ) {
+            throw new Error(
+              `Registry digest mismatch: ${JSON.stringify({
+                shasum: published.dist?.shasum,
+                integrity: published.dist?.integrity,
+              })}`,
+            );
+          }
+
+          const tarballResponse = await fetch(published.dist.tarball, {
+            headers: { 'cache-control': 'no-cache' },
+          });
+          if (!tarballResponse.ok) {
+            throw new Error(
+              `Registry tarball returned HTTP ${tarballResponse.status}`,
+            );
+          }
+          const tarball = Buffer.from(await tarballResponse.arrayBuffer());
+          const downloadedShasum = createHash('sha1')
+            .update(tarball)
+            .digest('hex');
+          const downloadedIntegrity = `sha512-${createHash('sha512')
+            .update(tarball)
+            .digest('base64')}`;
+          if (
+            downloadedShasum !== process.env.EXPECTED_SHASUM ||
+            downloadedIntegrity !== process.env.EXPECTED_INTEGRITY
+          ) {
+            throw new Error(
+              `Downloaded registry artifact mismatch: ${JSON.stringify({
+                shasum: downloadedShasum,
+                integrity: downloadedIntegrity,
+              })}`,
+            );
+          }
+
+          console.log(`Verified registry version: ${published.version}`);
+          console.log(`Verified latest dist-tag: ${latest.version}`);
+          console.log(`Verified registry shasum: ${downloadedShasum}`);
+          console.log(`Verified registry integrity: ${downloadedIntegrity}`);
+          console.log(`Verified registry tarball: ${published.dist.tarball}`);
+          NODE
