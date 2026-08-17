@@ -51,6 +51,7 @@ test('packed artifact independently completes the distribution lifecycle', async
   const packResult = JSON.parse(packed.stdout)[0];
   const packagedPaths = packResult.files.map((entry) => entry.path).sort();
   assert.equal(packagedPaths.includes('package.json'), true);
+  assert.equal(packagedPaths.includes('LICENSE'), true);
   assert.equal(packagedPaths.includes('bin/agent-project-setup.js'), true);
   assert.equal(packagedPaths.includes('skills/project-setup/SKILL.md'), true);
   assert.equal(
@@ -58,6 +59,7 @@ test('packed artifact independently completes the distribution lifecycle', async
       (entry) =>
         entry === 'package.json' ||
         entry === 'README.md' ||
+        entry === 'LICENSE' ||
         entry.startsWith('bin/') ||
         entry.startsWith('src/') ||
         entry.startsWith('skills/'),

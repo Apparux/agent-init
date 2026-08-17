@@ -37,6 +37,7 @@ import {
 import { compareVersions, validatePackagePayload } from './payload.js';
 import {
   inspectTarget,
+  linkResolvesToCanonical,
   materializeTarget,
   removeOwnedTarget,
 } from './targets.js';
@@ -375,6 +376,11 @@ async function repairMissingTargets(payload, paths, runtime, operation, oldManif
   }
 
   const created = [];
+  const rememberPublishedSymlink = (name, record) => {
+    if (record.mode === 'symlink' && !created.some((target) => target.name === name)) {
+      created.push({ name, ...record });
+    }
+  };
   const manifestFingerprint = await entryFingerprint(paths.manifest);
   let manifestSwap = null;
   try {
@@ -392,9 +398,12 @@ async function repairMissingTargets(payload, paths, runtime, operation, oldManif
         createDirectorySymlink: runtime.createDirectorySymlink,
         beforeMutation: runtime.beforeMutation,
         afterMutation: runtime.afterMutation,
+        onPublished: (published) => rememberPublishedSymlink(name, published),
       });
       nextManifest.targets[name] = record;
-      created.push({ name, ...record });
+      if (!created.some((target) => target.name === name)) {
+        created.push({ name, ...record });
+      }
     }
     nextManifest.updatedAt = isoNow(runtime);
     await recordIntent(operation, {
@@ -472,9 +481,16 @@ async function repairMissingTargets(payload, paths, runtime, operation, oldManif
       unresolved: [],
     };
   } catch (error) {
+    const unresolved = [];
     for (const target of created.reverse()) {
       if (target.mode === 'symlink') {
-        await removeIfSameSymlink(target.path, target.entryIdentity).catch(() => {});
+        try {
+          if (!(await removeIfSameSymlink(target.path, target.entryIdentity))) {
+            unresolved.push(target.path);
+          }
+        } catch {
+          unresolved.push(target.path);
+        }
       }
     }
     if (manifestSwap?.rollbackPath) {
@@ -491,11 +507,23 @@ async function repairMissingTargets(payload, paths, runtime, operation, oldManif
           {
             path: paths.manifest,
             cause: error,
-            unresolved: [paths.manifest, manifestSwap.rollbackPath],
+            unresolved: [paths.manifest, manifestSwap.rollbackPath, ...unresolved],
             remediation: 'Preserve both manifest entries and run doctor before any manual change.',
           },
         );
       }
+    }
+    if (unresolved.length > 0) {
+      throw new InstallationError(
+        'ROLLBACK_FAILED',
+        `Repair failed and rollback could not prove every target: ${paths.installRoot}`,
+        {
+          path: paths.installRoot,
+          cause: error,
+          unresolved,
+          remediation: 'Preserve the target and run doctor before any manual change.',
+        },
+      );
     }
     throw error;
   }
@@ -518,6 +546,11 @@ async function installFresh(payload, paths, runtime, operation) {
     paths.installRoot,
     `.staging-${operation.operationId}`,
   );
+  const rememberPublishedSymlink = (name, record) => {
+    if (record.mode === 'symlink' && !created.targets.some((target) => target.name === name)) {
+      created.targets.push({ ...record, name, identity: record.entryIdentity });
+    }
+  };
 
   try {
     await recordIntent(operation, {
@@ -600,14 +633,17 @@ async function installFresh(payload, paths, runtime, operation) {
         createDirectorySymlink: runtime.createDirectorySymlink,
         beforeMutation: runtime.beforeMutation,
         afterMutation: runtime.afterMutation,
+        onPublished: (published) => rememberPublishedSymlink(name, published),
       });
       targetRecords[name] = record;
-      const fingerprint = await entryFingerprint(record.path);
-      created.targets.push({
-        ...record,
-        name,
-        identity: fingerprint.identity,
-      });
+      if (!created.targets.some((target) => target.name === name)) {
+        const fingerprint = await entryFingerprint(record.path);
+        created.targets.push({
+          ...record,
+          name,
+          identity: fingerprint.identity,
+        });
+      }
       await callAfterMutation(runtime, `install:${name}-published`);
     }
 
@@ -2117,9 +2153,15 @@ function validateFreshInstallJournal(paths, descriptor, journal) {
     }
     const intent = copyIntent ?? linkIntent;
     const completion = copyIntent ? copyCompletion : linkCompletion;
-    if (completion && typeof completion.entryIdentity !== 'string') {
+    if (
+      completion &&
+      (typeof completion.entryIdentity !== 'string' ||
+        (linkCompletion &&
+          completion.linkText !== undefined &&
+          typeof completion.linkText !== 'string'))
+    ) {
       throw ambiguousRecovery(
-        `Fresh-install ${name} target completion has no stable identity.`,
+        `Fresh-install ${name} target completion has invalid identity evidence.`,
         journalPath,
       );
     }
@@ -2245,6 +2287,8 @@ function freshManifestMatchesEvidence(manifest, evidence, paths) {
     if (
       targetEvidence.mode === 'symlink'
         ? record.entryIdentity !== targetEvidence.completion.entryIdentity ||
+          (targetEvidence.completion.linkText !== undefined &&
+            record.linkText !== targetEvidence.completion.linkText) ||
           record.digest !== null
         : record.entryIdentity !== null ||
           record.digest !== targetEvidence.intent.digest
@@ -2410,17 +2454,31 @@ async function recoverInterruptedInstall(paths, runtime, control) {
     );
     const stagingFingerprint = await entryFingerprint(staging);
     if (targetEvidence?.completion) {
-      if (
-        targetState.identity !== targetEvidence.completion.entryIdentity ||
-        (targetEvidence.mode === 'symlink' &&
-          (targetState.type !== 'symlink' ||
-            targetState.linkText !== targetEvidence.intent.linkText))
-      ) {
+      if (targetState.identity !== targetEvidence.completion.entryIdentity) {
         throw ambiguousRecovery(
           `Interrupted fresh-install ${name} target changed.`,
           descriptor.journalPath,
           paths.targets[name],
         );
+      }
+      if (targetEvidence.mode === 'symlink') {
+        const completionLinkText = targetEvidence.completion.linkText;
+        if (
+          targetState.type !== 'symlink' ||
+          (completionLinkText !== undefined &&
+            targetState.linkText !== completionLinkText) ||
+          !(await linkResolvesToCanonical(
+            paths,
+            paths.targets[name],
+            targetState.linkText,
+          ))
+        ) {
+          throw ambiguousRecovery(
+            `Interrupted fresh-install ${name} target changed.`,
+            descriptor.journalPath,
+            paths.targets[name],
+          );
+        }
       }
       if (targetEvidence.mode === 'copy') {
         const copy = await validateManagedCopyDirectory(
@@ -2893,9 +2951,8 @@ async function validateUninstallTargetEntry(
   if (record.mode === 'symlink') {
     return (
       fingerprint.type === 'symlink' &&
-      fingerprint.linkText ===
-        (path.relative(path.dirname(livePath), paths.canonicalSkill) || '.') &&
-      path.resolve(path.dirname(livePath), fingerprint.linkText) === paths.canonicalSkill
+      (record.linkText == null || fingerprint.linkText === record.linkText) &&
+      (await linkResolvesToCanonical(paths, entryPath, fingerprint.linkText))
     );
   }
   const copy = await validateManagedCopyDirectory(entryPath, manifest, record);

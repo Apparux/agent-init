@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  posix-test:
+    name: ${{ matrix.os }} / Node 18
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 18
+          cache: npm
+      - run: npm test
+
+  windows-smoke:
+    name: Windows Native / Node 18 smoke and recovery
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 18
+          cache: npm
+      - run: node --test tests/cli/commands.test.js tests/cli/help.test.js tests/cli/lifecycle.test.js tests/installation/windows-smoke.test.js tests/installation/crash-recovery.test.js
+
+  package:
+    name: Package / Node 22
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm test
+      - name: Check JavaScript syntax
+        run: find bin src tests -type f -name '*.js' -print0 | xargs -0 -n1 node --check
+      - run: npm pack --dry-run

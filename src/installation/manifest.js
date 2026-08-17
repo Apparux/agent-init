@@ -256,6 +256,9 @@ export function validateManifest(manifest, expected, manifestPath) {
     }
     if (target.mode === 'symlink') {
       requireString(target.entryIdentity, `targets.${name}.entryIdentity`, manifestPath);
+      if (target.linkText !== undefined) {
+        requireString(target.linkText, `targets.${name}.linkText`, manifestPath);
+      }
       if (target.digest !== null) {
         throw new InstallationError(
           'CORRUPT_MANIFEST',
