@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "type": "module",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
-    "agent-project-setup": "./bin/agent-project-setup.js"
+    "agent-project-setup": "bin/agent-project-setup.js"
   },
   "files": [
     "bin",
