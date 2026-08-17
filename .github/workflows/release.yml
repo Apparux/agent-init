@@ -1,0 +1,80 @@
+name: Publish npm v0.1.0
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-npm-v0.1.0
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish @apparux/agent-project-setup@0.1.0
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      - name: Pin npm CLI
+        run: npm install --global npm@11.17.0
+      - name: Verify publish credential
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: node -e "if (!process.env.NODE_AUTH_TOKEN) throw new Error('NPM_TOKEN secret is not configured')"
+      - run: npm ci --ignore-scripts
+      - name: Verify release metadata
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+          const expected = {
+            name: '@apparux/agent-project-setup',
+            version: '0.1.0',
+            access: 'public',
+          };
+          if (
+            pkg.name !== expected.name ||
+            pkg.version !== expected.version ||
+            pkg.publishConfig?.access !== expected.access
+          ) {
+            throw new Error(`Release metadata mismatch: ${JSON.stringify({
+              name: pkg.name,
+              version: pkg.version,
+              access: pkg.publishConfig?.access,
+            })}`);
+          }
+          NODE
+      - run: npm test
+      - name: Build release artifact
+        run: |
+          mkdir .release-artifact
+          npm pack --json --pack-destination .release-artifact > .release-artifact/pack.json
+      - name: Verify release artifact
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const [artifact] = JSON.parse(readFileSync('.release-artifact/pack.json', 'utf8'));
+          const expected = {
+            filename: 'apparux-agent-project-setup-0.1.0.tgz',
+            shasum: '8576a93b58088850c1a388a790445ea2cfbe8154',
+            integrity: 'sha512-XRDEW8Vy1cVSvxYDdcUJBzJQ3Um/vTBumCXgH1ciZjAL3WlOc81fMNajFSkJWVG09W03SDM/H+zojcqf+xqLmg==',
+            entryCount: 22,
+          };
+          for (const [field, value] of Object.entries(expected)) {
+            if (artifact[field] !== value) {
+              throw new Error(`Release artifact ${field} mismatch: expected ${value}, received ${artifact[field]}`);
+            }
+          }
+          NODE
+      - name: Publish npm package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish .release-artifact/apparux-agent-project-setup-0.1.0.tgz --access public --tag latest

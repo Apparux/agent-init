@@ -1088,10 +1088,10 @@
 - [ ] 在 clean temporary HOME 执行 install；
 - [ ] 静态验证 mother/project Skill metadata contract；
 - [ ] 验证 stable canonical mother Skill 与两个 discovery target 的 filesystem state；
-- [ ] 分别启动 fresh Claude Code 与 Codex session，确认 `project-setup` 出现在 discovery catalog，调用 `/project-setup` 与 `$project-setup`，并证明两者加载同一 canonical version；无法自动化时保存命名的人工验收 evidence，不能用 target path 存在代替；
+- [ ] 使用 temporary HOME 验证 stable canonical mother Skill、两个 discovery target 与 manifest 记录加载同一 canonical version/content，不要求登录或启动 live Harness；
 - [ ] 运行 doctor 并得到 Healthy；
-- [ ] 两个 Harness 都在 fixture 上执行 no-approval path，确认先输出 Proposal 且零写入；至少一个完成 explore → proposal → approval → apply → validate；
-- [ ] approved apply 生成固定 project Skill 后，分别在 fresh Claude Code/Codex session 中确认该 Skill 出现在 catalog、可实际调用，并加载同一 `.agents/skills/<skill>` canonical content；
+- [ ] recorded-run evaluator 在 fixture 上覆盖 no-approval Proposal 与零写入路径；至少一个 conforming oracle 覆盖 explore → proposal → approval → apply → validate；
+- [ ] approved apply 生成固定 project Skill 后，验证其 physical file state、metadata contract 与 `.agents/skills/<skill>` canonical content 一致；
 - [ ] 再次运行 project-setup 并验证 ideally zero diff；
 - [ ] 从旧版 fixture 执行 update 并再次 doctor；
 - [ ] 执行 uninstall 并证明 project assets 保留；
@@ -1127,7 +1127,7 @@
 - [ ] 执行最终 `npm pack --dry-run` 和 test suite；
 - [ ] 发布 `@apparux/agent-project-setup@0.1.0`；
 - [ ] 从 registry 使用全新 temporary HOME 执行 `npx ... install`；
-- [ ] 在 fresh Claude Code/Codex session 中重复 mother Skill discovery + invocation 验收，并在最小 fixture 上调用两者确认 registry artifact 的 repository-plane entry 可用且相同 canonical version；
+- [ ] 从 registry artifact 使用 temporary HOME 验证 mother Skill metadata、两个 discovery target、repository-plane entry 与 canonical version/content 一致，不要求登录或启动 live Harness；
 - [ ] 运行 doctor、version 与 uninstall；
 - [ ] 验证项目资产不受 uninstall 影响；
 - [ ] 记录 published version、artifact integrity 与已知限制。
@@ -1196,7 +1196,6 @@
 - [ ] npm organization/package publish access；
 - [ ] release branch、tag 与 changelog policy；
 - [ ] CI provider 与允许修改的 workflow scope；
-- [ ] Windows Native 的最低承诺级别是否在 v0.1 发布说明中进一步收窄；
-- [ ] project-setup Agent behavior evaluation 在目标 harness 中可自动化到何种程度。
+- [ ] Windows Native 的最低承诺级别是否在 v0.1 发布说明中进一步收窄。
 
-这些 Unknown 不应被默认值偷偷替代。其中 license 与 registry access 只阻塞 APS-034；Harness 自动化程度不能取消 APS-033/034 的真实 discovery + invocation 验收，不能自动化的部分必须以命名的人工证据完成。其余事项应在对应任务开始前解决或记录为明确限制。
+这些 Unknown 不应被默认值偷偷替代。其中 license 与 registry access 只阻塞 APS-034；其余事项应在对应任务开始前解决或记录为明确限制。

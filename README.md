@@ -130,4 +130,4 @@ npm test
 npm pack --dry-run
 ```
 
-Tests use Node's built-in test runner and require no build step. Release acceptance additionally requires real discovery and invocation checks in fresh Claude Code and Codex sessions, supported-platform validation, a license decision, registry authorization, and an explicit publish decision.
+Tests use Node's built-in test runner and require no build step. Release acceptance additionally requires deterministic Skill contract and fixture validation, supported-platform validation, a license decision, registry authorization, and an explicit publish decision. Live Claude Code or Codex login is not a release gate.

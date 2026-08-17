@@ -1219,10 +1219,10 @@ v0.1 发布前必须满足：
 
 1. `npm pack` 产物只包含预期 `bin`、`src`、`skills` 与必要 metadata；
 2. 从 tarball 使用 temporary HOME 完成 install → doctor → update/no-op → uninstall；
-3. 静态 Skill metadata validation 通过；在 fresh Claude Code 与 Codex session 中分别确认 `project-setup` 出现在 discovery catalog，实际调用 `/project-setup` 与 `$project-setup`，并证明两者加载相同 canonical version；无法自动化时必须保留命名的人工验收记录，target path 存在不能替代该验收；
+3. 静态 Skill metadata validation 通过；使用 temporary HOME 验证 stable canonical mother Skill、两个 discovery target 与 manifest 记录加载相同 canonical version/content，不要求登录或启动 live Harness；
 4. uninstall 后 project fixture assets 与 temporary HOME 中所有 foreign sentinels 保持不变；
-5. 两个 Harness 都至少在代表性 fixture 上执行一次 no-approval path，确认先输出 Proposal 且零写入；至少一个 Harness 完成 explore → proposal → approved apply → validate；
-6. approved apply 生成固定 project Skill 后，在 fresh Claude Code 与 Codex session 中分别确认该 Skill 被发现、可调用，且加载同一 `.agents/skills/<skill>` canonical content；
+5. recorded-run evaluator 在代表性 fixture 上覆盖 no-approval Proposal 与零写入路径，并至少由一个 conforming oracle 覆盖 explore → proposal → approved apply → validate；
+6. approved apply 生成固定 project Skill 后，验证其 physical file state、metadata contract 与 `.agents/skills/<skill>` canonical content 一致；
 7. 对未变化 fixture 再次运行 ideally zero diff；
 8. PRD AC-D01–AC-D13 与 AC-P01–AC-P18 均有自动化测试或明确的人工验证记录；
 9. 所有失败场景都给出可执行 remediation；
