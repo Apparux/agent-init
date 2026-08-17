@@ -25,7 +25,7 @@ jobs:
       - run: npm test
 
   windows-smoke:
-    name: Windows Native / Node 18 smoke
+    name: Windows Native / Node 18 smoke and recovery
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: 18
           cache: npm
-      - run: node --test tests/cli/commands.test.js tests/cli/help.test.js tests/cli/lifecycle.test.js tests/installation/windows-smoke.test.js
+      - run: node --test tests/cli/commands.test.js tests/cli/help.test.js tests/cli/lifecycle.test.js tests/installation/windows-smoke.test.js tests/installation/crash-recovery.test.js
 
   package:
     name: Package / Node 22

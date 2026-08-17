@@ -26,6 +26,22 @@ function resolveLinkDestination(targetPath, linkText) {
   return path.resolve(path.dirname(targetPath), linkText);
 }
 
+function stripWindowsNamespace(entryPath) {
+  if (entryPath.startsWith('\\\\?\\UNC\\')) {
+    return `\\\\${entryPath.slice('\\\\?\\UNC\\'.length)}`;
+  }
+  if (entryPath.startsWith('\\\\?\\')) return entryPath.slice('\\\\?\\'.length);
+  return entryPath;
+}
+
+function linkDestinationMatchesCanonical(paths, targetPath, linkText) {
+  const destination = resolveLinkDestination(targetPath, linkText);
+  const canonical = path.resolve(paths.canonicalSkill);
+  if (process.platform !== 'win32') return destination === canonical;
+  return stripWindowsNamespace(path.win32.normalize(destination)).toLowerCase() ===
+    stripWindowsNamespace(path.win32.normalize(canonical)).toLowerCase();
+}
+
 async function physicalPathOrMissing(entryPath) {
   try {
     return await realpath(entryPath);
@@ -36,7 +52,13 @@ async function physicalPathOrMissing(entryPath) {
 }
 
 export async function linkResolvesToCanonical(paths, targetPath, linkText) {
-  if (typeof linkText !== 'string' || linkText.length === 0) return false;
+  if (
+    typeof linkText !== 'string' ||
+    linkText.length === 0 ||
+    !linkDestinationMatchesCanonical(paths, targetPath, linkText)
+  ) {
+    return false;
+  }
 
   const [targetPhysical, canonicalPhysical] = await Promise.all([
     physicalPathOrMissing(targetPath),
@@ -48,7 +70,7 @@ export async function linkResolvesToCanonical(paths, targetPath, linkText) {
       targetPhysical === canonicalPhysical;
   }
 
-  return resolveLinkDestination(targetPath, linkText) === paths.canonicalSkill;
+  return true;
 }
 
 function markerPath(targetPath) {
@@ -231,6 +253,7 @@ async function createSymlinkTarget(
   operation,
   createDirectorySymlink,
   afterMutation,
+  onPublished,
 ) {
   const targetPath = paths.targets[name];
   const linkText = path.relative(path.dirname(targetPath), paths.canonicalSkill) || '.';
@@ -254,26 +277,33 @@ async function createSymlinkTarget(
       if (error.code === 'EPERM') return null;
       throw error;
     }
-    const published = await entryFingerprint(targetPath);
-    if (
-      published.type !== 'symlink' ||
-      !published.identity ||
-      !(await linkResolvesToCanonical(paths, targetPath, published.linkText))
-    ) {
+    let published;
+    try {
+      published = await entryFingerprint(targetPath);
+    } catch (error) {
       throw new InstallationError(
-        'OWNERSHIP_MISMATCH',
-        `Published symlink cannot be identified safely: ${targetPath}`,
-        { path: targetPath, remediation: 'Preserve the target and inspect it manually.' },
+        'ROLLBACK_FAILED',
+        `Published discovery target could not be fingerprinted safely: ${targetPath}`,
+        {
+          path: targetPath,
+          cause: error,
+          unresolved: [targetPath],
+          remediation: 'Preserve the target and inspect the retained lifecycle journal before retrying.',
+        },
       );
     }
-    await recordCompletion(operation, {
-      action: 'create-target-link',
-      name,
-      path: targetPath,
-      entryIdentity: published.identity,
-      linkText: published.linkText,
-    });
-    return {
+    if (published.type !== 'symlink' || !published.identity) {
+      throw new InstallationError(
+        'ROLLBACK_FAILED',
+        `Published discovery target ownership cannot be proven: ${targetPath}`,
+        {
+          path: targetPath,
+          unresolved: [targetPath],
+          remediation: 'Preserve the target and inspect the retained lifecycle journal before retrying.',
+        },
+      );
+    }
+    const record = {
       path: targetPath,
       mode: 'symlink',
       source: paths.canonicalSkill,
@@ -282,6 +312,22 @@ async function createSymlinkTarget(
       linkText: published.linkText,
       digest: null,
     };
+    if (typeof onPublished === 'function') await onPublished(record);
+    await recordCompletion(operation, {
+      action: 'create-target-link',
+      name,
+      path: targetPath,
+      entryIdentity: published.identity,
+      linkText: published.linkText,
+    });
+    if (!(await linkResolvesToCanonical(paths, targetPath, published.linkText))) {
+      throw new InstallationError(
+        'OWNERSHIP_MISMATCH',
+        `Published symlink does not resolve to the canonical skill: ${targetPath}`,
+        { path: targetPath, remediation: 'Preserve the target and inspect it manually.' },
+      );
+    }
+    return record;
   } catch (error) {
     if (error instanceof InstallationError) throw error;
     if (!SYMLINK_CAPABILITY_ERRORS.has(error.code)) throw error;
@@ -468,6 +514,7 @@ export async function materializeTarget(spec) {
     createDirectorySymlink = symlink,
     beforeMutation,
     afterMutation,
+    onPublished,
   } = spec;
   await ensureSafeDirectoryChain(paths, paths.targetParents[name], { beforeMutation });
   await validateManagedAncestors(paths, paths.targetParents[name], { allowMissing: false });
@@ -482,6 +529,7 @@ export async function materializeTarget(spec) {
       operation,
       createDirectorySymlink,
       afterMutation,
+      onPublished,
     );
   } catch (error) {
     if (error.code === 'EACCES' || error.code === 'EROFS') {

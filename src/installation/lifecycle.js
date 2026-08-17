@@ -376,6 +376,11 @@ async function repairMissingTargets(payload, paths, runtime, operation, oldManif
   }
 
   const created = [];
+  const rememberPublishedSymlink = (name, record) => {
+    if (record.mode === 'symlink' && !created.some((target) => target.name === name)) {
+      created.push({ name, ...record });
+    }
+  };
   const manifestFingerprint = await entryFingerprint(paths.manifest);
   let manifestSwap = null;
   try {
@@ -393,9 +398,12 @@ async function repairMissingTargets(payload, paths, runtime, operation, oldManif
         createDirectorySymlink: runtime.createDirectorySymlink,
         beforeMutation: runtime.beforeMutation,
         afterMutation: runtime.afterMutation,
+        onPublished: (published) => rememberPublishedSymlink(name, published),
       });
       nextManifest.targets[name] = record;
-      created.push({ name, ...record });
+      if (!created.some((target) => target.name === name)) {
+        created.push({ name, ...record });
+      }
     }
     nextManifest.updatedAt = isoNow(runtime);
     await recordIntent(operation, {
@@ -473,9 +481,16 @@ async function repairMissingTargets(payload, paths, runtime, operation, oldManif
       unresolved: [],
     };
   } catch (error) {
+    const unresolved = [];
     for (const target of created.reverse()) {
       if (target.mode === 'symlink') {
-        await removeIfSameSymlink(target.path, target.entryIdentity).catch(() => {});
+        try {
+          if (!(await removeIfSameSymlink(target.path, target.entryIdentity))) {
+            unresolved.push(target.path);
+          }
+        } catch {
+          unresolved.push(target.path);
+        }
       }
     }
     if (manifestSwap?.rollbackPath) {
@@ -492,11 +507,23 @@ async function repairMissingTargets(payload, paths, runtime, operation, oldManif
           {
             path: paths.manifest,
             cause: error,
-            unresolved: [paths.manifest, manifestSwap.rollbackPath],
+            unresolved: [paths.manifest, manifestSwap.rollbackPath, ...unresolved],
             remediation: 'Preserve both manifest entries and run doctor before any manual change.',
           },
         );
       }
+    }
+    if (unresolved.length > 0) {
+      throw new InstallationError(
+        'ROLLBACK_FAILED',
+        `Repair failed and rollback could not prove every target: ${paths.installRoot}`,
+        {
+          path: paths.installRoot,
+          cause: error,
+          unresolved,
+          remediation: 'Preserve the target and run doctor before any manual change.',
+        },
+      );
     }
     throw error;
   }
@@ -519,6 +546,11 @@ async function installFresh(payload, paths, runtime, operation) {
     paths.installRoot,
     `.staging-${operation.operationId}`,
   );
+  const rememberPublishedSymlink = (name, record) => {
+    if (record.mode === 'symlink' && !created.targets.some((target) => target.name === name)) {
+      created.targets.push({ ...record, name, identity: record.entryIdentity });
+    }
+  };
 
   try {
     await recordIntent(operation, {
@@ -601,14 +633,17 @@ async function installFresh(payload, paths, runtime, operation) {
         createDirectorySymlink: runtime.createDirectorySymlink,
         beforeMutation: runtime.beforeMutation,
         afterMutation: runtime.afterMutation,
+        onPublished: (published) => rememberPublishedSymlink(name, published),
       });
       targetRecords[name] = record;
-      const fingerprint = await entryFingerprint(record.path);
-      created.targets.push({
-        ...record,
-        name,
-        identity: fingerprint.identity,
-      });
+      if (!created.targets.some((target) => target.name === name)) {
+        const fingerprint = await entryFingerprint(record.path);
+        created.targets.push({
+          ...record,
+          name,
+          identity: fingerprint.identity,
+        });
+      }
       await callAfterMutation(runtime, `install:${name}-published`);
     }
 
@@ -2252,7 +2287,8 @@ function freshManifestMatchesEvidence(manifest, evidence, paths) {
     if (
       targetEvidence.mode === 'symlink'
         ? record.entryIdentity !== targetEvidence.completion.entryIdentity ||
-          record.linkText !== targetEvidence.completion.linkText ||
+          (targetEvidence.completion.linkText !== undefined &&
+            record.linkText !== targetEvidence.completion.linkText) ||
           record.digest !== null
         : record.entryIdentity !== null ||
           record.digest !== targetEvidence.intent.digest

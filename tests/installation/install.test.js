@@ -4,6 +4,7 @@ import {
   mkdir,
   readFile,
   readlink,
+  readdir,
   realpath,
   symlink,
   unlink,
@@ -126,7 +127,64 @@ test('rejects a lexically canonical link that physically resolves to a foreign t
 
   assert.equal(result.ok, false);
   assert.equal(result.error.code, 'OWNERSHIP_MISMATCH');
+  assert.deepEqual(result.error.unresolved, []);
+  await assert.rejects(
+    () => lstat(path.join(runtime.homeDir, '.agents', 'skills', 'project-setup')),
+    { code: 'ENOENT' },
+  );
   assert.equal(await readFile(foreignSentinel, 'utf8'), 'must survive\n');
+  await assertSentinelsUnchanged(sentinels);
+});
+
+test('rejects a mutable alias even when it currently resolves to the canonical skill', async (t) => {
+  const { runtime, sentinels } = await createInstallationFixture(t);
+  const canonicalSkill = path.join(
+    runtime.homeDir,
+    '.agent-project-setup',
+    'current',
+    'skills',
+    'project-setup',
+  );
+  const aliasPath = path.join(runtime.homeDir, 'mutable-canonical-alias');
+  let aliasCreated = false;
+  runtime.createDirectorySymlink = async (_linkText, targetPath, type) => {
+    if (!aliasCreated) {
+      await symlink(canonicalSkill, aliasPath, type);
+      aliasCreated = true;
+    }
+    await symlink(aliasPath, targetPath, type);
+  };
+
+  const result = await executeLifecycle({ operation: 'install' }, runtime);
+
+  assert.equal(result.ok, false);
+  assert.equal(result.error.code, 'OWNERSHIP_MISMATCH');
+  await assert.rejects(
+    () => lstat(path.join(runtime.homeDir, '.agents', 'skills', 'project-setup')),
+    { code: 'ENOENT' },
+  );
+  assert.equal((await lstat(aliasPath)).isSymbolicLink(), true);
+  assert.equal(await readlink(aliasPath), canonicalSkill);
+  await assertSentinelsUnchanged(sentinels);
+});
+
+test('retains recovery evidence when a published target identity cannot be proven', async (t) => {
+  const { homeDir, runtime, sentinels } = await createInstallationFixture(t);
+  const targetPath = path.join(homeDir, '.agents', 'skills', 'project-setup');
+  runtime.createDirectorySymlink = async (_linkText, targetPath) => {
+    await writeFile(targetPath, 'foreign target\n');
+  };
+
+  const result = await executeLifecycle({ operation: 'install' }, runtime);
+
+  assert.equal(result.ok, false);
+  assert.equal(result.error.code, 'ROLLBACK_FAILED');
+  assert.deepEqual(result.error.unresolved, [targetPath]);
+  assert.equal(await readFile(targetPath, 'utf8'), 'foreign target\n');
+  assert.equal(
+    (await readdir(homeDir)).some((name) => name.includes('.operation-') && name.endsWith('.owner.json')),
+    true,
+  );
   await assertSentinelsUnchanged(sentinels);
 });
 
@@ -144,6 +202,19 @@ test('schema-1 manifests without linkText remain readable and safely removable',
   assert.equal(doctor.ok, true);
   const uninstalled = await executeLifecycle({ operation: 'uninstall' }, runtime);
   assert.equal(uninstalled.ok, true);
+  assert.equal(uninstalled.outcome, 'uninstalled');
+  assert.deepEqual(uninstalled.preserved, []);
+  assert.deepEqual(uninstalled.unresolved, []);
+  await assert.rejects(
+    () => lstat(path.join(homeDir, '.agent-project-setup')),
+    { code: 'ENOENT' },
+  );
+  for (const name of ['codex', 'claude']) {
+    await assert.rejects(
+      () => lstat(path.join(homeDir, name === 'codex' ? '.agents' : '.claude', 'skills', 'project-setup')),
+      { code: 'ENOENT' },
+    );
+  }
   await assertSentinelsUnchanged(sentinels);
 });
 

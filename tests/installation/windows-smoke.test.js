@@ -149,8 +149,27 @@ test(
       assert.equal(record.mode, 'copy');
       assert.equal((await lstat(record.path)).isDirectory(), true);
     }
-    assert.equal((await executeLifecycle({ operation: 'doctor' }, runtime)).ok, true);
-    assert.equal((await executeLifecycle({ operation: 'uninstall' }, runtime)).ok, true);
+
+    const packageMetadataPath = path.join(runtime.packageRoot, 'package.json');
+    const packageMetadata = JSON.parse(await readFile(packageMetadataPath, 'utf8'));
+    packageMetadata.version = '0.2.0';
+    await writeFile(packageMetadataPath, `${JSON.stringify(packageMetadata, null, 2)}\n`);
+    await writeFile(
+      path.join(runtime.packageRoot, 'skills', 'project-setup', 'SKILL.md'),
+      '---\nname: project-setup\ndescription: Windows managed-copy update payload.\n---\n\n# Version 0.2\n',
+    );
+    const nextRuntime = { ...runtime, packageVersion: '0.2.0' };
+    const updated = await executeLifecycle({ operation: 'update' }, nextRuntime);
+
+    assert.equal(updated.ok, true);
+    assert.equal(updated.outcome, 'updated');
+    for (const [name, record] of Object.entries(updated.manifest.targets)) {
+      assert.equal(record.mode, 'copy');
+      assert.notEqual(record.digest, installed.manifest.targets[name].digest);
+      assert.match(await readFile(path.join(record.path, 'SKILL.md'), 'utf8'), /Version 0\.2/);
+    }
+    assert.equal((await executeLifecycle({ operation: 'doctor' }, nextRuntime)).ok, true);
+    assert.equal((await executeLifecycle({ operation: 'uninstall' }, nextRuntime)).ok, true);
     assert.equal(await exists(path.join(runtime.homeDir, '.agent-project-setup')), false);
     for (const record of Object.values(installed.manifest.targets)) {
       assert.equal(await exists(record.path), false);

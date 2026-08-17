@@ -133,6 +133,29 @@ test('fresh-install recovery accepts a legacy link completion without linkText',
   await assertSentinelsUnchanged(sentinels);
 });
 
+test('fresh-install recovery accepts legacy link completion after manifest publication', async (t) => {
+  const { homeDir, runtime, sentinels } = await createInstallationFixture(t);
+  const child = crashLifecycle(runtime, 'install', 'install:manifest-published');
+  assert.equal(child.status, 77, child.stderr);
+
+  const journalNames = (await readdir(homeDir))
+    .filter((name) => name.includes('.journal-') && name.endsWith('.json'))
+    .sort();
+  const latestJournalPath = path.join(homeDir, journalNames.at(-1));
+  const journal = JSON.parse(await readFile(latestJournalPath, 'utf8'));
+  for (const completion of journal.completed) {
+    if (completion.action === 'create-target-link') delete completion.linkText;
+  }
+  await writeFile(latestJournalPath, `${JSON.stringify(journal, null, 2)}\n`);
+
+  const retried = await executeLifecycle({ operation: 'install' }, runtime);
+
+  assert.equal(retried.ok, true);
+  assert.equal(retried.outcome, 'installed');
+  assert.equal((await executeLifecycle({ operation: 'doctor' }, runtime)).ok, true);
+  await assertSentinelsUnchanged(sentinels);
+});
+
 test('retry removes validated canonical staging after a fresh-install crash', async (t) => {
   const { runtime, sentinels } = await createInstallationFixture(t);
   const child = crashLifecycle(runtime, 'install', 'install:canonical-staged');
