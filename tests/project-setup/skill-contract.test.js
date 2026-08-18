@@ -53,6 +53,30 @@ test('mother Skill is a concise ordered phase orchestrator with conditional refe
   assert.match(markdown, /no file writes/i);
 });
 
+test('Proposal presents a plain-language decision summary before audit details', async () => {
+  const [skill, proposal, evaluation] = await Promise.all([
+    read('SKILL.md'),
+    read(references.proposal),
+    read(references.evaluation),
+  ]);
+
+  assert.match(skill, /plain-language decision summary.*before.*audit details/is);
+  assert.match(skill, /user's language/i);
+
+  const summaryIndex = proposal.indexOf('## Decision summary');
+  const auditIndex = proposal.indexOf('## Audit details');
+  assert.ok(summaryIndex >= 0, 'Proposal reference must define a decision summary');
+  assert.ok(auditIndex > summaryIndex, 'audit details must follow the decision summary');
+  assert.match(proposal, /no files have been written/i);
+  assert.match(proposal, /CREATE.*UPDATE.*write actions/is);
+  assert.match(proposal, /KEEP.*SKIP.*RECOMMEND.*non-writing/is);
+  assert.match(proposal, /copy-ready.*Proposal ID.*revision.*action IDs/is);
+  assert.match(proposal, /summary.*derived presentation.*does not authorize Apply/is);
+  assert.match(proposal, /audit details.*full proposed content.*exact proposed diff.*fingerprint/is);
+
+  assert.match(evaluation, /decision summary.*complete Proposal.*audit/is);
+});
+
 test('progressive references each own one detailed operating contract', async () => {
   const [detection, classification, proposal, agents, skills, reconciliation, evaluation] = await Promise.all(
     Object.values(references).map(read),

@@ -1,4 +1,4 @@
-name: Publish npm v0.1.0
+name: Publish npm v0.1.1
 
 on:
   workflow_dispatch:
@@ -7,12 +7,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: publish-npm-v0.1.0
+  group: publish-npm-v0.1.1
   cancel-in-progress: false
 
 jobs:
   publish:
-    name: Publish @apparux/agent-project-setup@0.1.0
+    name: Publish @apparux/agent-project-setup@0.1.1
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -37,7 +37,7 @@ jobs:
           const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
           const expected = {
             name: '@apparux/agent-project-setup',
-            version: '0.1.0',
+            version: '0.1.1',
             access: 'public',
           };
           if (
@@ -57,7 +57,7 @@ jobs:
         run: |
           mkdir -p .release-artifact/unpacked
           npm pack --ignore-scripts --json --pack-destination .release-artifact > .release-artifact/pack.json
-          tar -xzf .release-artifact/apparux-agent-project-setup-0.1.0.tgz -C .release-artifact/unpacked
+          tar -xzf .release-artifact/apparux-agent-project-setup-0.1.1.tgz -C .release-artifact/unpacked
       - name: Verify release artifact
         id: artifact
         run: |
@@ -131,11 +131,11 @@ jobs:
           );
           const expected = {
             name: '@apparux/agent-project-setup',
-            version: '0.1.0',
-            filename: 'apparux-agent-project-setup-0.1.0.tgz',
+            version: '0.1.1',
+            filename: 'apparux-agent-project-setup-0.1.1.tgz',
             entryCount: 22,
             treeDigest:
-              'sha256:cb8cc23baf4ba29b0b7e75d39037a7a4d99c496cd5de7b63466088a12558673f',
+              'sha256:603300540dfc98b37e30693f250dadc9aeae7c898fefd464a42e7cb27be7f11f',
           };
           for (const field of ['name', 'version', 'filename', 'entryCount']) {
             if (artifact?.[field] !== expected[field]) {
@@ -224,7 +224,7 @@ jobs:
       - name: Publish npm package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish .release-artifact/apparux-agent-project-setup-0.1.0.tgz --access public --tag latest
+        run: npm publish .release-artifact/apparux-agent-project-setup-0.1.1.tgz --access public --tag latest
       - name: Verify published registry artifact
         env:
           EXPECTED_SHASUM: ${{ steps.artifact.outputs.shasum }}
@@ -235,7 +235,7 @@ jobs:
           import { setTimeout as delay } from 'node:timers/promises';
 
           const packageName = '@apparux/agent-project-setup';
-          const version = '0.1.0';
+          const version = '0.1.1';
           const registryRoot = `https://registry.npmjs.org/${encodeURIComponent(packageName)}`;
           const getJson = async (url) => {
             const response = await fetch(url, {

@@ -12,7 +12,7 @@ For every run record:
 - fixture ID and restored initial-state digest
 - fresh-session identifier or timestamp
 - invocation used
-- Proposal ID/revision and complete Proposal output
+- Proposal ID/revision, decision summary, and complete Proposal audit output in their rendered order
 - approval or rejection input exactly as supplied
 - before/after filesystem evidence
 - validation and second-run evidence

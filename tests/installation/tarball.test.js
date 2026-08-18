@@ -93,7 +93,7 @@ test('packed artifact independently completes the distribution lifecycle', async
   }
   const version = cli('--version');
   assert.equal(version.status, 0, version.stderr);
-  assert.equal(version.stdout, 'agent-project-setup 0.1.0\n');
+  assert.equal(version.stdout, 'agent-project-setup 0.1.1\n');
 
   const install = cli('install');
   assert.equal(install.status, 0, install.stderr);
