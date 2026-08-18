@@ -1,0 +1,7 @@
+name: staging-deploy
+on: [workflow_dispatch]
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    steps:
+      - run: npm run build && npm run deploy:staging && npm run smoke:staging

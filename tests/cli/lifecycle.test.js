@@ -46,7 +46,7 @@ test('spawned CLI completes install, doctor, update no-op, and uninstall', async
   const install = run('install');
   assert.equal(install.status, 0, install.stderr);
   assert.equal(install.stderr, '');
-  assert.match(install.stdout, /Agent Project Setup 0\.1\.1/);
+  assert.match(install.stdout, /Agent Project Setup 0\.1\.2/);
   assert.match(install.stdout, /Installation/);
   assert.match(install.stdout, /Ready\./);
   assert.match(install.stdout, /\/project-setup/);

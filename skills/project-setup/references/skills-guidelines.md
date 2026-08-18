@@ -1,20 +1,59 @@
 # Project Skills
 
-A project Skill persists a repeated project-specific procedure, not a technology stack label or source inventory.
+A project Skill persists a project-specific task procedure whose combined assessment justifies durable guidance, not a technology stack label or source inventory. A technology indicator is a search seed; evaluate the evidenced task workflow that may sit behind it.
 
-## Candidate gate
+## Candidate evidence floor
 
-A writable candidate requires all of:
+Every plausible candidate records direct repository `evidenceIds` plus:
+
+```yaml
+skillAssessment:
+  taskSpecificity: low | medium | high | unknown
+  rediscoveryCost: low | medium | high | unknown
+  errorCost: low | medium | high | unknown
+  reuseFrequency: low | medium | high | unknown
+targetedFollowUpSearch:
+  queries: [focused task and workflow searches]
+  paths: [repository-relative paths inspected]
+  result: literal positive, partial, or negative result
+  evidenceIds: [supporting evidence]
+```
+
+Assess the four dimensions qualitatively:
+
+- **Task Specificity** — whether the evidence describes a named task and workflow rather than a technology category.
+- **Rediscovery Cost** — the bounded effort needed to reconstruct the procedure, ordering, exceptions, and source links.
+- **Error Cost** — the consequence of omitting or misordering the project-specific procedure.
+- **Reuse Frequency** — how often future work is expected to trigger the workflow.
+
+These are decision inputs, not a score, quota, or four binary gates. One low or unknown dimension does not automatically force `SKIP`; decide from the combined assessment and evidence floor. A repository may correctly produce zero Skills.
+
+A `CREATE` or `UPDATE` evidence floor requires:
 
 - direct repository evidence and evidence IDs
 - a named task trigger (`When to use`)
 - a clear exclusion (`When not to use`)
-- repeated expected use
-- project-specific procedural knowledge beyond a few global rules
-- an exact verification method supported by repository evidence
-- no duplication of `GLOBAL` rules or an existing Skill
+- at least one project-specific `workflowSteps` entry
+- an exact `verification` method supported by repository evidence
+- no duplicate of a compatible existing Skill or `GLOBAL` rule
 
-A language, framework, dependency, directory, architecture category, or technology stack alone is insufficient. A guessed build/test/deploy/release command is forbidden. If any gate is missing, issue `SKIP` with the missing reason. If an existing Skill cannot be merged safely, issue `KEEP` plus warning/`decisionRequired`.
+A guessed build, test, migration, deploy, release, or verification command is never evidence. If targeted search leaves part of the workflow unsupported, retain that part as `Unknown` and make a grounded non-writing decision.
+
+## Decision records
+
+`CREATE` and `UPDATE` records carry the evidence floor, assessment, targeted search, triggers, exclusions, workflow steps, and verification. Name the Skill for the task—such as `build-verify`, `database-migration`, `audit-log`, or `deployment`—rather than Maven, Flyway, a logging framework, Redis, or another technology used by the task.
+
+A `SKIP` record carries `evidenceIds`, `targetedFollowUpSearch`, and:
+
+```yaml
+skipBasis:
+  dimensions: [taskSpecificity, rediscoveryCost, errorCost, reuseFrequency]
+  explanation: substantive evidence-based reason persistence would not change behavior
+```
+
+List only dimensions that actually lower persistence value and explain what the bounded search found or failed to find. Model familiarity is not repository evidence and stays out of decision records; a discoverable fact or technology name is never the sole basis for `SKIP`. “Only a dependency/configuration was found; focused README, scripts, CI, and call-site searches found no project-specific procedure or verification” is grounded. “The model knows this technology” is not.
+
+Before `CREATE`, match workflow intent against every existing Skill under `.agents/skills` and `.claude/skills`, even when names differ. Reuse the existing Skill with `KEEP` when it remains compatible; record `reuseExisting.path` plus `reuseExisting.compatibility`, and cite evidence whose `sourcePath` is that canonical Skill. Use `UPDATE` only for an evidence-backed conservative exact diff. If compatibility or merge safety is uncertain, issue `KEEP` with a warning or `decisionRequired`; never create a second Skill for the same workflow.
 
 ## Canonical form
 
@@ -27,7 +66,7 @@ description: <what it does and when to use it>
 ---
 ```
 
-The body is focused around `When to use`, `When not to use`, `Workflow`, `Project-specific rules`, `Verification`, and optional `References`. Do not copy `AGENTS.md`, a complete architecture model, or discoverable implementation detail.
+The body is focused around `When to use`, `When not to use`, `Workflow`, `Project-specific rules`, `Verification`, and optional `References`. Completion criteria belong in `Verification` and must make successful task completion observable. Keep related branches in one workflow Skill when their trigger and completion criteria are shared; use conditional context pointers to `references/`, `docs/agents/`, or source for stage-specific detail. Do not copy `AGENTS.md`, a complete architecture model, or discoverable implementation detail.
 
 ## Claude sharing
 

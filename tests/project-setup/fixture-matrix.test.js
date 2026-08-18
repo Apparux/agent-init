@@ -25,6 +25,11 @@ const fixtureNames = [
   '08-existing-skills',
   '09-no-git',
   '10-mixed-monorepo',
+  '11-maven-multi-module-build-verify',
+  '12-flyway-database-migration',
+  '13-audit-log',
+  '14-redis-no-skill',
+  '15-deployment',
 ];
 const requiredCoverage = new Set([
   'architecture-defer',
@@ -37,6 +42,12 @@ const requiredCoverage = new Set([
   'no-git-baseline',
   'project-workflow-skill',
   'stack-is-not-skill',
+  'plain-java-zero-skill',
+  'maven-multi-module-build-verify',
+  'database-migration-skill',
+  'audit-log-skill',
+  'redis-is-not-skill',
+  'deployment-workflow-skill',
 ]);
 
 async function loadFixture(name) {
@@ -61,7 +72,7 @@ async function runDetector(repository) {
   }
 }
 
-test('the ten minimal fixture repositories expose distinct behavior evidence', async () => {
+test('the fifteen minimal fixture repositories expose distinct behavior evidence', async () => {
   const actual = (await readdir(fixturesRoot, { withFileTypes: true }))
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
@@ -69,8 +80,10 @@ test('the ten minimal fixture repositories expose distinct behavior evidence', a
   assert.deepEqual(actual, fixtureNames);
 
   const observedCoverage = new Set();
+  const manifests = new Map();
   for (const name of fixtureNames) {
     const { manifest, repository } = await loadFixture(name);
+    manifests.set(name, manifest);
     assert.equal(manifest.id, name);
     assert.deepEqual(validateFixtureManifest(manifest), []);
     assert.ok(Array.isArray(manifest.coverage) && manifest.coverage.length > 0);
@@ -100,6 +113,39 @@ test('the ten minimal fixture repositories expose distinct behavior evidence', a
 
   for (const contract of requiredCoverage) {
     assert.ok(observedCoverage.has(contract), `missing behavior evidence: ${contract}`);
+  }
+
+  function decision(fixtureName, skillName) {
+    return manifests.get(fixtureName).expected.skillDecisions.find((item) => item.name === skillName);
+  }
+  function writableSkillDecisions(fixtureName) {
+    return manifests.get(fixtureName).expected.skillDecisions
+      .filter((item) => ['CREATE', 'UPDATE'].includes(item.action));
+  }
+
+  assert.deepEqual(writableSkillDecisions('01-java-maven-simple'), []);
+  const reusedRelease = decision('08-existing-skills', 'release-check');
+  assert.equal(reusedRelease?.action, 'KEEP');
+  assert.equal(reusedRelease?.reuseExisting.path, '.agents/skills/release/SKILL.md');
+  assert.equal(reusedRelease?.name === path.basename(path.dirname(reusedRelease.reuseExisting.path)), false);
+  assert.equal(decision('11-maven-multi-module-build-verify', 'build-verify')?.action, 'CREATE');
+  assert.equal(decision('12-flyway-database-migration', 'database-migration')?.action, 'CREATE');
+  assert.equal(decision('13-audit-log', 'audit-log')?.action, 'CREATE');
+  assert.equal(decision('14-redis-no-skill', 'redis')?.action, 'SKIP');
+  assert.deepEqual(writableSkillDecisions('14-redis-no-skill'), []);
+  assert.equal(decision('15-deployment', 'deployment')?.action, 'CREATE');
+
+  for (const name of fixtureNames.slice(10)) {
+    for (const candidate of manifests.get(name).expected.skillDecisions) {
+      assert.deepEqual(
+        Object.keys(candidate.skillAssessment).sort(),
+        ['errorCost', 'rediscoveryCost', 'reuseFrequency', 'taskSpecificity'],
+      );
+      assert.ok(candidate.targetedFollowUpSearch.queries.length > 0);
+      assert.ok(candidate.targetedFollowUpSearch.paths.length > 0);
+      assert.ok(candidate.targetedFollowUpSearch.result.length > 0);
+    }
+    assert.equal(manifests.get(name).expected.secondRun, 'NO_WRITE_ACTIONS');
   }
 });
 

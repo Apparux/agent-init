@@ -55,7 +55,28 @@
       {"factId": "fact-java-component", "persistenceScope": "DISCOVERABLE", "deterministicEnforcementCandidate": false, "destination": null}
     ],
     "skillDecisions": [
-      {"name": "mixed-monorepo", "action": "SKIP", "reason": "Multiple technologies are repository shape, not a task-specific procedure."}
+      {
+        "name": "mixed-monorepo",
+        "action": "SKIP",
+        "reason": "Multiple technologies are repository shape, not a task-specific procedure.",
+        "evidenceIds": ["ev-mixed-pnpm", "ev-python-runtime", "ev-java-component", "ev-ci-path"],
+        "skillAssessment": {
+          "taskSpecificity": "low",
+          "rediscoveryCost": "low",
+          "errorCost": "unknown",
+          "reuseFrequency": "low"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["repository-wide mixed monorepo workflow"],
+          "paths": ["package.json", "pyproject.toml", "services/api/pom.xml", ".github/workflows/verify.yml"],
+          "result": "Found component topology and one root test command but no single task workflow spanning all technologies.",
+          "evidenceIds": ["ev-mixed-pnpm", "ev-python-runtime", "ev-java-component", "ev-ci-path"]
+        },
+        "skipBasis": {
+          "dimensions": ["taskSpecificity", "rediscoveryCost", "errorCost", "reuseFrequency"],
+          "explanation": "Cross-checked build and CI evidence describes repository shape and component-local facts, not a repeated cross-stack task procedure with supported verification."
+        }
+      }
     ],
     "allowedActions": [
       {"action": "CREATE", "target": "AGENTS.md"},

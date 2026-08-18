@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "id": "11-maven-multi-module-build-verify",
+  "repository": "repository",
+  "purpose": "Recognize an evidenced multi-module Maven verification workflow without persisting module topology as always-loaded context.",
+  "coverage": ["maven-multi-module-build-verify", "project-workflow-skill"],
+  "evidence": [
+    {
+      "id": "ev-maven-api-module",
+      "fact": "The root Maven project declares the services/api module.",
+      "sourcePath": "pom.xml",
+      "sourceLocation": "project.modules.module[0]",
+      "observation": "module is services/api",
+      "whyItMatters": "The module selector in the supported verification command can be checked against repository shape."
+    },
+    {
+      "id": "ev-maven-module-artifact",
+      "fact": "The API child module has artifactId orders-api.",
+      "sourcePath": "services/api/pom.xml",
+      "sourceLocation": "project.artifactId",
+      "observation": "artifactId is orders-api",
+      "whyItMatters": "The child descriptor corroborates that services/api is a real Maven module."
+    },
+    {
+      "id": "ev-maven-ci-verify",
+      "fact": "CI declares the exact multi-module verification command.",
+      "sourcePath": ".github/workflows/verify.yml",
+      "sourceLocation": "jobs.verify.steps[0].run",
+      "observation": "run is mvn -pl services/api -am verify",
+      "whyItMatters": "Repeated code validation needs the project-supported module selection and dependency build order."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-api-module", "value": "services/api", "status": "confirmed", "evidenceIds": ["ev-maven-api-module"]},
+      {"id": "fact-api-artifact", "value": "orders-api", "status": "confirmed", "evidenceIds": ["ev-maven-module-artifact"]},
+      {"id": "fact-build-verify-command", "value": "mvn -pl services/api -am verify", "status": "confirmed", "evidenceIds": ["ev-maven-ci-verify"]}
+    ],
+    "unknowns": ["deployment-command", "production-profile"],
+    "classifications": [
+      {"factId": "fact-api-module", "persistenceScope": "DISCOVERABLE", "deterministicEnforcementCandidate": false, "destination": null},
+      {"factId": "fact-api-artifact", "persistenceScope": "DISCOVERABLE", "deterministicEnforcementCandidate": false, "destination": null},
+      {"factId": "fact-build-verify-command", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": false, "destination": ".agents/skills/build-verify/SKILL.md"}
+    ],
+    "skillDecisions": [
+      {
+        "name": "build-verify",
+        "action": "CREATE",
+        "reason": "The repository declares a repeated module-aware verification workflow with an exact CI-backed command.",
+        "evidenceIds": ["ev-maven-api-module", "ev-maven-module-artifact", "ev-maven-ci-verify"],
+        "skillAssessment": {
+          "taskSpecificity": "high",
+          "rediscoveryCost": "medium",
+          "errorCost": "high",
+          "reuseFrequency": "high"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["Maven API module verification workflow"],
+          "paths": ["pom.xml", "services/api/pom.xml", ".github/workflows/verify.yml"],
+          "result": "Cross-checking module descriptors and CI found the exact supported module-aware verify command.",
+          "evidenceIds": ["ev-maven-api-module", "ev-maven-module-artifact", "ev-maven-ci-verify"]
+        },
+        "taskTriggers": ["validating a change to the API module or its dependencies"],
+        "whenNotToUse": ["validating an unrelated module with its own documented workflow"],
+        "workflowSteps": ["Run Maven verify with services/api selected and required upstream modules included."],
+        "verification": ["mvn -pl services/api -am verify"]
+      }
+    ],
+    "allowedActions": [
+      {"action": "CREATE", "target": ".agents/skills/build-verify/SKILL.md"},
+      {"action": "CREATE", "target": ".claude/skills/build-verify"}
+    ],
+    "forbiddenPaths": ["pom.xml", "services/api/pom.xml", "services/api/src/", ".github/workflows/verify.yml"],
+    "preservation": [
+      {"path": ".github/workflows/verify.yml", "mode": "exact"}
+    ],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["pom.xml", "services/api/pom.xml"],
+      "lockFiles": [],
+      "agentConfigPaths": [],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

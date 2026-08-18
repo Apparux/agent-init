@@ -33,7 +33,28 @@
       {"factId": "fact-existing-skill", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": false, "destination": ".agents/skills/release/SKILL.md"}
     ],
     "skillDecisions": [
-      {"name": "release", "action": "KEEP", "reason": "The existing Skill is user-authored and evidence is insufficient for a safe merge."}
+      {
+        "name": "release-check",
+        "action": "KEEP",
+        "reason": "The existing Skill is user-authored and evidence is insufficient for a safe merge.",
+        "evidenceIds": ["ev-release-script", "ev-existing-skill"],
+        "skillAssessment": {
+          "taskSpecificity": "high",
+          "rediscoveryCost": "high",
+          "errorCost": "high",
+          "reuseFrequency": "medium"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["existing release workflow and release check"],
+          "paths": ["package.json", ".agents/skills/release/SKILL.md"],
+          "result": "Found an existing user-authored release Skill and one supporting script, but not enough evidence for a safe merge.",
+          "evidenceIds": ["ev-release-script", "ev-existing-skill"]
+        },
+        "reuseExisting": {
+          "path": ".agents/skills/release/SKILL.md",
+          "compatibility": "uncertain; preserve the existing workflow unchanged"
+        }
+      }
     ],
     "allowedActions": [
       {"action": "KEEP", "target": ".agents/skills/release/SKILL.md"},

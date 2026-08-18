@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "id": "12-flyway-database-migration",
+  "repository": "repository",
+  "purpose": "Turn Flyway indicators into an evidenced database-migration workflow Skill rather than a technology-named Skill.",
+  "coverage": ["database-migration-skill", "project-workflow-skill"],
+  "evidence": [
+    {
+      "id": "ev-flyway-build",
+      "fact": "The Maven build declares Flyway and a database-migration profile.",
+      "sourcePath": "pom.xml",
+      "sourceLocation": "project.dependencies and project.profiles",
+      "observation": "flyway-core and flyway-maven-plugin are declared and profile id is database-migration",
+      "whyItMatters": "The build indicator seeds a focused search for a repository migration procedure."
+    },
+    {
+      "id": "ev-migration-v1",
+      "fact": "The repository contains a published V1 migration.",
+      "sourcePath": "src/main/resources/db/migration/V1__create_orders.sql",
+      "sourceLocation": "file name and contents",
+      "observation": "V1__create_orders.sql creates the orders table",
+      "whyItMatters": "Existing versioned migrations make naming and published-history protection relevant."
+    },
+    {
+      "id": "ev-migration-v2",
+      "fact": "The repository contains a published V2 migration.",
+      "sourcePath": "src/main/resources/db/migration/V2__add_order_status.sql",
+      "sourceLocation": "file name and contents",
+      "observation": "V2__add_order_status.sql adds the order status column",
+      "whyItMatters": "Multiple immutable migrations show a repeated append-only workflow."
+    },
+    {
+      "id": "ev-migration-runbook",
+      "fact": "The migration runbook declares create, migrate, and validate steps.",
+      "sourcePath": "docs/database-migrations.md",
+      "sourceLocation": "Workflow and Verification sections",
+      "observation": "workflow is add a new V<next>__description.sql file, then run mvn -Pdatabase-migration flyway:migrate && mvn -Pdatabase-migration flyway:validate",
+      "whyItMatters": "Migration changes have a project-specific sequence and exact completion check."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-flyway-indicator", "value": "flyway-core", "status": "confirmed", "evidenceIds": ["ev-flyway-build"]},
+      {"id": "fact-published-migrations", "value": ["V1__create_orders.sql", "V2__add_order_status.sql"], "status": "confirmed", "evidenceIds": ["ev-migration-v1", "ev-migration-v2"]},
+      {"id": "fact-migration-workflow", "value": "mvn -Pdatabase-migration flyway:migrate && mvn -Pdatabase-migration flyway:validate", "status": "confirmed", "evidenceIds": ["ev-migration-runbook"]}
+    ],
+    "unknowns": ["production-database-credentials", "tenant-schema-policy", "rollback-procedure"],
+    "classifications": [
+      {"factId": "fact-flyway-indicator", "persistenceScope": "DISCOVERABLE", "deterministicEnforcementCandidate": false, "destination": null},
+      {"factId": "fact-published-migrations", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": true, "destination": ".agents/skills/database-migration/SKILL.md"},
+      {"factId": "fact-migration-workflow", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": false, "destination": ".agents/skills/database-migration/SKILL.md"}
+    ],
+    "skillDecisions": [
+      {
+        "name": "database-migration",
+        "action": "CREATE",
+        "reason": "Published migrations and the project runbook establish a repeated, error-sensitive migration workflow with exact validation.",
+        "evidenceIds": ["ev-flyway-build", "ev-migration-v1", "ev-migration-v2", "ev-migration-runbook"],
+        "skillAssessment": {
+          "taskSpecificity": "high",
+          "rediscoveryCost": "high",
+          "errorCost": "high",
+          "reuseFrequency": "medium"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["Flyway migration naming published history migrate validate workflow"],
+          "paths": ["pom.xml", "src/main/resources/db/migration/V1__create_orders.sql", "src/main/resources/db/migration/V2__add_order_status.sql", "docs/database-migrations.md"],
+          "result": "Found an append-only migration history plus documented creation, migrate, and validate steps.",
+          "evidenceIds": ["ev-flyway-build", "ev-migration-v1", "ev-migration-v2", "ev-migration-runbook"]
+        },
+        "taskTriggers": ["adding or validating a database schema migration"],
+        "whenNotToUse": ["changing application code without a schema migration"],
+        "workflowSteps": [
+          "Read the migration runbook and inspect the highest published migration version.",
+          "Add a new V<next>__description.sql file without editing published migrations.",
+          "Run the documented migrate step before the validate completion check."
+        ],
+        "verification": ["mvn -Pdatabase-migration flyway:validate"]
+      }
+    ],
+    "allowedActions": [
+      {"action": "CREATE", "target": ".agents/skills/database-migration/SKILL.md"},
+      {"action": "CREATE", "target": ".claude/skills/database-migration"}
+    ],
+    "forbiddenPaths": ["pom.xml", "src/main/resources/db/migration/", "docs/database-migrations.md", ".github/"],
+    "preservation": [
+      {"path": "src/main/resources/db/migration/V1__create_orders.sql", "mode": "exact"},
+      {"path": "src/main/resources/db/migration/V2__add_order_status.sql", "mode": "exact"}
+    ],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["pom.xml"],
+      "lockFiles": [],
+      "agentConfigPaths": [],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

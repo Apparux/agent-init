@@ -33,7 +33,28 @@
       {"factId": "fact-test-path", "persistenceScope": "DISCOVERABLE", "deterministicEnforcementCandidate": false, "destination": null}
     ],
     "skillDecisions": [
-      {"name": "python-backend", "action": "SKIP", "reason": "Python and pytest configuration do not establish a project-specific procedure."}
+      {
+        "name": "python-backend",
+        "action": "SKIP",
+        "reason": "Python and pytest configuration do not establish a project-specific procedure.",
+        "evidenceIds": ["ev-python-version", "ev-pytest-config"],
+        "skillAssessment": {
+          "taskSpecificity": "low",
+          "rediscoveryCost": "low",
+          "errorCost": "unknown",
+          "reuseFrequency": "low"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["Python project installation verification deployment workflow"],
+          "paths": [".python-version", "pyproject.toml"],
+          "result": "Found runtime and test-discovery configuration but no installation, verification, or deployment procedure.",
+          "evidenceIds": ["ev-python-version", "ev-pytest-config"]
+        },
+        "skipBasis": {
+          "dimensions": ["taskSpecificity", "rediscoveryCost", "errorCost", "reuseFrequency"],
+          "explanation": "Focused configuration search found only runtime and test-layout facts; no named task trigger, repeated workflow, or evidenced verification command was found."
+        }
+      }
     ],
     "allowedActions": [
       {"action": "CREATE", "target": "AGENTS.md"},

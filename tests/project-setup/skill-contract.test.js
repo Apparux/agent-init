@@ -51,6 +51,8 @@ test('mother Skill is a concise ordered phase orchestrator with conditional refe
   assert.match(markdown, /CLAUDE\.md.*@AGENTS\.md/s);
   assert.match(markdown, /external acceptance/i);
   assert.match(markdown, /no file writes/i);
+  assert.match(markdown, /targeted follow-up search/i);
+  assert.match(markdown, /Task Specificity.*Rediscovery Cost.*Error Cost.*Reuse Frequency/is);
 });
 
 test('Proposal presents a plain-language decision summary before audit details', async () => {
@@ -94,13 +96,22 @@ test('progressive references each own one detailed operating contract', async ()
     'repository-relative',
     'conflicting',
     'Unknown',
+    'targeted follow-up search',
   ]) assert.match(detection, new RegExp(term, 'i'));
+  assert.match(detection, /queries.*paths.*result.*evidence IDs/is);
+  assert.match(detection, /indicator.*search seed/is);
 
   for (const scope of ['GLOBAL', 'WORKFLOW', 'DISCOVERABLE', 'ARCHITECTURE', 'NONE']) {
     assert.match(classification, new RegExp(`\\b${scope}\\b`));
   }
   assert.match(classification, /deterministicEnforcementCandidate/);
   assert.match(classification, /technology stack/i);
+  assert.match(classification, /context load/i);
+  assert.match(classification, /AGENTS\.md.*SKILL\.md.*references\/.*docs\/agents.*runtime/is);
+  assert.match(classification, /DISCOVERABLE.*does not.*Skill decision/is);
+  assert.match(classification, /model familiarity.*repository evidence/is);
+  assert.match(classification, /combined Skill assessment.*no single assessment dimension.*hard gate/is);
+  assert.doesNotMatch(classification, /Task-specific \+ repeated/i);
 
   for (const action of ['CREATE', 'UPDATE', 'KEEP', 'SKIP', 'RECOMMEND']) {
     assert.match(proposal, new RegExp(`\\b${action}\\b`));
@@ -126,6 +137,20 @@ test('progressive references each own one detailed operating contract', async ()
   assert.match(skills, /When to use/i);
   assert.match(skills, /When not to use/i);
   assert.match(skills, /technology stack/i);
+  for (const dimension of ['Task Specificity', 'Rediscovery Cost', 'Error Cost', 'Reuse Frequency']) {
+    assert.match(skills, new RegExp(dimension, 'i'));
+  }
+  assert.match(skills, /targetedFollowUpSearch/);
+  assert.match(skills, /queries.*paths.*result/is);
+  assert.match(skills, /evidence floor/i);
+  assert.match(skills, /one.*dimension.*SKIP/is);
+  assert.match(skills, /combined assessment.*durable guidance/is);
+  assert.doesNotMatch(skills, /Skill persists a repeated/i);
+  assert.match(skills, /SKIP.*skipBasis.*dimensions.*explanation/is);
+  assert.match(skills, /model familiarity.*discoverable.*sole.*SKIP/is);
+  assert.match(skills, /workflow intent.*existing Skill/is);
+  assert.match(skills, /completion criteria.*Verification/is);
+  assert.doesNotMatch(skills, /If any gate is missing, issue `SKIP`/i);
 
   assert.match(reconciliation, /no-follow/i);
   assert.match(reconciliation, /physical/i);

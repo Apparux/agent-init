@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "id": "13-audit-log",
+  "repository": "repository",
+  "purpose": "Recognize an audit-log task workflow from framework indicators, call sites, and an exact project verification test.",
+  "coverage": ["audit-log-skill", "project-workflow-skill"],
+  "evidence": [
+    {
+      "id": "ev-audit-framework",
+      "fact": "The service uses the project audit framework.",
+      "sourcePath": "pom.xml",
+      "sourceLocation": "project.dependencies.audit-framework",
+      "observation": "dependency is com.example:audit-framework",
+      "whyItMatters": "The framework marker seeds a search for the project-specific audit event procedure."
+    },
+    {
+      "id": "ev-audit-service",
+      "fact": "AuditService records actor, action, and resource for an audit event.",
+      "sourcePath": "src/main/java/com/example/audit/AuditService.java",
+      "sourceLocation": "record method",
+      "observation": "record writes actor, action, and resource to AuditEvent",
+      "whyItMatters": "The event shape is a project-specific rule that must be applied consistently."
+    },
+    {
+      "id": "ev-audit-call-sites",
+      "fact": "Order operations call the audit service.",
+      "sourcePath": "src/main/java/com/example/order/OrderService.java",
+      "sourceLocation": "createOrder and cancelOrder",
+      "observation": "order operations call auditService.record",
+      "whyItMatters": "One set of call sites establishes repeated use beyond a framework dependency."
+    },
+    {
+      "id": "ev-audit-account-call-site",
+      "fact": "Account operations call the audit service.",
+      "sourcePath": "src/main/java/com/example/account/AccountService.java",
+      "sourceLocation": "closeAccount",
+      "observation": "account operations call auditService.record",
+      "whyItMatters": "An independent call site corroborates that the audit workflow spans multiple domain operations."
+    },
+    {
+      "id": "ev-audit-runbook",
+      "fact": "The audit runbook declares an exact contract test.",
+      "sourcePath": "docs/audit-log.md",
+      "sourceLocation": "Verification section",
+      "observation": "verification is mvn -Dtest=AuditLogContractTest test",
+      "whyItMatters": "Changes to audit behavior have an evidenced completion check."
+    },
+    {
+      "id": "ev-audit-contract-test",
+      "fact": "The audit contract test checks required event fields.",
+      "sourcePath": "src/test/java/com/example/audit/AuditLogContractTest.java",
+      "sourceLocation": "requiredFields test",
+      "observation": "AuditLogContractTest invokes AuditService.record and asserts the emitted actor, action, and resource values",
+      "whyItMatters": "The verification source corroborates the documented audit workflow."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-audit-framework", "value": "com.example:audit-framework", "status": "confirmed", "evidenceIds": ["ev-audit-framework"]},
+      {"id": "fact-audit-event-shape", "value": "actor, action, resource", "status": "confirmed", "evidenceIds": ["ev-audit-service"]},
+      {"id": "fact-audit-call-sites", "value": "order and account operations", "status": "confirmed", "evidenceIds": ["ev-audit-call-sites", "ev-audit-account-call-site"]},
+      {"id": "fact-audit-check", "value": "mvn -Dtest=AuditLogContractTest test", "status": "confirmed", "evidenceIds": ["ev-audit-runbook", "ev-audit-contract-test"]}
+    ],
+    "unknowns": ["audit-retention-period", "production-audit-sink", "redaction-policy"],
+    "classifications": [
+      {"factId": "fact-audit-framework", "persistenceScope": "DISCOVERABLE", "deterministicEnforcementCandidate": false, "destination": null},
+      {"factId": "fact-audit-event-shape", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": false, "destination": ".agents/skills/audit-log/SKILL.md"},
+      {"factId": "fact-audit-call-sites", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": false, "destination": ".agents/skills/audit-log/SKILL.md"},
+      {"factId": "fact-audit-check", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": false, "destination": ".agents/skills/audit-log/SKILL.md"}
+    ],
+    "skillDecisions": [
+      {
+        "name": "audit-log",
+        "action": "CREATE",
+        "reason": "The project documents a repeated audit event procedure with multiple call sites and an exact contract test.",
+        "evidenceIds": ["ev-audit-framework", "ev-audit-service", "ev-audit-call-sites", "ev-audit-account-call-site", "ev-audit-runbook", "ev-audit-contract-test"],
+        "skillAssessment": {
+          "taskSpecificity": "high",
+          "rediscoveryCost": "high",
+          "errorCost": "high",
+          "reuseFrequency": "medium"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["audit event required fields call sites contract test"],
+          "paths": ["pom.xml", "src/main/java/com/example/audit/AuditService.java", "src/main/java/com/example/order/OrderService.java", "src/main/java/com/example/account/AccountService.java", "docs/audit-log.md", "src/test/java/com/example/audit/AuditLogContractTest.java"],
+          "result": "Follow-up search connected the framework marker to repeated order and account event call sites, required fields, and an exact contract test.",
+          "evidenceIds": ["ev-audit-framework", "ev-audit-service", "ev-audit-call-sites", "ev-audit-account-call-site", "ev-audit-runbook", "ev-audit-contract-test"]
+        },
+        "taskTriggers": ["adding or changing an auditable domain operation"],
+        "whenNotToUse": ["changing an operation that is explicitly outside the audit event boundary"],
+        "workflowSteps": [
+          "Record actor, action, and resource through AuditService at each audited operation call site.",
+          "Preserve the event shape and consult the runbook for redaction decisions when evidence is available.",
+          "Run the project audit contract test before completing the change."
+        ],
+        "verification": ["mvn -Dtest=AuditLogContractTest test"]
+      }
+    ],
+    "allowedActions": [
+      {"action": "CREATE", "target": ".agents/skills/audit-log/SKILL.md"},
+      {"action": "CREATE", "target": ".claude/skills/audit-log"}
+    ],
+    "forbiddenPaths": ["pom.xml", "src/main/java/", "src/test/java/", "docs/audit-log.md", ".github/"],
+    "preservation": [
+      {"path": "src/test/java/com/example/audit/AuditLogContractTest.java", "mode": "exact"}
+    ],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["pom.xml"],
+      "lockFiles": [],
+      "agentConfigPaths": [],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

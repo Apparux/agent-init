@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "id": "14-redis-no-skill",
+  "repository": "repository",
+  "purpose": "Prove that ordinary Redis dependency and client configuration remain discoverable facts without creating a redis Skill.",
+  "coverage": ["redis-is-not-skill", "stack-is-not-skill"],
+  "evidence": [
+    {
+      "id": "ev-redis-dependency",
+      "fact": "The service declares a Redis client dependency.",
+      "sourcePath": "pom.xml",
+      "sourceLocation": "project.dependencies",
+      "observation": "dependency is org.springframework.data:spring-data-redis",
+      "whyItMatters": "The technology indicator seeds a bounded search but does not name a project workflow."
+    },
+    {
+      "id": "ev-redis-config",
+      "fact": "The application configures a local Redis endpoint.",
+      "sourcePath": "src/main/resources/application.yml",
+      "sourceLocation": "spring.data.redis.host",
+      "observation": "redis host is localhost; no credential value is present",
+      "whyItMatters": "The client configuration is a runtime fact and must not be inflated into a runbook."
+    },
+    {
+      "id": "ev-redis-call-site",
+      "fact": "CacheRepository uses the Redis template for ordinary cache access.",
+      "sourcePath": "src/main/java/com/example/cache/CacheRepository.java",
+      "sourceLocation": "get and put methods",
+      "observation": "CacheRepository calls redisTemplate.opsForValue for get and put",
+      "whyItMatters": "A normal client call site is not evidence of a repeatable Redis-specific operational procedure."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-redis-dependency", "value": "spring-data-redis", "status": "confirmed", "evidenceIds": ["ev-redis-dependency"]},
+      {"id": "fact-redis-host", "value": "localhost", "status": "confirmed", "evidenceIds": ["ev-redis-config"]},
+      {"id": "fact-redis-cache-call", "value": "get and put", "status": "confirmed", "evidenceIds": ["ev-redis-call-site"]}
+    ],
+    "unknowns": ["redis-operational-procedure", "redis-verification", "redis-data-safety-policy"],
+    "classifications": [
+      {"factId": "fact-redis-dependency", "persistenceScope": "DISCOVERABLE", "deterministicEnforcementCandidate": false, "destination": null},
+      {"factId": "fact-redis-host", "persistenceScope": "DISCOVERABLE", "deterministicEnforcementCandidate": false, "destination": null},
+      {"factId": "fact-redis-cache-call", "persistenceScope": "DISCOVERABLE", "deterministicEnforcementCandidate": false, "destination": null}
+    ],
+    "skillDecisions": [
+      {
+        "name": "redis",
+        "action": "SKIP",
+        "reason": "Redis dependency and ordinary cache calls do not establish a project-specific Redis procedure.",
+        "evidenceIds": ["ev-redis-dependency", "ev-redis-config", "ev-redis-call-site"],
+        "skillAssessment": {
+          "taskSpecificity": "low",
+          "rediscoveryCost": "low",
+          "errorCost": "unknown",
+          "reuseFrequency": "low"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["Redis operational runbook verification eviction backup"],
+          "paths": ["pom.xml", "src/main/resources/application.yml", "src/main/java/com/example/cache/CacheRepository.java"],
+          "result": "Found only a dependency, local endpoint, and ordinary get/put call site; no repeatable Redis procedure or verification was found.",
+          "evidenceIds": ["ev-redis-dependency", "ev-redis-config", "ev-redis-call-site"]
+        },
+        "skipBasis": {
+          "dimensions": ["taskSpecificity", "rediscoveryCost", "errorCost", "reuseFrequency"],
+          "explanation": "The bounded search found dependency, configuration, and ordinary cache access but no Redis-specific task trigger, operational steps, repeated runbook, or completion check."
+        }
+      }
+    ],
+    "allowedActions": [
+      {"action": "SKIP", "target": ".agents/skills/redis/SKILL.md"}
+    ],
+    "forbiddenPaths": ["pom.xml", "src/main/resources/application.yml", "src/main/java/", ".github/"],
+    "preservation": [
+      {"path": "src/main/resources/application.yml", "mode": "exact"}
+    ],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["pom.xml"],
+      "lockFiles": [],
+      "agentConfigPaths": [],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

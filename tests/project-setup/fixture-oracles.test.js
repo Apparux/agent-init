@@ -24,31 +24,20 @@ const fixtureNames = [
   '08-existing-skills',
   '09-no-git',
   '10-mixed-monorepo',
+  '11-maven-multi-module-build-verify',
+  '12-flyway-database-migration',
+  '13-audit-log',
+  '14-redis-no-skill',
+  '15-deployment',
 ];
 
 async function loadFixture(name) {
   return JSON.parse(await readFile(path.join(fixturesRoot, name, 'fixture.json'), 'utf8'));
 }
 
-function makeCandidate(decision, fixture) {
-  if (!['CREATE', 'UPDATE'].includes(decision.action)) {
-    return {
-      name: decision.name,
-      decision: decision.action,
-      reason: decision.reason,
-    };
-  }
-  return {
-    name: decision.name,
-    decision: decision.action,
-    evidenceIds: [fixture.evidence[0].id],
-    taskTriggers: ['the named project workflow is requested'],
-    whenNotToUse: ['the task does not require that workflow'],
-    repeated: true,
-    projectSpecific: true,
-    proceduralValue: true,
-    verification: ['use the fixture-declared verification evidence'],
-  };
+function makeCandidate(decision) {
+  const { action, ...candidate } = structuredClone(decision);
+  return { ...candidate, decision: action };
 }
 
 async function makeOracleRun(fixture) {
@@ -135,7 +124,7 @@ async function makeOracleRun(fixture) {
         unknowns: fixture.expected.unknowns.map((id) => ({ id })),
       },
       { type: 'classify', decisions: fixture.expected.classifications },
-      { type: 'skills', candidates: fixture.expected.skillDecisions.map((decision) => makeCandidate(decision, fixture)) },
+      { type: 'skills', candidates: fixture.expected.skillDecisions.map(makeCandidate) },
       proposal,
       {
         type: 'approval',

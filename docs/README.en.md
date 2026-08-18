@@ -4,7 +4,7 @@
 
 Agent Project Setup installs a shared `project-setup` Skill for Claude Code and Codex. The Skill enters an existing repository, gathers evidence, proposes a minimal Agent environment, and writes only after explicit approval.
 
-> Status: v0.1.1.
+> Status: v0.1.2.
 >
 > License: MIT.
 

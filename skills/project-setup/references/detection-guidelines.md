@@ -12,6 +12,16 @@ Use **Search → Read relevant → Cross-check**:
 2. Read only sources relevant to a live question. Avoid whole-repository traversal.
 3. Cross-check important conclusions against independent evidence where possible. Record conflicting evidence rather than choosing the convenient source.
 
+## Targeted follow-up search
+
+A language, framework, dependency, profile, directory, or CI marker is an indicator and search seed, not a Skill decision. When an indicator plausibly points to a task workflow with persistence value, run a bounded targeted follow-up search before classifying or skipping the candidate:
+
+1. Name the live task question and record focused `queries` for its task terms, scripts, commands, conventions, and verification.
+2. Record the repository-relative `paths` inspected. Prefer existing Skills, README/runbooks, build and package files, scripts, CI, focused configuration, and relevant source call sites; stop when the workflow is supported or the bounded paths are exhausted.
+3. Record a literal `result` plus the supporting `evidence IDs`, including a negative result when no project procedure was found.
+
+A partial or negative result preserves unsupported commands, steps, and intent as `Unknown`. Continue to Skill assessment with the evidence actually found; the indicator alone neither creates nor skips a Skill.
+
 Inventory `AGENTS.md`, `AGENTS.override.md`, `CLAUDE.md`, `CLAUDE.local.md`, `.agents/`, `.claude/` Skills/Hooks/settings/local settings, `docs/agents/`, `.cursor/`, and `.github/copilot-instructions.md`. Record whether an Agent target has pre-existing edits; use conservative `KEEP` or a conflict warning rather than overwriting it.
 
 ## Privacy boundary

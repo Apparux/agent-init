@@ -32,7 +32,28 @@
       {"factId": "fact-verify-target", "persistenceScope": "NONE", "deterministicEnforcementCandidate": false, "destination": null}
     ],
     "skillDecisions": [
-      {"name": "build-verify", "action": "SKIP", "reason": "The fixture does not establish a substantial repeated procedure."}
+      {
+        "name": "build-verify",
+        "action": "SKIP",
+        "reason": "The fixture does not establish a substantial repeated procedure.",
+        "evidenceIds": ["ev-make-verify"],
+        "skillAssessment": {
+          "taskSpecificity": "medium",
+          "rediscoveryCost": "low",
+          "errorCost": "unknown",
+          "reuseFrequency": "unknown"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["Make verify workflow and completion check"],
+          "paths": ["Makefile"],
+          "result": "Found a placeholder verify target but no substantive steps, runtime, or completion verification.",
+          "evidenceIds": ["ev-make-verify"]
+        },
+        "skipBasis": {
+          "dimensions": ["rediscoveryCost", "errorCost", "reuseFrequency"],
+          "explanation": "Targeted Makefile search found only a placeholder target; the reusable procedure, error consequences, repeated trigger, and completion check remain unsupported."
+        }
+      }
     ],
     "allowedActions": [
       {"action": "SKIP", "target": ".agents/skills/build-verify/SKILL.md"}

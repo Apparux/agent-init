@@ -3,7 +3,7 @@
   "id": "01-java-maven-simple",
   "repository": "repository",
   "purpose": "Prove that a Java/Maven indicator supports evidenced runtime knowledge but not a stack-label Skill or speculative architecture guidance.",
-  "coverage": ["stack-is-not-skill", "architecture-defer"],
+  "coverage": ["stack-is-not-skill", "architecture-defer", "plain-java-zero-skill"],
   "architectureDecision": {
     "status": "EVALUATED / DEFER",
     "reason": "A minimal build descriptor does not provide enough module-seam or coupling evidence for durable architecture guidance."
@@ -27,7 +27,28 @@
       {"factId": "fact-java-release", "persistenceScope": "GLOBAL", "deterministicEnforcementCandidate": true, "destination": "AGENTS.md"}
     ],
     "skillDecisions": [
-      {"name": "java-backend", "action": "SKIP", "reason": "Java is a stack label, not an evidenced project workflow."}
+      {
+        "name": "java-backend",
+        "action": "SKIP",
+        "reason": "Java is a stack label, not an evidenced project workflow.",
+        "evidenceIds": ["ev-java-release"],
+        "skillAssessment": {
+          "taskSpecificity": "low",
+          "rediscoveryCost": "low",
+          "errorCost": "unknown",
+          "reuseFrequency": "low"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["Java project workflow and verification"],
+          "paths": ["pom.xml"],
+          "result": "Found only a Java release constraint; no named task workflow or verification command is declared.",
+          "evidenceIds": ["ev-java-release"]
+        },
+        "skipBasis": {
+          "dimensions": ["taskSpecificity", "rediscoveryCost", "errorCost", "reuseFrequency"],
+          "explanation": "Targeted search of the Maven descriptor found only runtime evidence and no named workflow, reusable procedure, or verification command."
+        }
+      }
     ],
     "allowedActions": [
       {"action": "CREATE", "target": "AGENTS.md"},

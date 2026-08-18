@@ -1,0 +1,7 @@
+name: verify-api
+on: [pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - run: mvn -pl services/api -am verify

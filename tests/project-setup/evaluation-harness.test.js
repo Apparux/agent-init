@@ -70,8 +70,49 @@ const fixture = {
       },
     ],
     skillDecisions: [
-      { name: 'build-verify', action: 'CREATE' },
-      { name: 'node-backend', action: 'SKIP' },
+      {
+        name: 'build-verify',
+        action: 'CREATE',
+        evidenceIds: ['ev-workflow'],
+        skillAssessment: {
+          taskSpecificity: 'high',
+          rediscoveryCost: 'medium',
+          errorCost: 'high',
+          reuseFrequency: 'high',
+        },
+        targetedFollowUpSearch: {
+          queries: ['repository verification workflow'],
+          paths: ['package.json'],
+          result: 'Found the exact scripts.verify workflow.',
+          evidenceIds: ['ev-workflow'],
+        },
+        taskTriggers: ['validating a code change'],
+        whenNotToUse: ['read-only analysis'],
+        workflowSteps: ['Run the repository-declared verify workflow.'],
+        verification: ['pnpm lint && pnpm test'],
+      },
+      {
+        name: 'node-backend',
+        action: 'SKIP',
+        reason: 'A technology label alone is not a project-specific workflow.',
+        evidenceIds: ['ev-package-manager'],
+        skillAssessment: {
+          taskSpecificity: 'low',
+          rediscoveryCost: 'low',
+          errorCost: 'low',
+          reuseFrequency: 'low',
+        },
+        targetedFollowUpSearch: {
+          queries: ['Node-specific project workflow'],
+          paths: ['package.json'],
+          result: 'Found a package-manager declaration but no Node-specific procedure.',
+          evidenceIds: ['ev-package-manager'],
+        },
+        skipBasis: {
+          dimensions: ['taskSpecificity', 'rediscoveryCost', 'reuseFrequency'],
+          explanation: 'Repository evidence contains a technology label but no repeated task workflow or verification procedure.',
+        },
+      },
     ],
     allowedActions: [
       { action: 'UPDATE', target: 'AGENTS.md' },
@@ -155,12 +196,12 @@ Run \`pnpm lint && pnpm test\`.
       },
       {
         type: 'profile',
-        facts: fixture.expected.facts,
+        facts: structuredClone(fixture.expected.facts),
         unknowns: [{ id: 'deployment-command', label: 'Deployment command' }],
       },
       {
         type: 'classify',
-        decisions: fixture.expected.classifications,
+        decisions: structuredClone(fixture.expected.classifications),
       },
       {
         type: 'skills',
@@ -169,8 +210,21 @@ Run \`pnpm lint && pnpm test\`.
             name: 'build-verify',
             decision: 'CREATE',
             evidenceIds: ['ev-workflow'],
+            skillAssessment: {
+              taskSpecificity: 'high',
+              rediscoveryCost: 'medium',
+              errorCost: 'high',
+              reuseFrequency: 'high',
+            },
+            targetedFollowUpSearch: {
+              queries: ['repository verification workflow'],
+              paths: ['package.json'],
+              result: 'Found the exact scripts.verify workflow.',
+              evidenceIds: ['ev-workflow'],
+            },
             taskTriggers: ['validating a code change'],
             whenNotToUse: ['read-only analysis'],
+            workflowSteps: ['Run the repository-declared verify workflow.'],
             repeated: true,
             projectSpecific: true,
             proceduralValue: true,
@@ -180,6 +234,22 @@ Run \`pnpm lint && pnpm test\`.
             name: 'node-backend',
             decision: 'SKIP',
             evidenceIds: ['ev-package-manager'],
+            skillAssessment: {
+              taskSpecificity: 'low',
+              rediscoveryCost: 'low',
+              errorCost: 'low',
+              reuseFrequency: 'low',
+            },
+            targetedFollowUpSearch: {
+              queries: ['Node-specific project workflow'],
+              paths: ['package.json'],
+              result: 'Found a package-manager declaration but no Node-specific procedure.',
+              evidenceIds: ['ev-package-manager'],
+            },
+            skipBasis: {
+              dimensions: ['taskSpecificity', 'rediscoveryCost', 'reuseFrequency'],
+              explanation: 'Repository evidence contains a technology label but no repeated task workflow or verification procedure.',
+            },
             reason: 'A technology label alone is not a project-specific workflow.',
           },
         ],
@@ -396,10 +466,10 @@ async function materializeRun(run) {
   return { roots, cleanup: () => rm(temporary, { recursive: true, force: true }) };
 }
 
-async function evaluateRecordedRun(run) {
+async function evaluateRecordedRun(run, fixtureContract = fixture) {
   const subject = await materializeRun(run);
   try {
-    return await evaluateRunRecord(fixture, run, subject.roots);
+    return await evaluateRunRecord(fixtureContract, run, subject.roots);
   } finally {
     await subject.cleanup();
   }
@@ -577,7 +647,203 @@ test('evidence and Unknown boundaries reject unsupported generated knowledge', a
   });
 });
 
+test('Skill candidates require evidence-backed qualitative assessment and search', async (t) => {
+  await t.test('missing qualitative assessment is rejected', async () => {
+    const run = await goodRun();
+    const candidate = run.events.find((event) => event.type === 'skills')
+      .candidates.find((item) => item.name === 'build-verify');
+    delete candidate.skillAssessment;
+
+    const result = await evaluateRecordedRun(run);
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.some((message) => message.startsWith('SKILL_ASSESSMENT:')));
+  });
+
+  await t.test('missing targeted follow-up search is rejected', async () => {
+    const run = await goodRun();
+    const candidate = run.events.find((event) => event.type === 'skills')
+      .candidates.find((item) => item.name === 'build-verify');
+    delete candidate.targetedFollowUpSearch;
+
+    const result = await evaluateRecordedRun(run);
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.some((message) => message.startsWith('TARGETED_SEARCH:')));
+  });
+
+  await t.test('verification not quoted by candidate evidence is rejected', async () => {
+    const run = await goodRun();
+    const candidate = run.events.find((event) => event.type === 'skills')
+      .candidates.find((item) => item.name === 'build-verify');
+    candidate.verification = ['pnpm deploy'];
+
+    const result = await evaluateRecordedRun(run);
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.some((message) => message.startsWith('GUESSED_VERIFICATION:')));
+  });
+
+  await t.test('one low assessment dimension does not veto an evidenced workflow', async () => {
+    const run = await goodRun();
+    const candidate = run.events.find((event) => event.type === 'skills')
+      .candidates.find((item) => item.name === 'build-verify');
+    candidate.skillAssessment.rediscoveryCost = 'low';
+    delete candidate.repeated;
+    delete candidate.projectSpecific;
+    delete candidate.proceduralValue;
+
+    const result = await evaluateRecordedRun(run);
+    assert.equal(result.ok, true, result.errors.join('\n'));
+  });
+
+  await t.test('discoverability or model familiarity alone is an ungrounded SKIP', async () => {
+    for (const explanation of [
+      'The model already knows this workflow, so skip it.',
+      'The model already knows this repository task, so skip it.',
+      'This procedure is discoverable, so skip it.',
+    ]) {
+      const run = await goodRun();
+      const candidate = run.events.find((event) => event.type === 'skills')
+        .candidates.find((item) => item.name === 'node-backend');
+      candidate.reason = explanation;
+      candidate.skipBasis = {
+        dimensions: ['taskSpecificity'],
+        explanation,
+      };
+
+      const result = await evaluateRecordedRun(run);
+      assert.equal(result.ok, false);
+      assert.ok(result.errors.some((message) => message.startsWith('UNGROUNDED_SKIP:')));
+    }
+  });
+
+  await t.test('model familiarity in the top-level SKIP reason is rejected', async () => {
+    const run = await goodRun();
+    const candidate = run.events.find((event) => event.type === 'skills')
+      .candidates.find((item) => item.name === 'node-backend');
+    candidate.reason = 'The model already knows Redis, so skip it.';
+
+    const result = await evaluateRecordedRun(run);
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.some((message) => message.startsWith('UNGROUNDED_SKIP:')));
+  });
+
+  await t.test('an undeclared technology candidate is rejected', async () => {
+    const run = await goodRun();
+    const candidates = run.events.find((event) => event.type === 'skills').candidates;
+    const unexpected = structuredClone(candidates.find((item) => item.name === 'node-backend'));
+    unexpected.name = 'redis';
+    candidates.push(unexpected);
+
+    const result = await evaluateRecordedRun(run);
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.some((message) => message.startsWith('UNEXPECTED_SKILL:')));
+  });
+
+  await t.test('duplicate candidate names are rejected', async () => {
+    const run = await goodRun();
+    const candidates = run.events.find((event) => event.type === 'skills').candidates;
+    candidates.push(structuredClone(candidates.find((item) => item.name === 'node-backend')));
+
+    const result = await evaluateRecordedRun(run);
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.some((message) => message.startsWith('DUPLICATE_SKILL:')));
+  });
+
+  await t.test('creating over an expected existing Skill is rejected', async () => {
+    const fixtureContract = structuredClone(fixture);
+    const existingSkillEvidence = {
+      id: 'ev-existing-release-skill',
+      fact: 'A canonical release Skill already exists.',
+      sourcePath: '.agents/skills/release/SKILL.md',
+      sourceLocation: 'frontmatter and body',
+      observation: 'existing release Skill is present and user-authored',
+      whyItMatters: 'Existing workflow intent must be preserved instead of duplicated.',
+    };
+    fixtureContract.evidence.push(existingSkillEvidence);
+    fixtureContract.expected.skillDecisions.push({
+      name: 'release',
+      action: 'KEEP',
+      evidenceIds: ['ev-existing-release-skill'],
+      skillAssessment: {
+        taskSpecificity: 'high',
+        rediscoveryCost: 'high',
+        errorCost: 'high',
+        reuseFrequency: 'medium',
+      },
+      targetedFollowUpSearch: {
+        queries: ['existing release workflow'],
+        paths: ['.agents/skills/release/SKILL.md'],
+        result: 'Found a compatible existing release Skill.',
+        evidenceIds: ['ev-existing-release-skill'],
+      },
+      reuseExisting: {
+        path: '.agents/skills/release/SKILL.md',
+        compatibility: 'compatible',
+      },
+    });
+    const run = await goodRun();
+    run.evidenceLedger.push({
+      ...existingSkillEvidence,
+      persistenceScope: 'WORKFLOW',
+      deterministicEnforcementCandidate: false,
+      destination: '.agents/skills/release/SKILL.md',
+    });
+    const source = run.events.find((event) => event.type === 'skills')
+      .candidates.find((item) => item.name === 'build-verify');
+    run.events.find((event) => event.type === 'skills').candidates.push({
+      ...structuredClone(source),
+      name: 'release',
+      decision: 'CREATE',
+    });
+
+    const result = await evaluateRecordedRun(run, fixtureContract);
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.some((message) => message.startsWith('DUPLICATE_SKILL:')));
+  });
+
+  await t.test('KEEP reuse path must be backed by matching evidence', async () => {
+    const fixtureContract = structuredClone(fixture);
+    fixtureContract.expected.skillDecisions.push({
+      name: 'missing-reuse',
+      action: 'KEEP',
+      evidenceIds: ['ev-workflow'],
+      skillAssessment: {
+        taskSpecificity: 'high',
+        rediscoveryCost: 'high',
+        errorCost: 'high',
+        reuseFrequency: 'medium',
+      },
+      targetedFollowUpSearch: {
+        queries: ['existing missing workflow'],
+        paths: ['.agents/skills/missing/SKILL.md'],
+        result: 'Found a claimed existing workflow path.',
+        evidenceIds: ['ev-workflow'],
+      },
+      reuseExisting: {
+        path: '.agents/skills/missing/SKILL.md',
+        compatibility: 'compatible',
+      },
+    });
+
+    const errors = validateFixtureManifest(fixtureContract);
+    assert.ok(errors.some((message) => message.startsWith('DUPLICATE_SKILL:')));
+  });
+});
+
 test('generated assets and recommendations preserve v0.1 boundaries', async (t) => {
+  await t.test('canonical Skill requires observable Verification content', async () => {
+    const run = await goodRun();
+    const proposal = run.events.find((event) => event.type === 'proposal');
+    const action = proposal.actions.find((item) => item.id === 'create-skill');
+    const emptyVerification = action.proposedContent.replace(/## Verification[\s\S]*$/, '## Verification\n');
+    action.proposedContent = emptyVerification;
+    run.fixtureBytes.final['.agents/skills/build-verify/SKILL.md'] = emptyVerification;
+    run.events.find((event) => event.type === 'approval').proposalDigest = digestProposal(proposal);
+
+    const result = await evaluateRecordedRun(run);
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.some((message) => message.startsWith('PROJECT_SKILL:')));
+  });
+
   await t.test('CLAUDE.md cannot duplicate a shared AGENTS.md rule', async () => {
     const run = await goodRun();
     const duplicated = '- Use pnpm@9.0.0.';
@@ -633,6 +899,18 @@ test('generated assets and recommendations preserve v0.1 boundaries', async (t) 
     const result = await evaluateRecordedRun(run);
     assert.equal(result.ok, false);
     assert.ok(result.errors.some((message) => message.startsWith('ARCHITECTURE_REFACTOR:')));
+  });
+
+  await t.test('an unchanged second run accepts non-writing decisions with zero writes', async () => {
+    const run = await goodRun();
+    const reconcile = run.events.find((event) => event.type === 'reconcile');
+    reconcile.proposalActions.push(
+      { action: 'SKIP', target: '.agents/skills/node-backend/SKILL.md' },
+      { action: 'RECOMMEND', target: 'package-manager enforcement' },
+    );
+
+    const result = await evaluateRecordedRun(run);
+    assert.equal(result.ok, true, result.errors.join('\n'));
   });
 
   await t.test('an unchanged second run cannot contain write actions', async () => {

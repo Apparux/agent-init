@@ -33,8 +33,50 @@
       {"factId": "fact-verify", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": false, "destination": ".agents/skills/build-verify/SKILL.md"}
     ],
     "skillDecisions": [
-      {"name": "build-verify", "action": "CREATE", "reason": "The exact project workflow is repeated, task-specific, and verifiable."},
-      {"name": "node-backend", "action": "SKIP", "reason": "Node is a stack label rather than a workflow."}
+      {
+        "name": "build-verify",
+        "action": "CREATE",
+        "reason": "The exact project workflow is repeated, task-specific, and verifiable.",
+        "evidenceIds": ["ev-verify"],
+        "skillAssessment": {
+          "taskSpecificity": "high",
+          "rediscoveryCost": "medium",
+          "errorCost": "high",
+          "reuseFrequency": "high"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["repository verification workflow"],
+          "paths": ["package.json"],
+          "result": "Found the exact ordered scripts.verify command used for repeated code validation.",
+          "evidenceIds": ["ev-verify"]
+        },
+        "taskTriggers": ["validating a code change"],
+        "whenNotToUse": ["read-only analysis that does not require repository validation"],
+        "workflowSteps": ["Run the repository-declared verify script, which sequences lint before tests."],
+        "verification": ["pnpm lint && pnpm test"]
+      },
+      {
+        "name": "node-backend",
+        "action": "SKIP",
+        "reason": "Node is a stack label rather than a workflow.",
+        "evidenceIds": ["ev-pnpm"],
+        "skillAssessment": {
+          "taskSpecificity": "low",
+          "rediscoveryCost": "low",
+          "errorCost": "low",
+          "reuseFrequency": "low"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["Node-specific project workflow"],
+          "paths": ["package.json"],
+          "result": "Found a package-manager declaration but no Node-specific task procedure.",
+          "evidenceIds": ["ev-pnpm"]
+        },
+        "skipBasis": {
+          "dimensions": ["taskSpecificity", "rediscoveryCost", "errorCost", "reuseFrequency"],
+          "explanation": "Targeted manifest search found only a technology and package-manager constraint; no separate Node task workflow or verification procedure was found."
+        }
+      }
     ],
     "allowedActions": [
       {"action": "CREATE", "target": "AGENTS.md"},

@@ -7,6 +7,14 @@ const PERSISTENCE_SCOPES = new Set(['GLOBAL', 'WORKFLOW', 'DISCOVERABLE', 'ARCHI
 const LEDGER_SCOPES = new Set([...PERSISTENCE_SCOPES, 'Unknown']);
 const WRITE_ACTIONS = new Set(['CREATE', 'UPDATE']);
 const NON_WRITE_ACTIONS = new Set(['KEEP', 'SKIP', 'RECOMMEND']);
+const SKILL_DECISIONS = new Set(['CREATE', 'UPDATE', 'KEEP', 'SKIP']);
+const SKILL_ASSESSMENT_DIMENSIONS = [
+  'taskSpecificity',
+  'rediscoveryCost',
+  'errorCost',
+  'reuseFrequency',
+];
+const SKILL_ASSESSMENT_LEVELS = new Set(['low', 'medium', 'high', 'unknown']);
 const EVENT_ORDER = ['preflight', 'explore', 'profile', 'classify', 'skills', 'proposal', 'approval', 'write', 'validation', 'reconcile'];
 
 export const EVALUATION_BOUNDARIES = Object.freeze({
@@ -261,6 +269,126 @@ function uniqueIds(records, field, errors, label) {
   return seen;
 }
 
+function hasNonEmptyStrings(value) {
+  return Array.isArray(value)
+    && value.length > 0
+    && value.every((item) => typeof item === 'string' && item.trim().length > 0);
+}
+
+function validateSkillCandidateRecord(record, actionField, evidenceById, errors, label) {
+  const knownEvidenceIds = new Set(evidenceById.keys());
+  const action = record?.[actionField];
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(record?.name ?? '')) {
+    error(errors, 'SKILL_DECISION', `${label} requires a lowercase-hyphen name`);
+  }
+  if (!SKILL_DECISIONS.has(action)) {
+    error(errors, 'SKILL_DECISION', `${label} uses unsupported decision ${action}`);
+  }
+
+  const candidateEvidenceIds = Array.isArray(record?.evidenceIds) ? record.evidenceIds : [];
+  if (!hasNonEmptyStrings(candidateEvidenceIds)) {
+    error(errors, 'EVIDENCE', `${label} requires evidenceIds`);
+  }
+  for (const evidenceId of candidateEvidenceIds) {
+    if (!knownEvidenceIds.has(evidenceId)) {
+      error(errors, 'EVIDENCE', `${label} references unknown evidence ${evidenceId}`);
+    }
+  }
+
+  if (!isObject(record?.skillAssessment)) {
+    error(errors, 'SKILL_ASSESSMENT', `${label} requires skillAssessment`);
+  } else {
+    for (const dimension of SKILL_ASSESSMENT_DIMENSIONS) {
+      if (!SKILL_ASSESSMENT_LEVELS.has(record.skillAssessment[dimension])) {
+        error(errors, 'SKILL_ASSESSMENT', `${label} has invalid ${dimension}`);
+      }
+    }
+  }
+
+  const search = record?.targetedFollowUpSearch;
+  if (!isObject(search)
+    || !hasNonEmptyStrings(search.queries)
+    || !hasNonEmptyStrings(search.paths)
+    || typeof search.result !== 'string'
+    || search.result.trim().length === 0
+    || !hasNonEmptyStrings(search.evidenceIds)) {
+    error(errors, 'TARGETED_SEARCH', `${label} requires queries, paths, result, and evidence IDs`);
+  } else {
+    for (const inspectedPath of search.paths) {
+      if (path.isAbsolute(inspectedPath) || inspectedPath.split(/[\\/]/).includes('..')) {
+        error(errors, 'TARGETED_SEARCH', `${label} search path must be repository-relative: ${inspectedPath}`);
+      }
+    }
+    for (const evidenceId of search.evidenceIds) {
+      if (!knownEvidenceIds.has(evidenceId) || !candidateEvidenceIds.includes(evidenceId)) {
+        error(errors, 'TARGETED_SEARCH', `${label} search evidence ${evidenceId} is not candidate evidence`);
+      }
+    }
+  }
+
+  if (WRITE_ACTIONS.has(action)) {
+    const qualified = hasNonEmptyStrings(record.taskTriggers)
+      && hasNonEmptyStrings(record.whenNotToUse)
+      && hasNonEmptyStrings(record.workflowSteps)
+      && hasNonEmptyStrings(record.verification);
+    if (!qualified) {
+      error(errors, 'STACK_TO_SKILL', `${label} lacks an evidence-backed workflow floor`);
+    } else {
+      const observations = candidateEvidenceIds
+        .map((evidenceId) => evidenceById.get(evidenceId)?.observation ?? '')
+        .join('\n');
+      for (const verification of record.verification) {
+        if (!observations.includes(verification)) {
+          error(errors, 'GUESSED_VERIFICATION', `${label} verification is not quoted by its evidence: ${verification}`);
+        }
+      }
+    }
+  }
+
+  if (action === 'SKIP') {
+    const basis = record?.skipBasis;
+    const dimensions = basis?.dimensions;
+    const explanation = basis?.explanation;
+    const reason = record?.reason;
+    const rationale = `${reason ?? ''}\n${explanation ?? ''}`;
+    const validDimensions = hasNonEmptyStrings(dimensions)
+      && dimensions.every((dimension) => SKILL_ASSESSMENT_DIMENSIONS.includes(dimension))
+      && new Set(dimensions).size === dimensions.length
+      && dimensions.every((dimension) => ['low', 'unknown'].includes(record?.skillAssessment?.[dimension]));
+    const substantive = typeof reason === 'string'
+      && reason.trim().length > 0
+      && typeof explanation === 'string'
+      && explanation.trim().length >= 30;
+    const invokesModelFamiliarity = /model\s+(?:already\s+)?knows?|model familiarity|familiar technology/i.test(rationale);
+    const invokesDiscoverability = /\bdiscoverable\b/i.test(rationale);
+    const grounded = /evidence|search|found|path|command|procedure|verification|trigger|reuse|cost|risk|call[- ]site|bounded|focused/i.test(explanation ?? '');
+    const groundedSearchOutcome = /(?:search|evidence|inspection).{0,160}(?:found|showed|established|returned)|(?:found|showed|established).{0,160}(?:procedure|verification|trigger|command|call[- ]site)/i.test(rationale);
+    if (!isObject(basis)
+      || !validDimensions
+      || !substantive
+      || invokesModelFamiliarity
+      || !grounded
+      || (invokesDiscoverability && !groundedSearchOutcome)) {
+      error(errors, 'UNGROUNDED_SKIP', `${label} requires low/unknown dimensions and a substantive repository-evidence explanation`);
+    }
+  }
+
+  if (action === 'KEEP') {
+    const reuse = record?.reuseExisting;
+    const reusePathIsEvidenced = candidateEvidenceIds.some(
+      (evidenceId) => evidenceById.get(evidenceId)?.sourcePath === reuse?.path,
+    );
+    if (!isObject(reuse)
+      || typeof reuse.path !== 'string'
+      || reuse.path.length === 0
+      || typeof reuse.compatibility !== 'string'
+      || reuse.compatibility.length === 0
+      || !reusePathIsEvidenced) {
+      error(errors, 'DUPLICATE_SKILL', `${label} KEEP requires an evidence-backed reuseExisting path and compatibility`);
+    }
+  }
+}
+
 export function validateFixtureManifest(fixture) {
   const errors = [];
   if (!isObject(fixture)) return ['SCHEMA: fixture must be an object'];
@@ -281,6 +409,7 @@ export function validateFixtureManifest(fixture) {
 
   const evidence = Array.isArray(fixture.evidence) ? fixture.evidence : [];
   const evidenceIds = uniqueIds(evidence, 'id', errors, 'fixture evidence');
+  const evidenceById = new Map(evidence.map((record) => [record?.id, record]));
   for (const record of evidence) {
     for (const field of ['fact', 'sourcePath', 'sourceLocation', 'observation', 'whyItMatters']) {
       if (typeof record?.[field] !== 'string' || record[field].length === 0) {
@@ -322,6 +451,18 @@ export function validateFixtureManifest(fixture) {
     if (typeof classification?.deterministicEnforcementCandidate !== 'boolean') {
       error(errors, 'SCHEMA', `classification ${classification?.factId ?? '<unknown>'} requires a deterministic flag`);
     }
+  }
+
+  const skillDecisions = Array.isArray(expected.skillDecisions) ? expected.skillDecisions : [];
+  uniqueIds(skillDecisions, 'name', errors, 'expected Skill decision');
+  for (const decision of skillDecisions) {
+    validateSkillCandidateRecord(
+      decision,
+      'action',
+      evidenceById,
+      errors,
+      `expected Skill ${decision?.name ?? '<unknown>'}`,
+    );
   }
 
   return errors;
@@ -538,26 +679,39 @@ function validatePhaseEvents(fixture, run, errors) {
     }
   }
 
-  const expectedSkills = new Map((fixture.expected.skillDecisions ?? []).map((item) => [item.name, item.action]));
+  const expectedSkills = new Map(
+    (Array.isArray(fixture.expected.skillDecisions) ? fixture.expected.skillDecisions : [])
+      .map((item) => [item.name, item]),
+  );
   const candidates = skills?.candidates ?? [];
-  for (const [name, expectedAction] of expectedSkills) {
-    const actual = candidates.find((candidate) => candidate.name === name);
-    if (!actual || actual.decision !== expectedAction) {
-      error(errors, 'SKILL_DECISION', `Skill ${name} should be ${expectedAction}`);
-    }
-  }
+  const ledgerById = new Map((run.evidenceLedger ?? []).map((record) => [record.id, record]));
+  const seenCandidateNames = new Set();
   for (const candidate of candidates) {
-    if (['CREATE', 'UPDATE'].includes(candidate.decision)) {
-      const qualified = Array.isArray(candidate.evidenceIds) && candidate.evidenceIds.length > 0
-        && Array.isArray(candidate.taskTriggers) && candidate.taskTriggers.length > 0
-        && Array.isArray(candidate.whenNotToUse) && candidate.whenNotToUse.length > 0
-        && candidate.repeated === true
-        && candidate.projectSpecific === true
-        && candidate.proceduralValue === true
-        && Array.isArray(candidate.verification) && candidate.verification.length > 0;
-      if (!qualified) {
-        error(errors, 'STACK_TO_SKILL', `Skill ${candidate.name} lacks evidence-backed workflow qualification`);
+    const label = `Skill ${candidate?.name ?? '<unknown>'}`;
+    if (seenCandidateNames.has(candidate?.name)) {
+      error(errors, 'DUPLICATE_SKILL', `${label} appears more than once`);
+    } else {
+      seenCandidateNames.add(candidate?.name);
+    }
+
+    const expected = expectedSkills.get(candidate?.name);
+    if (!expected) {
+      error(errors, 'UNEXPECTED_SKILL', `${label} is absent from the fixture decision oracle`);
+    } else if (candidate.decision !== expected.action) {
+      if (expected.action === 'KEEP' && WRITE_ACTIONS.has(candidate.decision)) {
+        error(errors, 'DUPLICATE_SKILL', `${label} would overwrite or duplicate an expected existing Skill`);
       }
+      if (expected.action === 'SKIP' && WRITE_ACTIONS.has(candidate.decision)) {
+        error(errors, 'STACK_TO_SKILL', `${label} turns a non-workflow indicator into a writable Skill`);
+      }
+      error(errors, 'SKILL_DECISION', `${label} should be ${expected.action}`);
+    }
+
+    validateSkillCandidateRecord(candidate, 'decision', ledgerById, errors, label);
+  }
+  for (const [name, expected] of expectedSkills) {
+    if (!seenCandidateNames.has(name)) {
+      error(errors, 'SKILL_DECISION', `Skill ${name} should be ${expected.action}`);
     }
   }
 
@@ -855,12 +1009,28 @@ function validateGeneratedAssets(run, approvalState, errors) {
     if (action.kind === 'project-skill') {
       const content = state.content ?? '';
       const directory = action.target.split('/')[2];
-      if (!new RegExp(`^---\\nname: ${directory}\\n`, 'm').test(content)) {
-        error(errors, 'PROJECT_SKILL', `Skill metadata name must match directory ${directory}`);
-      }
-      for (const heading of ['When to use', 'When not to use', 'Workflow', 'Project-specific rules', 'Verification']) {
-        if (!new RegExp(`^## ${heading}$`, 'm').test(content)) {
-          error(errors, 'PROJECT_SKILL', `Skill ${directory} lacks ${heading}`);
+      const isCanonicalSkill = action.target === `.agents/skills/${directory}/SKILL.md`;
+      if (!isCanonicalSkill) {
+        if (!content.trim()) {
+          error(errors, 'PROJECT_REFERENCE', `Skill reference or script ${action.target} must contain content`);
+        }
+      } else {
+        if (!new RegExp(`^---\\nname: ${directory}\\n`, 'm').test(content)) {
+          error(errors, 'PROJECT_SKILL', `Skill metadata name must match directory ${directory}`);
+        }
+        for (const heading of ['When to use', 'When not to use', 'Workflow', 'Project-specific rules', 'Verification']) {
+          if (!new RegExp(`^## ${heading}$`, 'm').test(content)) {
+            error(errors, 'PROJECT_SKILL', `Skill ${directory} lacks ${heading}`);
+          }
+        }
+        const verificationHeading = /^## Verification\s*$/m.exec(content);
+        const verificationBody = verificationHeading
+          ? content.slice(verificationHeading.index + verificationHeading[0].length)
+            .split(/^##\s/m, 1)[0]
+            .trim()
+          : '';
+        if (!verificationBody) {
+          error(errors, 'PROJECT_SKILL', `Skill ${directory} requires observable Verification content`);
         }
       }
     }

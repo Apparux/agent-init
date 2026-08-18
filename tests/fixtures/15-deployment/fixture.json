@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "id": "15-deployment",
+  "repository": "repository",
+  "purpose": "Recognize a project deployment workflow from scripts, CI, and smoke verification without writing deployment infrastructure.",
+  "coverage": ["deployment-workflow-skill", "project-workflow-skill"],
+  "evidence": [
+    {
+      "id": "ev-deploy-script",
+      "fact": "The package declares a staging deployment script.",
+      "sourcePath": "package.json",
+      "sourceLocation": "scripts.deploy:staging",
+      "observation": "deploy:staging script is invoked as npm run deploy:staging and runs bash scripts/deploy-staging.sh",
+      "whyItMatters": "A named deployment task is a trigger for a bounded workflow search."
+    },
+    {
+      "id": "ev-deploy-runbook",
+      "fact": "The deployment runbook declares build, staging deploy, and smoke verification in order.",
+      "sourcePath": "docs/deployment.md",
+      "sourceLocation": "Staging workflow",
+      "observation": "workflow is npm run build && npm run deploy:staging && npm run smoke:staging",
+      "whyItMatters": "Deployment requires an ordered project procedure and a completion check."
+    },
+    {
+      "id": "ev-deploy-ci",
+      "fact": "CI corroborates the documented staging deployment workflow.",
+      "sourcePath": ".github/workflows/deploy.yml",
+      "sourceLocation": "jobs.staging.steps",
+      "observation": "CI runs npm run build && npm run deploy:staging && npm run smoke:staging",
+      "whyItMatters": "Independent CI evidence confirms the exact command sequence without authorizing CI edits."
+    },
+    {
+      "id": "ev-deploy-smoke",
+      "fact": "The smoke script checks the staging health endpoint.",
+      "sourcePath": "scripts/smoke-staging.js",
+      "sourceLocation": "health check",
+      "observation": "smoke-staging requests /health and fails when the HTTP response is not successful",
+      "whyItMatters": "The post-deploy verification is an observable completion criterion."
+    }
+  ],
+  "expected": {
+    "facts": [
+      {"id": "fact-deploy-script", "value": "npm run deploy:staging", "status": "confirmed", "evidenceIds": ["ev-deploy-script"]},
+      {"id": "fact-deploy-workflow", "value": "npm run build && npm run deploy:staging && npm run smoke:staging", "status": "confirmed", "evidenceIds": ["ev-deploy-runbook", "ev-deploy-ci"]},
+      {"id": "fact-deploy-smoke", "value": "/health", "status": "confirmed", "evidenceIds": ["ev-deploy-smoke"]}
+    ],
+    "unknowns": ["production-deployment-command", "rollback-procedure", "deployment-credentials"],
+    "classifications": [
+      {"factId": "fact-deploy-script", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": false, "destination": ".agents/skills/deployment/SKILL.md"},
+      {"factId": "fact-deploy-workflow", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": false, "destination": ".agents/skills/deployment/SKILL.md"},
+      {"factId": "fact-deploy-smoke", "persistenceScope": "WORKFLOW", "deterministicEnforcementCandidate": false, "destination": ".agents/skills/deployment/SKILL.md"}
+    ],
+    "skillDecisions": [
+      {
+        "name": "deployment",
+        "action": "CREATE",
+        "reason": "Scripts, independent CI/runbook evidence, and a staging smoke check establish a repeated deployment workflow.",
+        "evidenceIds": ["ev-deploy-script", "ev-deploy-runbook", "ev-deploy-ci", "ev-deploy-smoke"],
+        "skillAssessment": {
+          "taskSpecificity": "high",
+          "rediscoveryCost": "high",
+          "errorCost": "high",
+          "reuseFrequency": "medium"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["staging deployment smoke verification workflow"],
+          "paths": ["package.json", "docs/deployment.md", ".github/workflows/deploy.yml", "scripts/deploy-staging.sh", "scripts/smoke-staging.js"],
+          "result": "Cross-checking scripts, runbook, CI, and smoke code found one exact staging workflow with an observable health check.",
+          "evidenceIds": ["ev-deploy-script", "ev-deploy-runbook", "ev-deploy-ci", "ev-deploy-smoke"]
+        },
+        "taskTriggers": ["deploying the application to the documented staging environment"],
+        "whenNotToUse": ["production release or infrastructure changes without an approved production procedure"],
+        "workflowSteps": [
+          "Run the project build before invoking the staging deployment script.",
+          "Run the documented staging deployment command.",
+          "Run the staging smoke check and inspect the health result before reporting completion."
+        ],
+        "verification": ["npm run smoke:staging"]
+      }
+    ],
+    "allowedActions": [
+      {"action": "CREATE", "target": ".agents/skills/deployment/SKILL.md"},
+      {"action": "CREATE", "target": ".claude/skills/deployment"}
+    ],
+    "forbiddenPaths": ["package.json", "docs/deployment.md", "scripts/", ".github/workflows/deploy.yml", "infra/", "config/production/"],
+    "preservation": [
+      {"path": ".github/workflows/deploy.yml", "mode": "exact"}
+    ],
+    "secondRun": "NO_WRITE_ACTIONS",
+    "detection": {
+      "gitRepository": false,
+      "buildFiles": ["package.json"],
+      "lockFiles": [],
+      "agentConfigPaths": [],
+      "skillDirectories": []
+    }
+  },
+  "externalAcceptance": {
+    "claudeCode": {"status": "not-run", "evidence": null},
+    "codex": {"status": "not-run", "evidence": null}
+  }
+}

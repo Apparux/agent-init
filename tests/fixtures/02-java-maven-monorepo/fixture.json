@@ -33,8 +33,50 @@
       {"factId": "fact-verify-profile", "persistenceScope": "NONE", "deterministicEnforcementCandidate": false, "destination": null}
     ],
     "skillDecisions": [
-      {"name": "api-verification", "action": "SKIP", "reason": "No exact repository-supported invocation or complete workflow is evidenced."},
-      {"name": "java-monorepo", "action": "SKIP", "reason": "Repository shape alone is not a project workflow."}
+      {
+        "name": "api-verification",
+        "action": "SKIP",
+        "reason": "No exact repository-supported invocation or complete workflow is evidenced.",
+        "evidenceIds": ["ev-maven-module", "ev-verify-profile"],
+        "skillAssessment": {
+          "taskSpecificity": "medium",
+          "rediscoveryCost": "medium",
+          "errorCost": "unknown",
+          "reuseFrequency": "unknown"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["API verification profile invocation"],
+          "paths": ["pom.xml", "services/api/pom.xml"],
+          "result": "Found a verification-named profile but no repository-supported invocation, ordered procedure, or completion check.",
+          "evidenceIds": ["ev-maven-module", "ev-verify-profile"]
+        },
+        "skipBasis": {
+          "dimensions": ["errorCost", "reuseFrequency"],
+          "explanation": "Targeted build-file search found a profile name but no evidenced command, completion check, or repeated task trigger; the remaining decision dimensions stay unknown."
+        }
+      },
+      {
+        "name": "java-monorepo",
+        "action": "SKIP",
+        "reason": "Repository shape alone is not a project workflow.",
+        "evidenceIds": ["ev-maven-module"],
+        "skillAssessment": {
+          "taskSpecificity": "low",
+          "rediscoveryCost": "low",
+          "errorCost": "unknown",
+          "reuseFrequency": "low"
+        },
+        "targetedFollowUpSearch": {
+          "queries": ["multi-module Java task workflow"],
+          "paths": ["pom.xml", "services/api/pom.xml"],
+          "result": "Found module topology but no task-specific multi-module procedure or verification sequence.",
+          "evidenceIds": ["ev-maven-module"]
+        },
+        "skipBasis": {
+          "dimensions": ["taskSpecificity", "rediscoveryCost", "errorCost", "reuseFrequency"],
+          "explanation": "Focused module search found discoverable repository shape only; no repeated task workflow, procedural ordering, or verified completion condition is evidenced."
+        }
+      }
     ],
     "allowedActions": [
       {"action": "SKIP", "target": ".agents/skills/api-verification/SKILL.md"},
