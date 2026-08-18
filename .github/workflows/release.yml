@@ -135,7 +135,7 @@ jobs:
             filename: 'apparux-agent-project-setup-0.1.1.tgz',
             entryCount: 22,
             treeDigest:
-              'sha256:603300540dfc98b37e30693f250dadc9aeae7c898fefd464a42e7cb27be7f11f',
+              'sha256:99e9a4a818c4820450e37c2231aec4139957bbcd287ab9a579b76388ad87aee9',
           };
           for (const field of ['name', 'version', 'filename', 'entryCount']) {
             if (artifact?.[field] !== expected[field]) {
