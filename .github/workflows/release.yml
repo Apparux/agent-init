@@ -256,7 +256,10 @@ jobs:
           let published;
           let latest;
           let lastError;
-          for (let attempt = 1; attempt <= 12; attempt += 1) {
+          // npm's CDN can take several minutes to serve a freshly published
+          // packument even though the publish succeeded; 12 attempts (~1 min)
+          // was measured to be too short.
+          for (let attempt = 1; attempt <= 60; attempt += 1) {
             try {
               [published, latest] = await Promise.all([
                 getJson(`${registryRoot}/${version}`),
@@ -265,12 +268,12 @@ jobs:
               break;
             } catch (error) {
               lastError = error;
-              if (attempt < 12) await delay(5_000);
+              if (attempt < 60) await delay(5_000);
             }
           }
           if (!published || !latest) {
             throw new Error(
-              `Published package was not visible after 12 attempts: ${lastError?.message}`,
+              `Published package was not visible after 60 attempts (~5 min): ${lastError?.message}`,
             );
           }
           if (
