@@ -227,6 +227,8 @@ jobs:
           console.log(`Runner artifact integrity: ${artifact.integrity}`);
           NODE
       - name: Publish npm package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish .release-artifact/apparux-agent-init-0.1.3-rc.0.tgz --access public
       - name: Verify published registry artifact
         env:
