@@ -8,7 +8,7 @@ import { createInstallationFixture } from './helpers.js';
 
 test('fresh manifest publication never overwrites a concurrent replacement', async (t) => {
   const { homeDir, runtime, sentinels } = await createInstallationFixture(t);
-  const manifestPath = path.join(homeDir, '.agent-project-setup', 'install.json');
+  const manifestPath = path.join(homeDir, '.agent-init', 'install.json');
   let injected = false;
   const racingRuntime = {
     ...runtime,
@@ -44,7 +44,7 @@ test('update manifest CAS preserves a concurrent replacement and old rollback ev
     path.join(packageRoot, 'skills', 'project-setup', 'SKILL.md'),
     '---\nname: project-setup\ndescription: Manifest CAS race payload.\n---\n\n# 0.2\n',
   );
-  const manifestPath = path.join(homeDir, '.agent-project-setup', 'install.json');
+  const manifestPath = path.join(homeDir, '.agent-init', 'install.json');
   let injected = false;
   const racingRuntime = {
     ...runtime,

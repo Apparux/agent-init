@@ -1,8 +1,8 @@
-# 19 — APS-053 — Reconcile a workflow merge without orphan Skills
+# 19 — AI-053 — Reconcile a workflow merge without orphan Skills
 
 **Status:** ready-for-agent
 **Milestone:** 9 — Safe Pruning
-**Blocked by:** APS-050 — Coordinated reference updates and retirement.
+**Blocked by:** AI-050 — Coordinated reference updates and retirement.
 **PRD requirements:** [PRD.md](../../../PRD.md) §31.3, §7, §28–30.
 
 **What to build:** Multiple replaced workflows converge into one evidence-backed workflow while all obsolete assets and incoming references are handled in one exact approved migration.

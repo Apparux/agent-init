@@ -51,7 +51,7 @@ test('uninstall removes only verified owned assets and preserves project assets'
 
   assert.equal(result.ok, true);
   assert.equal(result.outcome, 'uninstalled');
-  assert.equal(await exists(path.join(homeDir, '.agent-project-setup')), false);
+  assert.equal(await exists(path.join(homeDir, '.agent-init')), false);
   assert.equal(await exists(path.join(homeDir, '.agents', 'skills', 'project-setup')), false);
   assert.equal(await exists(path.join(homeDir, '.claude', 'skills', 'project-setup')), false);
   assert.equal(await exists(path.join(homeDir, '.agents', 'skills')), true);
@@ -76,7 +76,7 @@ test('uninstall preserves a replaced target while removing independent owned ass
   assert.equal(await readFile(codexPath, 'utf8'), 'user replacement\n');
   assert.equal((await lstat(codexPath)).mode & 0o777, 0o600);
   assert.equal(await exists(claudePath), false);
-  assert.equal(await exists(path.join(homeDir, '.agent-project-setup')), false);
+  assert.equal(await exists(path.join(homeDir, '.agent-init')), false);
   await assertSentinelsUnchanged(sentinels);
 });
 
@@ -111,7 +111,7 @@ test('partial uninstall reports changed, preserved, and unresolved assets', asyn
   assert.equal(result.error.unresolved.includes(claudeQuarantine), true);
   assert.equal(
     result.error.unresolved.some((entry) =>
-      entry.endsWith('.agent-project-setup.operation.lock'),
+      entry.endsWith('.agent-init.operation.lock'),
     ),
     true,
   );

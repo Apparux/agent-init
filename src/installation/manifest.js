@@ -6,7 +6,7 @@ import { readRegularFileNoFollow } from './filesystem.js';
 import { InstallationError } from './paths.js';
 
 export const MANIFEST_SCHEMA_VERSION = 1;
-export const OWNER_MARKER = '.agent-project-setup-owner.json';
+export const OWNER_MARKER = '.agent-init-owner.json';
 
 function sortJsonValue(value) {
   if (Array.isArray(value)) return value.map(sortJsonValue);

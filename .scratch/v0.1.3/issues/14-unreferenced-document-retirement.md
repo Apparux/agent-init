@@ -1,8 +1,8 @@
-# 14 — APS-048 — Retire one unreferenced obsolete Agent document safely
+# 14 — AI-048 — Retire one unreferenced obsolete Agent document safely
 
 **Status:** ready-for-agent
 **Milestone:** 9 — Safe Pruning
-**Blocked by:** APS-044 — Mutation matrix; APS-045 — Transition fixtures; APS-046 — Ambiguous-evidence fixtures; APS-047 — Acceptance freshness.
+**Blocked by:** AI-044 — Mutation matrix; AI-045 — Transition fixtures; AI-046 — Ambiguous-evidence fixtures; AI-047 — Acceptance freshness.
 **Dependency rationale:** All Milestone 8 work must complete before pruning under PRD §41.
 **PRD requirements:** [PRD.md](../../../PRD.md) §24–30, §31.4.
 

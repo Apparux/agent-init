@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   publish:
-    name: Publish @apparux/agent-project-setup@0.1.3-rc.0
+    name: Publish @apparux/agent-init@0.1.3-rc.0
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -35,10 +35,10 @@ jobs:
           import { readFileSync } from 'node:fs';
           const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
           const expected = {
-            name: '@apparux/agent-project-setup',
+            name: '@apparux/agent-init',
             version: '0.1.3-rc.0',
             access: 'public',
-            repository: 'git+https://github.com/Apparux/agent-project-setup.git',
+            repository: 'git+https://github.com/Apparux/agent-init.git',
           };
           if (
             pkg.name !== expected.name ||
@@ -59,7 +59,7 @@ jobs:
         run: |
           mkdir -p .release-artifact/unpacked
           npm pack --ignore-scripts --json --pack-destination .release-artifact > .release-artifact/pack.json
-          tar -xzf .release-artifact/apparux-agent-project-setup-0.1.3-rc.0.tgz -C .release-artifact/unpacked
+          tar -xzf .release-artifact/apparux-agent-init-0.1.3-rc.0.tgz -C .release-artifact/unpacked
       - name: Verify release artifact
         id: artifact
         run: |
@@ -116,7 +116,7 @@ jobs:
               left.relativePath.localeCompare(right.relativePath, 'en'),
             );
             const hash = createHash('sha256');
-            addField(hash, 'agent-project-setup-tree-v1');
+            addField(hash, 'agent-init-tree-v1');
             for (const entry of entries) {
               addField(hash, entry.type);
               addField(hash, entry.relativePath);
@@ -132,13 +132,13 @@ jobs:
             readFileSync('.release-artifact/pack.json', 'utf8'),
           );
           const expected = {
-            name: '@apparux/agent-project-setup',
+            name: '@apparux/agent-init',
             version: '0.1.3-rc.0',
-            filename: 'apparux-agent-project-setup-0.1.3-rc.0.tgz',
-            repository: 'git+https://github.com/Apparux/agent-project-setup.git',
+            filename: 'apparux-agent-init-0.1.3-rc.0.tgz',
+            repository: 'git+https://github.com/Apparux/agent-init.git',
             entryCount: 22,
             treeDigest:
-              'sha256:cae6a5d4aefb0cbad46ff44cdfbe18fd1339266a5b5605e44a3aea2f11e72bb5',
+              'sha256:9ff77f76b0f62ae95b6ea71e2764cc1a8628cf378d4fcf490cafe1831fb5d9db',
           };
           for (const field of ['name', 'version', 'filename', 'entryCount']) {
             if (artifact?.[field] !== expected[field]) {
@@ -151,7 +151,7 @@ jobs:
           const expectedFiles = [
             ['LICENSE', 0o644],
             ['README.md', 0o644],
-            ['bin/agent-project-setup.js', 0o755],
+            ['bin/agent-init.js', 0o755],
             ['package.json', 0o644],
             ['skills/project-setup/SKILL.md', 0o644],
             ['skills/project-setup/references/agents-guidelines.md', 0o644],
@@ -227,7 +227,7 @@ jobs:
           console.log(`Runner artifact integrity: ${artifact.integrity}`);
           NODE
       - name: Publish npm package
-        run: npm publish .release-artifact/apparux-agent-project-setup-0.1.3-rc.0.tgz --access public --tag oidc-test
+        run: npm publish .release-artifact/apparux-agent-init-0.1.3-rc.0.tgz --access public
       - name: Verify published registry artifact
         env:
           EXPECTED_SHASUM: ${{ steps.artifact.outputs.shasum }}
@@ -237,9 +237,8 @@ jobs:
           import { createHash } from 'node:crypto';
           import { setTimeout as delay } from 'node:timers/promises';
 
-          const packageName = '@apparux/agent-project-setup';
+          const packageName = '@apparux/agent-init';
           const version = '0.1.3-rc.0';
-          const expectedLatestVersion = '0.1.2';
           const registryRoot = `https://registry.npmjs.org/${encodeURIComponent(packageName)}`;
           const getJson = async (url) => {
             const response = await fetch(url, {
@@ -255,14 +254,12 @@ jobs:
           };
 
           let published;
-          let oidcTest;
           let latest;
           let lastError;
           for (let attempt = 1; attempt <= 12; attempt += 1) {
             try {
-              [published, oidcTest, latest] = await Promise.all([
+              [published, latest] = await Promise.all([
                 getJson(`${registryRoot}/${version}`),
-                getJson(`${registryRoot}/oidc-test`),
                 getJson(`${registryRoot}/latest`),
               ]);
               break;
@@ -271,7 +268,7 @@ jobs:
               if (attempt < 12) await delay(5_000);
             }
           }
-          if (!published || !oidcTest || !latest) {
+          if (!published || !latest) {
             throw new Error(
               `Published package was not visible after 12 attempts: ${lastError?.message}`,
             );
@@ -279,14 +276,12 @@ jobs:
           if (
             published.name !== packageName ||
             published.version !== version ||
-            oidcTest.version !== version ||
-            latest.version !== expectedLatestVersion
+            latest.version !== version
           ) {
             throw new Error(
               `Registry metadata mismatch: ${JSON.stringify({
                 name: published.name,
                 version: published.version,
-                oidcTest: oidcTest.version,
                 latest: latest.version,
               })}`,
             );
@@ -331,8 +326,7 @@ jobs:
           }
 
           console.log(`Verified registry version: ${published.version}`);
-          console.log(`Verified oidc-test dist-tag: ${oidcTest.version}`);
-          console.log(`Verified unchanged latest dist-tag: ${latest.version}`);
+          console.log(`Verified latest dist-tag: ${latest.version}`);
           console.log(`Verified registry shasum: ${downloadedShasum}`);
           console.log(`Verified registry integrity: ${downloadedIntegrity}`);
           console.log(`Verified registry tarball: ${published.dist.tarball}`);

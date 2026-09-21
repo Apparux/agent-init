@@ -1,8 +1,8 @@
-# 21 — APS-055 — Validate knowledge placement across context layers
+# 21 — AI-055 — Validate knowledge placement across context layers
 
 **Status:** ready-for-agent
 **Milestone:** 10 — Qualification
-**Blocked by:** APS-054 — Pruning idempotency.
+**Blocked by:** AI-054 — Pruning idempotency.
 **Dependency rationale:** The completed M9 gate precedes M10 under PRD §41.
 **PRD requirements:** [PRD.md](../../../PRD.md) §34; §5.3–5.4.
 
@@ -12,7 +12,7 @@
 
 Extend existing Knowledge Classification, Evidence Ledger, candidate, and final-asset checks. Reuse conflict/overlap/stale/partial-evidence fixtures and the existing mutation matrix. Agent understanding supplies semantic decisions; deterministic checks verify supported classifications, evidence, approved content, and observable contracts. Do not create a general semantic classifier or LLM judging framework.
 
-PRD.md remains the sole specification; §4–5 and §42 apply. This ticket verifies layer responsibilities; APS-056 adds the distinct cross-layer duplication matrix. Do not rewrite all generated content or impose arbitrary size quotas to make a test pass.
+PRD.md remains the sole specification; §4–5 and §42 apply. This ticket verifies layer responsibilities; AI-056 adds the distinct cross-layer duplication matrix. Do not rewrite all generated content or impose arbitrary size quotas to make a test pass.
 
 ## Acceptance criteria
 

@@ -1,8 +1,8 @@
-# 11 — APS-045 — Exercise workflow transitions and user-edited assets
+# 11 — AI-045 — Exercise workflow transitions and user-edited assets
 
 **Status:** ready-for-agent
 **Milestone:** 8 — Evaluation Completion
-**Blocked by:** APS-043 — Trigger threshold gate.
+**Blocked by:** AI-043 — Trigger threshold gate.
 **Dependency rationale:** Milestone 7 must complete first; this fixture slice does not require the separate mutation-matrix implementation.
 **PRD requirements:** [PRD.md](../../../PRD.md) §22; §31 transition scenarios; §41 ordering.
 

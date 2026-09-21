@@ -1,6 +1,6 @@
-# DESIGN — Agent Project Setup
+# DESIGN — Agent Init
 
-**项目：** Agent Project Setup  
+**项目：** Agent Init  
 **版本：** v0.1  
 **状态：** Ready for Implementation  
 **依据：** [PRD.md](PRD.md)
@@ -54,7 +54,7 @@
 ```text
 Distribution Plane                         Repository Plane
 ──────────────────                         ────────────────
-@apparux/agent-project-setup               project-setup mother Skill
+@apparux/agent-init               project-setup mother Skill
         │                                           │
         ▼                                           ▼
 Lightweight Node CLI                         Current repository
@@ -62,7 +62,7 @@ Lightweight Node CLI                         Current repository
 install / update / doctor / uninstall               │
         │                                  explore / propose / apply
         ▼                                           ▼
-~/.agent-project-setup/                    AGENTS.md / CLAUDE.md /
+~/.agent-init/                    AGENTS.md / CLAUDE.md /
         │                                  project Skills / agent docs
         ├──────────────┐
         ▼              ▼
@@ -121,12 +121,12 @@ runCli(argv, runtime) -> exitCode
 **命令语法**
 
 ```text
-agent-project-setup install
-agent-project-setup update
-agent-project-setup doctor
-agent-project-setup uninstall
-agent-project-setup --version
-agent-project-setup --help
+agent-init install
+agent-init update
+agent-init doctor
+agent-init uninstall
+agent-init --version
+agent-init --help
 ```
 
 无参数或未知参数时输出简洁 usage。`--help` 是辅助行为，不扩大产品职责。
@@ -269,9 +269,9 @@ references 是 Progressive Disclosure 的实现，不应在 `SKILL.md` 中重复
 PRD 中的目录是参考而非必须逐文件照搬。v0.1 建议从以下最小布局开始：
 
 ```text
-agent-project-setup/
+agent-init/
 ├── bin/
-│   └── agent-project-setup.js
+│   └── agent-init.js
 ├── src/
 │   ├── cli/
 │   │   ├── run.js
@@ -346,13 +346,13 @@ RuntimeContext
 正式安装布局：
 
 ```text
-~/.agent-project-setup.operation.lock                 # fixed atomic lock entry；健康 idle 状态不存在
-~/.agent-project-setup.operation-<id>.owner.json      # immutable descriptor
-~/.agent-project-setup.operation-<id>.journal.json    # atomically replaced journal
+~/.agent-init.operation.lock                 # fixed atomic lock entry；健康 idle 状态不存在
+~/.agent-init.operation-<id>.owner.json      # immutable descriptor
+~/.agent-init.operation-<id>.journal.json    # atomically replaced journal
 
-~/.agent-project-setup/
+~/.agent-init/
 ├── current/
-│   ├── .agent-project-setup-owner.json
+│   ├── .agent-init-owner.json
 │   └── skills/
 │       └── project-setup/
 │           ├── SKILL.md
@@ -373,7 +373,7 @@ Discovery targets：
 目标默认指向：
 
 ```text
-~/.agent-project-setup/current/skills/project-setup
+~/.agent-init/current/skills/project-setup
 ```
 
 ### 7.1 Staging、journal 与 rollback
@@ -381,8 +381,8 @@ Discovery targets：
 Canonical payload 在 installation root 所在文件系统 staging；每个 managed-copy target 则必须在自身 physical parent 下使用唯一 sibling staging/quarantine，避免跨 filesystem rename 与 `EXDEV` 后退化为 live in-place copy：
 
 ```text
-~/.agent-project-setup/.staging-<operation-id>/
-~/.agent-project-setup/.rollback-<operation-id>/
+~/.agent-init/.staging-<operation-id>/
+~/.agent-init/.rollback-<operation-id>/
 <target-parent>/.project-setup-staging-<operation-id>/
 <target-parent>/.project-setup-rollback-<operation-id>/
 ```
@@ -424,21 +424,21 @@ Journal 至少记录 process ownership evidence、operation id/type、previous/p
 
 ## 8. Installation Manifest
 
-`~/.agent-project-setup/install.json` 是生命周期状态与 ownership evidence，不是配置中心。
+`~/.agent-init/install.json` 是生命周期状态与 ownership evidence，不是配置中心。
 
 建议 schema：
 
 ```json
 {
   "schemaVersion": 1,
-  "package": "@apparux/agent-project-setup",
+  "package": "@apparux/agent-init",
   "version": "0.1.0",
   "installId": "<opaque installation id>",
   "installedAt": "<ISO-8601>",
   "updatedAt": "<ISO-8601>",
   "installRoot": "<absolute path>",
   "canonical": {
-    "root": "<absolute path to ~/.agent-project-setup/current>",
+    "root": "<absolute path to ~/.agent-init/current>",
     "skillPath": "<absolute path to current/skills/project-setup>",
     "digest": "sha256:<payload digest>"
   },
@@ -600,10 +600,10 @@ Remove rollback assets
 | running version 较新 | 允许按安全计划 upgrade |
 | version 相同且 package digest 相同 | 健康则 `Already up to date.`；owned asset 缺失/损坏则 repair |
 | version 相同但 package digest 不同 | integrity conflict，零修改并提示使用明确的新版本发布 |
-| running version 较旧 | 拒绝 downgrade，零修改并提示使用 `npx @apparux/agent-project-setup@latest update` |
+| running version 较旧 | 拒绝 downgrade，零修改并提示使用 `npx @apparux/agent-init@latest update` |
 | version 无法按支持的语义比较 | 停止并报告 manifest/package metadata error |
 
-foreign、ambiguous 或 drifted asset 不更新；update 永远不扫描或修改业务 repository。每个 canonical/target/manifest mutation 前重新验证 plan fingerprint 与 ownership identity；更新失败时根据 durable journal 恢复旧 canonical payload、managed copies 与旧 manifest。v0.1 不提供 force/downgrade 开关。版本比较只发生在 running package 与 installed manifest 之间；CLI 不自行查询 registry，因此 global-install 用户要获取最新 payload，必须使用 PRD 推荐的 `npx @apparux/agent-project-setup@latest update` 或先更新 global package。
+foreign、ambiguous 或 drifted asset 不更新；update 永远不扫描或修改业务 repository。每个 canonical/target/manifest mutation 前重新验证 plan fingerprint 与 ownership identity；更新失败时根据 durable journal 恢复旧 canonical payload、managed copies 与旧 manifest。v0.1 不提供 force/downgrade 开关。版本比较只发生在 running package 与 installed manifest 之间；CLI 不自行查询 registry，因此 global-install 用户要获取最新 payload，必须使用 PRD 推荐的 `npx @apparux/agent-init@latest update` 或先更新 global package。
 
 ### 10.3 Doctor
 
@@ -660,7 +660,7 @@ Validate absence/preservation
 ### 10.5 Version
 
 - 直接读取 package metadata；
-- 输出 `agent-project-setup <version>`；
+- 输出 `agent-init <version>`；
 - 不读取 manifest，不要求已安装；
 - 不维护独立版本常量。
 

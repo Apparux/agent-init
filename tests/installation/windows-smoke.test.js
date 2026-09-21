@@ -18,7 +18,7 @@ import { executeLifecycle } from '../../src/installation/lifecycle.js';
 import { createInstallationFixture } from './helpers.js';
 
 const binPath = fileURLToPath(
-  new URL('../../bin/agent-project-setup.js', import.meta.url),
+  new URL('../../bin/agent-init.js', import.meta.url),
 );
 
 function windowsHomeEnvironment(homeDir) {
@@ -69,7 +69,7 @@ test(
       path.join(packageCopy, 'package.json'),
     );
     const env = windowsHomeEnvironment(homeDir);
-    const packageBin = path.join(packageCopy, 'bin', 'agent-project-setup.js');
+    const packageBin = path.join(packageCopy, 'bin', 'agent-init.js');
 
     function run(command) {
       return spawnSync(process.execPath, [packageBin, command], {
@@ -81,7 +81,7 @@ test(
 
     const installed = run('install');
     assert.equal(installed.status, 0, installed.stderr);
-    const installRoot = path.join(homeDir, '.agent-project-setup');
+    const installRoot = path.join(homeDir, '.agent-init');
     const codexTarget = path.join(homeDir, '.agents', 'skills', 'project-setup');
     const claudeTarget = path.join(homeDir, '.claude', 'skills', 'project-setup');
     assert.equal(await exists(installRoot), true);
@@ -170,7 +170,7 @@ test(
     }
     assert.equal((await executeLifecycle({ operation: 'doctor' }, nextRuntime)).ok, true);
     assert.equal((await executeLifecycle({ operation: 'uninstall' }, nextRuntime)).ok, true);
-    assert.equal(await exists(path.join(runtime.homeDir, '.agent-project-setup')), false);
+    assert.equal(await exists(path.join(runtime.homeDir, '.agent-init')), false);
     for (const record of Object.values(installed.manifest.targets)) {
       assert.equal(await exists(record.path), false);
     }

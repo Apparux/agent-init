@@ -1,8 +1,8 @@
-# 12 — APS-046 — Exercise conflicting, stale, overlapping, and partial evidence
+# 12 — AI-046 — Exercise conflicting, stale, overlapping, and partial evidence
 
 **Status:** ready-for-agent
 **Milestone:** 8 — Evaluation Completion
-**Blocked by:** APS-043 — Trigger threshold gate.
+**Blocked by:** AI-043 — Trigger threshold gate.
 **Dependency rationale:** Milestone 7 must complete first; these fixtures are independent of the transition-fixture slice.
 **PRD requirements:** [PRD.md](../../../PRD.md) §22, §26–27, §42.
 

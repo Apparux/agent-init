@@ -15,7 +15,7 @@ function targetLabel(name) {
 }
 
 export function renderSuccess(result, runtime) {
-  const lines = [`Agent Project Setup ${runtime.packageVersion}`, ''];
+  const lines = [`Agent Init ${runtime.packageVersion}`, ''];
   if (result.operation === 'install') {
     if (result.outcome === 'already-installed') {
       lines.push('Already installed.', '');
@@ -69,7 +69,7 @@ export function renderSuccess(result, runtime) {
 export function renderFailure(result, runtime) {
   if (result.operation === 'doctor' && Array.isArray(result.checks)) {
     const lines = [
-      `Agent Project Setup ${runtime.packageVersion}`,
+      `Agent Init ${runtime.packageVersion}`,
       '',
       'Doctor found problems:',
     ];
@@ -90,7 +90,7 @@ export function renderFailure(result, runtime) {
       ? entries.map((entry) => displayPath(entry, runtime.homeDir)).join(', ')
       : empty;
   return [
-    `Agent Project Setup ${runtime.packageVersion}`,
+    `Agent Init ${runtime.packageVersion}`,
     '',
     `Error [${error.code}]: ${error.message}`,
     `Path: ${displayPath(error.path, runtime.homeDir)}`,

@@ -1,4 +1,4 @@
-# TASKS — Agent Project Setup v0.1
+# TASKS — Agent Init v0.1
 
 **依据：** [PRD.md](PRD.md) 与 [DESIGN.md](DESIGN.md)  
 **状态：** Not Started  
@@ -23,7 +23,7 @@
 - [ ] 任务范围内的测试先失败、后通过；
 - [ ] 实现满足对应 PRD acceptance criteria 与 DESIGN safety invariants；
 - [ ] 错误路径带路径、原因和 remediation，不静默吞异常；
-- [ ] 测试未访问开发者真实 `~/.agents`、`~/.claude` 或 `~/.agent-project-setup`；
+- [ ] 测试未访问开发者真实 `~/.agents`、`~/.claude` 或 `~/.agent-init`；
 - [ ] 每个 lifecycle test 都验证 temporary HOME 中预置的 foreign sentinel 在 success/failure/conflict/race/crash/retry 后保持 content、entry type、link text 与 relevant mode bits 不变；
 - [ ] 没有不相关的文件或依赖变更；
 - [ ] 相关测试与回归测试通过；
@@ -36,46 +36,46 @@
 
 | ID | 任务 | Blocked by | 主要 PRD 验收 |
 |---|---|---|---|
-| APS-001 | 初始化 package 与最小 CLI test seam | — | AC-D01, AC-D07 |
-| APS-002 | 建立隔离测试工具与 temporary HOME | APS-001 | CLI Testing safety |
-| APS-003 | 实现 runtime paths 与 metadata version | APS-001, APS-002 | AC-D02, AC-D03 |
-| APS-004 | 实现 manifest schema 与 deterministic digest | APS-002, APS-003 | ownership foundation |
-| APS-005 | 实现 managed filesystem transaction | APS-002, APS-003 | safe install/update |
-| APS-006 | 实现 target inspection 与 ownership state | APS-004, APS-005 | AC-D11, AC-D12, AC-D13 |
-| APS-007 | 建立 lifecycle planning Interface | APS-004, APS-005, APS-006 | lifecycle consistency |
-| APS-008 | 完成 CLI parsing、output 与 error contract | APS-003, APS-007 | AC-D07 |
-| APS-009 | 实现 install 与 repair | APS-007, APS-008 | AC-D01–AC-D06, AC-D08, AC-D11 |
-| APS-010 | 实现 read-only doctor | APS-006, APS-008, APS-009 | AC-D13 |
-| APS-011 | 实现 ownership-safe uninstall | APS-007, APS-008, APS-009 | AC-D10, AC-D11 |
-| APS-012 | 完成 symlink fallback 与平台差异 | APS-009, APS-010, APS-011 | AC-D12 |
-| APS-013 | 验证 npm tarball distribution lifecycle | APS-009–APS-012, APS-014 | AC-D01–AC-D03, AC-D06–AC-D13（update 除外） |
-| APS-014 | 建立可发现的 mother Skill skeleton | APS-001 | Project Setup packaging foundation |
-| APS-015 | 建立 project fixture/evaluation harness | APS-002, APS-014 | Project Setup Testing Focus |
-| APS-016 | 实现 optional deterministic fact collector | APS-014, APS-015 | Explore optimization |
-| APS-017 | 定义并验证 Preflight 与 Explore | APS-015 | Phase 0–1 |
-| APS-018 | 定义 Project Profile 与 Evidence Ledger | APS-017 | Phase 2, AC-P13 |
-| APS-019 | 实现 knowledge classification behavior | APS-018 | AC-P03–AC-P05, AC-P09 |
-| APS-020 | 实现 Proposal 与 approval gate | APS-018, APS-019 | Proposal/Apply safety |
-| APS-021 | 实现 minimal AGENTS/CLAUDE generation | APS-019, APS-020 | AC-P04–AC-P07, AC-P10–AC-P11 |
-| APS-022 | 实现 scoped Apply 与 Validate | APS-020, APS-021 | AC-P10–AC-P16 |
-| APS-023 | 实现 Skill candidate detection | APS-019, APS-020 | AC-P03, AC-P08–AC-P09 |
-| APS-024 | 实现 project Skill generation 与跨 Agent 共享 | APS-022, APS-023 | AC-P08, AC-P12 |
-| APS-025 | 实现 CLI update 与 rollback | APS-007–APS-013 | AC-D07, AC-D09 |
-| APS-026 | 验证 existing configuration preservation | APS-022, APS-024 | AC-P10–AC-P12 |
-| APS-027 | 实现 reconcile 与 idempotency | APS-022, APS-024, APS-026 | AC-P18 |
-| APS-028 | 完成 core repository fixture matrix | APS-027 | AC-P01–AC-P16, AC-P18 |
-| APS-029 | 实现 deterministic guardrail recommendations | APS-020, APS-028 | AC-P15–AC-P16 |
-| APS-030 | 评估 architecture guidance 并验证限制 | APS-020, APS-028 | AC-P17 |
-| APS-031 | 完成 package docs 与 files 清单 | APS-025, APS-028, APS-029 | distribution readiness |
-| APS-032 | 建立跨平台自动化与 smoke validation | APS-025 | platform support |
-| APS-033 | 执行 v0.1 acceptance 与 release dry run | APS-025, APS-028–APS-032 | AC-D01–13, AC-P01–18 |
-| APS-034 | 完成发布前决策、发布 v0.1 并验证 registry 安装 | APS-033 | Definition of Done |
+| AI-001 | 初始化 package 与最小 CLI test seam | — | AC-D01, AC-D07 |
+| AI-002 | 建立隔离测试工具与 temporary HOME | AI-001 | CLI Testing safety |
+| AI-003 | 实现 runtime paths 与 metadata version | AI-001, AI-002 | AC-D02, AC-D03 |
+| AI-004 | 实现 manifest schema 与 deterministic digest | AI-002, AI-003 | ownership foundation |
+| AI-005 | 实现 managed filesystem transaction | AI-002, AI-003 | safe install/update |
+| AI-006 | 实现 target inspection 与 ownership state | AI-004, AI-005 | AC-D11, AC-D12, AC-D13 |
+| AI-007 | 建立 lifecycle planning Interface | AI-004, AI-005, AI-006 | lifecycle consistency |
+| AI-008 | 完成 CLI parsing、output 与 error contract | AI-003, AI-007 | AC-D07 |
+| AI-009 | 实现 install 与 repair | AI-007, AI-008 | AC-D01–AC-D06, AC-D08, AC-D11 |
+| AI-010 | 实现 read-only doctor | AI-006, AI-008, AI-009 | AC-D13 |
+| AI-011 | 实现 ownership-safe uninstall | AI-007, AI-008, AI-009 | AC-D10, AC-D11 |
+| AI-012 | 完成 symlink fallback 与平台差异 | AI-009, AI-010, AI-011 | AC-D12 |
+| AI-013 | 验证 npm tarball distribution lifecycle | AI-009–AI-012, AI-014 | AC-D01–AC-D03, AC-D06–AC-D13（update 除外） |
+| AI-014 | 建立可发现的 mother Skill skeleton | AI-001 | Project Setup packaging foundation |
+| AI-015 | 建立 project fixture/evaluation harness | AI-002, AI-014 | Project Setup Testing Focus |
+| AI-016 | 实现 optional deterministic fact collector | AI-014, AI-015 | Explore optimization |
+| AI-017 | 定义并验证 Preflight 与 Explore | AI-015 | Phase 0–1 |
+| AI-018 | 定义 Project Profile 与 Evidence Ledger | AI-017 | Phase 2, AC-P13 |
+| AI-019 | 实现 knowledge classification behavior | AI-018 | AC-P03–AC-P05, AC-P09 |
+| AI-020 | 实现 Proposal 与 approval gate | AI-018, AI-019 | Proposal/Apply safety |
+| AI-021 | 实现 minimal AGENTS/CLAUDE generation | AI-019, AI-020 | AC-P04–AC-P07, AC-P10–AC-P11 |
+| AI-022 | 实现 scoped Apply 与 Validate | AI-020, AI-021 | AC-P10–AC-P16 |
+| AI-023 | 实现 Skill candidate detection | AI-019, AI-020 | AC-P03, AC-P08–AC-P09 |
+| AI-024 | 实现 project Skill generation 与跨 Agent 共享 | AI-022, AI-023 | AC-P08, AC-P12 |
+| AI-025 | 实现 CLI update 与 rollback | AI-007–AI-013 | AC-D07, AC-D09 |
+| AI-026 | 验证 existing configuration preservation | AI-022, AI-024 | AC-P10–AC-P12 |
+| AI-027 | 实现 reconcile 与 idempotency | AI-022, AI-024, AI-026 | AC-P18 |
+| AI-028 | 完成 core repository fixture matrix | AI-027 | AC-P01–AC-P16, AC-P18 |
+| AI-029 | 实现 deterministic guardrail recommendations | AI-020, AI-028 | AC-P15–AC-P16 |
+| AI-030 | 评估 architecture guidance 并验证限制 | AI-020, AI-028 | AC-P17 |
+| AI-031 | 完成 package docs 与 files 清单 | AI-025, AI-028, AI-029 | distribution readiness |
+| AI-032 | 建立跨平台自动化与 smoke validation | AI-025 | platform support |
+| AI-033 | 执行 v0.1 acceptance 与 release dry run | AI-025, AI-028–AI-032 | AC-D01–13, AC-P01–18 |
+| AI-034 | 完成发布前决策、发布 v0.1 并验证 registry 安装 | AI-033 | Definition of Done |
 
 ---
 
 # Milestone 1 — Distribution Foundation
 
-## APS-001 — 初始化 package 与最小 CLI test seam
+## AI-001 — 初始化 package 与最小 CLI test seam
 
 **Blocked by:** —
 
@@ -86,8 +86,8 @@
 **实施清单**
 
 - [ ] 先写 smoke test，证明 package bin 能由 Node 启动并返回受控结果；
-- [ ] 创建 package metadata，名称为 `@apparux/agent-project-setup`，版本为 `0.1.0`；
-- [ ] 声明 `agent-project-setup` bin 与 Node.js 18+ requirement；
+- [ ] 创建 package metadata，名称为 `@apparux/agent-init`，版本为 `0.1.0`；
+- [ ] 声明 `agent-init` bin 与 Node.js 18+ requirement；
 - [ ] 建立带 shebang 的极薄 bin entry；
 - [ ] 建立 `runCli(argv, runtime)` seam，但不在入口复制命令逻辑；
 - [ ] 配置 Node 内置 test runner；除非出现已记录的充分理由，不增加 runtime dependency；
@@ -104,9 +104,9 @@
 
 ---
 
-## APS-002 — 建立隔离测试工具与 temporary HOME
+## AI-002 — 建立隔离测试工具与 temporary HOME
 
-**Blocked by:** APS-001
+**Blocked by:** AI-001
 
 **目标**
 
@@ -134,9 +134,9 @@
 
 ---
 
-## APS-003 — 实现 runtime paths 与 metadata version
+## AI-003 — 实现 runtime paths 与 metadata version
 
-**Blocked by:** APS-001, APS-002
+**Blocked by:** AI-001, AI-002
 
 **目标**
 
@@ -157,7 +157,7 @@
 
 **完成验证**
 
-- 输出严格为 `agent-project-setup <package version>`；
+- 输出严格为 `agent-init <package version>`；
 - changing cwd 不改变 source/installation path resolution；
 - 没有第二份 version constant；
 - 不依赖 npm 临时执行路径作为持久 target。
@@ -166,9 +166,9 @@
 
 ---
 
-## APS-004 — 实现 manifest schema 与 deterministic digest
+## AI-004 — 实现 manifest schema 与 deterministic digest
 
-**Blocked by:** APS-002, APS-003
+**Blocked by:** AI-002, AI-003
 
 **目标**
 
@@ -197,9 +197,9 @@
 
 ---
 
-## APS-005 — 实现 managed filesystem transaction
+## AI-005 — 实现 managed filesystem transaction
 
-**Blocked by:** APS-002, APS-003
+**Blocked by:** AI-002, AI-003
 
 **目标**
 
@@ -236,9 +236,9 @@
 
 ---
 
-## APS-006 — 实现 target inspection 与 ownership state
+## AI-006 — 实现 target inspection 与 ownership state
 
-**Blocked by:** APS-004, APS-005
+**Blocked by:** AI-004, AI-005
 
 **目标**
 
@@ -267,9 +267,9 @@
 
 ---
 
-## APS-007 — 建立 lifecycle planning Interface
+## AI-007 — 建立 lifecycle planning Interface
 
-**Blocked by:** APS-004, APS-005, APS-006
+**Blocked by:** AI-004, AI-005, AI-006
 
 **目标**
 
@@ -299,9 +299,9 @@
 
 ---
 
-## APS-008 — 完成 CLI parsing、output 与 error contract
+## AI-008 — 完成 CLI parsing、output 与 error contract
 
-**Blocked by:** APS-003, APS-007
+**Blocked by:** AI-003, AI-007
 
 **目标**
 
@@ -328,9 +328,9 @@
 
 ---
 
-## APS-009 — 实现 install 与 repair
+## AI-009 — 实现 install 与 repair
 
-**Blocked by:** APS-007, APS-008
+**Blocked by:** AI-007, AI-008
 
 **目标**
 
@@ -362,9 +362,9 @@
 
 ---
 
-## APS-010 — 实现 read-only doctor
+## AI-010 — 实现 read-only doctor
 
-**Blocked by:** APS-006, APS-008, APS-009
+**Blocked by:** AI-006, AI-008, AI-009
 
 **目标**
 
@@ -392,9 +392,9 @@
 
 ---
 
-## APS-011 — 实现 ownership-safe uninstall
+## AI-011 — 实现 ownership-safe uninstall
 
-**Blocked by:** APS-007, APS-008, APS-009
+**Blocked by:** AI-007, AI-008, AI-009
 
 **目标**
 
@@ -425,9 +425,9 @@
 
 ---
 
-## APS-012 — 完成 symlink fallback 与平台差异
+## AI-012 — 完成 symlink fallback 与平台差异
 
-**Blocked by:** APS-009, APS-010, APS-011
+**Blocked by:** AI-009, AI-010, AI-011
 
 **目标**
 
@@ -456,9 +456,9 @@
 
 ---
 
-## APS-013 — 验证 npm tarball distribution lifecycle
+## AI-013 — 验证 npm tarball distribution lifecycle
 
-**Blocked by:** APS-009, APS-010, APS-011, APS-012, APS-014
+**Blocked by:** AI-009, AI-010, AI-011, AI-012, AI-014
 
 **目标**
 
@@ -487,13 +487,13 @@
 
 # Milestone 2 — Core Project Setup
 
-## APS-014 — 建立可发现的 mother Skill skeleton
+## AI-014 — 建立可发现的 mother Skill skeleton
 
-**Blocked by:** APS-001
+**Blocked by:** AI-001
 
 **目标**
 
-先建立可由 package 分发、符合共享 discovery metadata contract 的 `project-setup` skeleton；APS-015 建立 evaluation harness 与失败 behavioral evaluations，具体行为由 APS-017–APS-027 各自按 TDD 实现。
+先建立可由 package 分发、符合共享 discovery metadata contract 的 `project-setup` skeleton；AI-015 建立 evaluation harness 与失败 behavioral evaluations，具体行为由 AI-017–AI-027 各自按 TDD 实现。
 
 **实施清单**
 
@@ -517,9 +517,9 @@
 
 ---
 
-## APS-015 — 建立 project fixture/evaluation harness
+## AI-015 — 建立 project fixture/evaluation harness
 
-**Blocked by:** APS-002, APS-014
+**Blocked by:** AI-002, AI-014
 
 **目标**
 
@@ -533,7 +533,7 @@
 - [ ] 建立 `03-node-pnpm`；
 - [ ] 建立 `04-python`；
 - [ ] 定义如何在 Claude Code 与 Codex 中启动 fresh session、注入/拒绝 approval、观察 writes 与保存人工/自动验收 evidence；
-- [ ] 建立由 APS-017–APS-027 分别负责启用的 pending behavioral evaluation contracts（phase orchestration、Progressive Disclosure、approval/scope、Unknown、preservation、reconcile separation）；本任务只让 harness self-tests 通过，不把尚未实现的 contract 混入 green suite，也不提前实现产品行为；后续 owner task 必须先启用对应 contract 得到 red，再做最小实现转绿；
+- [ ] 建立由 AI-017–AI-027 分别负责启用的 pending behavioral evaluation contracts（phase orchestration、Progressive Disclosure、approval/scope、Unknown、preservation、reconcile separation）；本任务只让 harness self-tests 通过，不把尚未实现的 contract 混入 green suite，也不提前实现产品行为；后续 owner task 必须先启用对应 contract 得到 red，再做最小实现转绿；
 - [ ] 为 proposal-before-write、scope 与 preservation 建立自动检查；
 - [ ] 不要求生成文本逐字一致；
 - [ ] 确保 fixtures 最小但含足够交叉 evidence。
@@ -548,9 +548,9 @@
 
 ---
 
-## APS-016 — 实现 optional deterministic fact collector
+## AI-016 — 实现 optional deterministic fact collector
 
-**Blocked by:** APS-014, APS-015
+**Blocked by:** AI-014, AI-015
 
 **目标**
 
@@ -579,9 +579,9 @@
 
 ---
 
-## APS-017 — 定义并验证 Preflight 与 Explore
+## AI-017 — 定义并验证 Preflight 与 Explore
 
-**Blocked by:** APS-015
+**Blocked by:** AI-015
 
 **目标**
 
@@ -609,9 +609,9 @@
 
 ---
 
-## APS-018 — 定义 Project Profile 与 Evidence Ledger
+## AI-018 — 定义 Project Profile 与 Evidence Ledger
 
-**Blocked by:** APS-017
+**Blocked by:** AI-017
 
 **目标**
 
@@ -638,9 +638,9 @@
 
 ---
 
-## APS-019 — 实现 knowledge classification behavior
+## AI-019 — 实现 knowledge classification behavior
 
-**Blocked by:** APS-018
+**Blocked by:** AI-018
 
 **目标**
 
@@ -668,9 +668,9 @@
 
 ---
 
-## APS-020 — 实现 Proposal 与 approval gate
+## AI-020 — 实现 Proposal 与 approval gate
 
-**Blocked by:** APS-018, APS-019
+**Blocked by:** AI-018, AI-019
 
 **目标**
 
@@ -701,9 +701,9 @@
 
 ---
 
-## APS-021 — 实现 minimal AGENTS/CLAUDE generation
+## AI-021 — 实现 minimal AGENTS/CLAUDE generation
 
-**Blocked by:** APS-019, APS-020
+**Blocked by:** AI-019, AI-020
 
 **目标**
 
@@ -731,9 +731,9 @@
 
 ---
 
-## APS-022 — 实现 scoped Apply 与 Validate
+## AI-022 — 实现 scoped Apply 与 Validate
 
-**Blocked by:** APS-020, APS-021
+**Blocked by:** AI-020, AI-021
 
 **目标**
 
@@ -766,9 +766,9 @@
 
 # Milestone 3 — Project Skills
 
-## APS-023 — 实现 Skill candidate detection
+## AI-023 — 实现 Skill candidate detection
 
-**Blocked by:** APS-019, APS-020
+**Blocked by:** AI-019, AI-020
 
 **目标**
 
@@ -794,9 +794,9 @@
 
 ---
 
-## APS-024 — 实现 project Skill generation 与跨 Agent 共享
+## AI-024 — 实现 project Skill generation 与跨 Agent 共享
 
-**Blocked by:** APS-022, APS-023
+**Blocked by:** AI-022, AI-023
 
 **目标**
 
@@ -827,9 +827,9 @@
 
 # Milestone 4 — Maintenance
 
-## APS-025 — 实现 CLI update 与 rollback
+## AI-025 — 实现 CLI update 与 rollback
 
-**Blocked by:** APS-007, APS-008, APS-009, APS-010, APS-011, APS-012, APS-013
+**Blocked by:** AI-007, AI-008, AI-009, AI-010, AI-011, AI-012, AI-013
 
 **目标**
 
@@ -859,9 +859,9 @@
 
 ---
 
-## APS-026 — 验证 existing configuration preservation
+## AI-026 — 验证 existing configuration preservation
 
-**Blocked by:** APS-022, APS-024
+**Blocked by:** AI-022, AI-024
 
 **目标**
 
@@ -891,9 +891,9 @@
 
 ---
 
-## APS-027 — 实现 reconcile 与 idempotency
+## AI-027 — 实现 reconcile 与 idempotency
 
-**Blocked by:** APS-022, APS-024, APS-026
+**Blocked by:** AI-022, AI-024, AI-026
 
 **目标**
 
@@ -921,13 +921,13 @@
 
 ---
 
-## APS-028 — 完成 core repository fixture matrix
+## AI-028 — 完成 core repository fixture matrix
 
-**Blocked by:** APS-027
+**Blocked by:** AI-027
 
 **目标**
 
-覆盖 PRD 要求的十类 repository，并完成 APS-027 之前已经实现的 core Project Setup behavior matrix；specialized guardrail/architecture coverage 由 APS-029/030 追加，完整 AC-P01–P18 签核留到 APS-033。
+覆盖 PRD 要求的十类 repository，并完成 AI-027 之前已经实现的 core Project Setup behavior matrix；specialized guardrail/architecture coverage 由 AI-029/030 追加，完整 AC-P01–P18 签核留到 AI-033。
 
 **实施清单**
 
@@ -938,7 +938,7 @@
 - [ ] 每个 fixture 验证 proposal-before-write；
 - [ ] 每个 approved fixture 验证 forbidden paths untouched；
 - [ ] 每个 fixture 验证 second-run idempotency；
-- [ ] 建立 AC-P01–AC-P16、AC-P18 的 core traceability report，并为 AC-P17 预留 APS-030 记录；
+- [ ] 建立 AC-P01–AC-P16、AC-P18 的 core traceability report，并为 AC-P17 预留 AI-030 记录；
 - [ ] 记录不能可靠自动化的验收及人工验证步骤。
 
 **完成验证**
@@ -953,9 +953,9 @@
 
 # Milestone 5 — Guardrails and Architecture Guidance
 
-## APS-029 — 实现 deterministic guardrail recommendations
+## AI-029 — 实现 deterministic guardrail recommendations
 
-**Blocked by:** APS-020, APS-028
+**Blocked by:** AI-020, AI-028
 
 **目标**
 
@@ -981,9 +981,9 @@
 
 ---
 
-## APS-030 — 评估 architecture guidance 并验证限制
+## AI-030 — 评估 architecture guidance 并验证限制
 
-**Blocked by:** APS-020, APS-028
+**Blocked by:** AI-020, AI-028
 
 **目标**
 
@@ -1013,9 +1013,9 @@
 
 # Release Preparation
 
-## APS-031 — 完成 package docs 与 files 清单
+## AI-031 — 完成 package docs 与 files 清单
 
-**Blocked by:** APS-025, APS-028, APS-029
+**Blocked by:** AI-025, AI-028, AI-029
 
 **目标**
 
@@ -1024,7 +1024,7 @@
 **实施清单**
 
 - [ ] 编写 README，默认优先推荐 `npx`；
-- [ ] 文档化 install/update/doctor/uninstall/version；明确 `Already up to date` 表示相对当前 running package，并要求 global-install 用户用 `npx @apparux/agent-project-setup@latest update`（或先更新 global package）获取最新 payload；
+- [ ] 文档化 install/update/doctor/uninstall/version；明确 `Already up to date` 表示相对当前 running package，并要求 global-install 用户用 `npx @apparux/agent-init@latest update`（或先更新 global package）获取最新 payload；
 - [ ] 文档化 Claude `/project-setup` 与 Codex `$project-setup`；
 - [ ] 解释 tool update 与 project reconcile 的区别；
 - [ ] 说明 stable directory、symlink fallback、platform support 与 ownership protection；
@@ -1038,15 +1038,15 @@
 - README 示例与实际 CLI output/behavior 一致；
 - 未声明超出 v0.1 的能力；
 - package 无开发时文件或本机路径；
-- license 未确认不阻塞本任务或内部测试，但明确阻塞 APS-034。
+- license 未确认不阻塞本任务或内部测试，但明确阻塞 AI-034。
 
 **PRD Trace:** npm Package、CLI UX、Platform Support、Repository Structure、Definition of Done。
 
 ---
 
-## APS-032 — 建立跨平台自动化与 smoke validation
+## AI-032 — 建立跨平台自动化与 smoke validation
 
-**Blocked by:** APS-025
+**Blocked by:** AI-025
 
 **目标**
 
@@ -1074,9 +1074,9 @@
 
 ---
 
-## APS-033 — 执行 v0.1 acceptance 与 release dry run
+## AI-033 — 执行 v0.1 acceptance 与 release dry run
 
-**Blocked by:** APS-025, APS-028, APS-029, APS-030, APS-031, APS-032
+**Blocked by:** AI-025, AI-028, AI-029, AI-030, AI-031, AI-032
 
 **目标**
 
@@ -1111,9 +1111,9 @@
 
 ---
 
-## APS-034 — 完成发布前决策、发布 v0.1 并验证 registry 安装
+## AI-034 — 完成发布前决策、发布 v0.1 并验证 registry 安装
 
-**Blocked by:** APS-033
+**Blocked by:** AI-033
 
 **目标**
 
@@ -1125,7 +1125,7 @@
 - [ ] 确认 package name availability 与 release metadata；
 - [ ] 确认 Git/worktree clean state、tag/commit policy 与 rollback/deprecation plan；
 - [ ] 执行最终 `npm pack --dry-run` 和 test suite；
-- [ ] 发布 `@apparux/agent-project-setup@0.1.0`；
+- [ ] 发布 `@apparux/agent-init@0.1.0`；
 - [ ] 从 registry 使用全新 temporary HOME 执行 `npx ... install`；
 - [ ] 从 registry artifact 使用 temporary HOME 验证 mother Skill metadata、两个 discovery target、repository-plane entry 与 canonical version/content 一致，不要求登录或启动 live Harness；
 - [ ] 运行 doctor、version 与 uninstall；
@@ -1149,42 +1149,42 @@
 
 | PRD AC | 主要任务 |
 |---|---|
-| AC-D01 | APS-001, APS-009, APS-013, APS-034 |
-| AC-D02 | APS-003, APS-009 |
-| AC-D03 | APS-003, APS-013 |
-| AC-D04 | APS-014, APS-033, APS-034 |
-| AC-D05 | APS-014, APS-033, APS-034 |
-| AC-D06 | APS-006, APS-009, APS-012 |
-| AC-D07 | APS-008, APS-009–APS-011, APS-025 |
-| AC-D08 | APS-009 |
-| AC-D09 | APS-025 |
-| AC-D10 | APS-011, APS-033 |
-| AC-D11 | APS-006, APS-009, APS-011 |
-| AC-D12 | APS-006, APS-012 |
-| AC-D13 | APS-010 |
+| AC-D01 | AI-001, AI-009, AI-013, AI-034 |
+| AC-D02 | AI-003, AI-009 |
+| AC-D03 | AI-003, AI-013 |
+| AC-D04 | AI-014, AI-033, AI-034 |
+| AC-D05 | AI-014, AI-033, AI-034 |
+| AC-D06 | AI-006, AI-009, AI-012 |
+| AC-D07 | AI-008, AI-009–AI-011, AI-025 |
+| AC-D08 | AI-009 |
+| AC-D09 | AI-025 |
+| AC-D10 | AI-011, AI-033 |
+| AC-D11 | AI-006, AI-009, AI-011 |
+| AC-D12 | AI-006, AI-012 |
+| AC-D13 | AI-010 |
 
 ### Project Setup
 
 | PRD AC | 主要任务 |
 |---|---|
-| AC-P01 | APS-015–APS-019, APS-028 |
-| AC-P02 | APS-015–APS-019, APS-028 |
-| AC-P03 | APS-019, APS-023 |
-| AC-P04 | APS-019, APS-021 |
-| AC-P05 | APS-019, APS-021 |
-| AC-P06 | APS-021, APS-024 |
-| AC-P07 | APS-021 |
-| AC-P08 | APS-023, APS-024 |
-| AC-P09 | APS-018, APS-019, APS-023 |
-| AC-P10 | APS-021, APS-022, APS-026 |
-| AC-P11 | APS-021, APS-022, APS-026 |
-| AC-P12 | APS-024, APS-026 |
-| AC-P13 | APS-018, APS-019 |
-| AC-P14 | APS-022, APS-028 |
-| AC-P15 | APS-022, APS-029 |
-| AC-P16 | APS-022, APS-029 |
-| AC-P17 | APS-030 |
-| AC-P18 | APS-027, APS-028 |
+| AC-P01 | AI-015–AI-019, AI-028 |
+| AC-P02 | AI-015–AI-019, AI-028 |
+| AC-P03 | AI-019, AI-023 |
+| AC-P04 | AI-019, AI-021 |
+| AC-P05 | AI-019, AI-021 |
+| AC-P06 | AI-021, AI-024 |
+| AC-P07 | AI-021 |
+| AC-P08 | AI-023, AI-024 |
+| AC-P09 | AI-018, AI-019, AI-023 |
+| AC-P10 | AI-021, AI-022, AI-026 |
+| AC-P11 | AI-021, AI-022, AI-026 |
+| AC-P12 | AI-024, AI-026 |
+| AC-P13 | AI-018, AI-019 |
+| AC-P14 | AI-022, AI-028 |
+| AC-P15 | AI-022, AI-029 |
+| AC-P16 | AI-022, AI-029 |
+| AC-P17 | AI-030 |
+| AC-P18 | AI-027, AI-028 |
 
 ---
 
@@ -1198,4 +1198,4 @@
 - [ ] CI provider 与允许修改的 workflow scope；
 - [ ] Windows Native 的最低承诺级别是否在 v0.1 发布说明中进一步收窄。
 
-这些 Unknown 不应被默认值偷偷替代。其中 license 与 registry access 只阻塞 APS-034；其余事项应在对应任务开始前解决或记录为明确限制。
+这些 Unknown 不应被默认值偷偷替代。其中 license 与 registry access 只阻塞 AI-034；其余事项应在对应任务开始前解决或记录为明确限制。

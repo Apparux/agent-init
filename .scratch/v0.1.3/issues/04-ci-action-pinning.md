@@ -1,4 +1,4 @@
-# 04 — APS-038 — Apply immutable Action pinning consistently
+# 04 — AI-038 — Apply immutable Action pinning consistently
 
 **Status:** ready-for-agent
 **Milestone:** 6 — Known Gap Closure

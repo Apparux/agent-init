@@ -166,7 +166,7 @@ export async function resolveInstallationPaths(homeDir) {
     );
   }
 
-  const installRoot = path.join(homeDir, '.agent-project-setup');
+  const installRoot = path.join(homeDir, '.agent-init');
   const canonicalRoot = path.join(installRoot, 'current');
   const canonicalSkill = path.join(canonicalRoot, 'skills', 'project-setup');
   const paths = {
@@ -176,7 +176,7 @@ export async function resolveInstallationPaths(homeDir) {
     canonicalRoot,
     canonicalSkill,
     manifest: path.join(installRoot, 'install.json'),
-    canonicalMarker: path.join(canonicalRoot, '.agent-project-setup-owner.json'),
+    canonicalMarker: path.join(canonicalRoot, '.agent-init-owner.json'),
     targets: {
       codex: path.join(homeDir, '.agents', 'skills', 'project-setup'),
       claude: path.join(homeDir, '.claude', 'skills', 'project-setup'),
@@ -185,7 +185,7 @@ export async function resolveInstallationPaths(homeDir) {
       codex: path.join(homeDir, '.agents', 'skills'),
       claude: path.join(homeDir, '.claude', 'skills'),
     },
-    lock: path.join(homeDir, '.agent-project-setup.operation.lock'),
+    lock: path.join(homeDir, '.agent-init.operation.lock'),
   };
 
   for (const candidate of [

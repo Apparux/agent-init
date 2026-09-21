@@ -3951,7 +3951,7 @@ async function executeInternal(request, runtime) {
         `Running version ${runtime.packageVersion} is older than installed version ${initial.manifest.version}.`,
         {
           path: paths.manifest,
-          remediation: 'Use npx @apparux/agent-project-setup@latest update or another package newer than the installed version.',
+          remediation: 'Use npx @apparux/agent-init@latest update or another package newer than the installed version.',
         },
       );
     }

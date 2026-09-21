@@ -29,7 +29,7 @@ async function assertManagedCopyFallback(runtime, sentinels) {
     assert.equal(record.mode, 'copy');
     assert.equal((await lstat(record.path)).isDirectory(), true);
     const marker = JSON.parse(
-      await readFile(path.join(record.path, '.agent-project-setup-owner.json'), 'utf8'),
+      await readFile(path.join(record.path, '.agent-init-owner.json'), 'utf8'),
     );
     assert.equal(marker.installId, installed.manifest.installId);
     assert.equal(marker.targetId, record.targetId);

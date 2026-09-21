@@ -136,7 +136,7 @@ test('in-process update failure restores the previous healthy installation', asy
   assert.equal(result.ok, false);
   assert.equal(result.error.code, 'UNEXPECTED_ERROR');
   const manifest = JSON.parse(
-    await readFile(path.join(homeDir, '.agent-project-setup', 'install.json'), 'utf8'),
+    await readFile(path.join(homeDir, '.agent-init', 'install.json'), 'utf8'),
   );
   assert.equal(manifest.version, '0.1.0');
   assert.equal(
@@ -196,7 +196,7 @@ test('validated staging failure cleans only operation-owned staging and keeps ol
     beforeSkill,
   );
   assert.equal(
-    (await readdir(path.join(homeDir, '.agent-project-setup'))).some((name) =>
+    (await readdir(path.join(homeDir, '.agent-init'))).some((name) =>
       name.startsWith('.staging-'),
     ),
     false,
@@ -243,7 +243,7 @@ test('post-commit cleanup failure remains recoverable and reports committed chan
   assert.equal(result.error.changed.includes(installed.paths.manifest), true);
   assert.equal(
     result.error.unresolved.some((entry) =>
-      entry.endsWith('.agent-project-setup.operation.lock'),
+      entry.endsWith('.agent-init.operation.lock'),
     ),
     true,
   );
@@ -276,7 +276,7 @@ test('post-commit cleanup failure remains recoverable and reports committed chan
     false,
   );
   assert.deepEqual(
-    (await readdir(path.join(homeDir, '.agent-project-setup'))).sort(),
+    (await readdir(path.join(homeDir, '.agent-init'))).sort(),
     ['current', 'install.json'],
   );
   await assertSentinelsUnchanged(sentinels);

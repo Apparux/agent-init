@@ -1,4 +1,4 @@
-# 01 — APS-035 — Generate and verify approved Skill routing metadata
+# 01 — AI-035 — Generate and verify approved Skill routing metadata
 
 **Status:** ready-for-agent
 **Milestone:** 6 — Known Gap Closure

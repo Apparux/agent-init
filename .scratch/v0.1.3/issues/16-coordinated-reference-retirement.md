@@ -1,8 +1,8 @@
-# 16 — APS-050 — Update Agent-plane references and retire in one approved Proposal
+# 16 — AI-050 — Update Agent-plane references and retire in one approved Proposal
 
 **Status:** ready-for-agent
 **Milestone:** 9 — Safe Pruning
-**Blocked by:** APS-049 — Skill bundle retirement.
+**Blocked by:** AI-049 — Skill bundle retirement.
 **PRD requirements:** [PRD.md](../../../PRD.md) §28–30, §32.
 
 **What to build:** A referenced obsolete Agent asset can be retired only when its incoming Agent-plane references are also safely updated within the same exact approved Proposal.

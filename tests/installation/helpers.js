@@ -2,7 +2,7 @@ import { lstat, mkdir, mkdtemp, readFile, readdir, readlink, rm, writeFile } fro
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-export const PACKAGE_NAME = '@apparux/agent-project-setup';
+export const PACKAGE_NAME = '@apparux/agent-init';
 
 export async function createInstallationFixture(t, options = {}) {
   const disposableRoot = await mkdtemp(path.join(tmpdir(), 'aps-installation-'));

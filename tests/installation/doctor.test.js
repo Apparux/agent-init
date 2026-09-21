@@ -51,7 +51,7 @@ test('doctor reports orphan control files and lifecycle residue without mutation
   const operationId = 'ab'.repeat(16);
   const orphanDescriptor = path.join(
     homeDir,
-    `.agent-project-setup.operation-${operationId}.owner.json`,
+    `.agent-init.operation-${operationId}.owner.json`,
   );
   const rollback = path.join(
     installed.paths.installRoot,

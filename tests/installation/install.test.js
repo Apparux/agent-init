@@ -30,7 +30,7 @@ test('fresh install materializes one canonical skill and two managed targets', a
   assert.equal(result.outcome, 'installed');
   const canonicalSkill = path.join(
     homeDir,
-    '.agent-project-setup',
+    '.agent-init',
     'current',
     'skills',
     'project-setup',
@@ -38,12 +38,12 @@ test('fresh install materializes one canonical skill and two managed targets', a
   assert.match(await readFile(path.join(canonicalSkill, 'SKILL.md'), 'utf8'), /name: project-setup/);
 
   const manifest = JSON.parse(
-    await readFile(path.join(homeDir, '.agent-project-setup', 'install.json'), 'utf8'),
+    await readFile(path.join(homeDir, '.agent-init', 'install.json'), 'utf8'),
   );
   assert.equal(manifest.schemaVersion, 1);
   assert.equal(manifest.package, PACKAGE_NAME);
   assert.equal(manifest.version, '0.1.0');
-  assert.equal(manifest.installRoot, path.join(homeDir, '.agent-project-setup'));
+  assert.equal(manifest.installRoot, path.join(homeDir, '.agent-init'));
   assert.equal(manifest.canonical.skillPath, canonicalSkill);
   assert.match(manifest.canonical.digest, /^sha256:[a-f0-9]{64}$/);
   assert.match(manifest.installId, /^[a-f0-9]{32}$/);
@@ -66,7 +66,7 @@ test('absolute junction-style link text is accepted when it resolves to the cano
     await symlink(
       path.join(
         runtime.homeDir,
-        '.agent-project-setup',
+        '.agent-init',
         'current',
         'skills',
         'project-setup',
@@ -97,7 +97,7 @@ test('rejects a lexically canonical link that physically resolves to a foreign t
   const foreignMount = path.join(foreignRoot, 'mounted');
   const foreignSkill = path.join(
     foreignRoot,
-    '.agent-project-setup',
+    '.agent-init',
     'current',
     'skills',
     'project-setup',
@@ -114,7 +114,7 @@ test('rejects a lexically canonical link that physically resolves to a foreign t
     '..',
     'link-alias-parent',
     '..',
-    '.agent-project-setup',
+    '.agent-init',
     'current',
     'skills',
     'project-setup',
@@ -140,7 +140,7 @@ test('rejects a mutable alias even when it currently resolves to the canonical s
   const { runtime, sentinels } = await createInstallationFixture(t);
   const canonicalSkill = path.join(
     runtime.homeDir,
-    '.agent-project-setup',
+    '.agent-init',
     'current',
     'skills',
     'project-setup',
@@ -193,7 +193,7 @@ test('schema-1 manifests without linkText remain readable and safely removable',
   const installed = await executeLifecycle({ operation: 'install' }, runtime);
   assert.equal(installed.ok, true);
 
-  const manifestPath = path.join(homeDir, '.agent-project-setup', 'install.json');
+  const manifestPath = path.join(homeDir, '.agent-init', 'install.json');
   const legacyManifest = JSON.parse(await readFile(manifestPath, 'utf8'));
   for (const target of Object.values(legacyManifest.targets)) delete target.linkText;
   await writeFile(manifestPath, `${JSON.stringify(legacyManifest, null, 2)}\n`);
@@ -206,7 +206,7 @@ test('schema-1 manifests without linkText remain readable and safely removable',
   assert.deepEqual(uninstalled.preserved, []);
   assert.deepEqual(uninstalled.unresolved, []);
   await assert.rejects(
-    () => lstat(path.join(homeDir, '.agent-project-setup')),
+    () => lstat(path.join(homeDir, '.agent-init')),
     { code: 'ENOENT' },
   );
   for (const name of ['codex', 'claude']) {
@@ -253,7 +253,7 @@ test('repeat install repairs only a missing owned target', async (t) => {
     await realpath(installed.manifest.canonical.skillPath),
   );
   const manifest = JSON.parse(
-    await readFile(path.join(homeDir, '.agent-project-setup', 'install.json'), 'utf8'),
+    await readFile(path.join(homeDir, '.agent-init', 'install.json'), 'utf8'),
   );
   assert.notEqual(manifest.targets.codex.entryIdentity, installed.manifest.targets.codex.entryIdentity);
   assert.equal(manifest.targets.claude.entryIdentity, installed.manifest.targets.claude.entryIdentity);

@@ -1,15 +1,15 @@
-# 22 — APS-056 — Detect unnecessary context and Skill discovery duplication
+# 22 — AI-056 — Detect unnecessary context and Skill discovery duplication
 
 **Status:** ready-for-agent
 **Milestone:** 10 — Qualification
-**Blocked by:** APS-055 — Context architecture contract.
+**Blocked by:** AI-055 — Context architecture contract.
 **PRD requirements:** [PRD.md](../../../PRD.md) §35, §21.
 
 **What to build:** Cross-layer duplication is rejected without confusing legitimate pointers, shared names, or canonical discovery references with copied knowledge.
 
 ## Scope and implementation boundaries
 
-Extend the existing duplicate-rule/canonical-sharing evaluator using the evidence and placement contract completed by APS-055. Reuse overlap/conflict fixtures and filesystem-backed canonical/discovery assertions. Keep analysis bounded to current Agent assets; do not add a generic semantic similarity engine, scoring system, arbitrary token cap, or new dependency.
+Extend the existing duplicate-rule/canonical-sharing evaluator using the evidence and placement contract completed by AI-055. Reuse overlap/conflict fixtures and filesystem-backed canonical/discovery assertions. Keep analysis bounded to current Agent assets; do not add a generic semantic similarity engine, scoring system, arbitrary token cap, or new dependency.
 
 PRD.md remains the sole specification; §4–5 and §42 apply. Classification and evidence inform semantic boundaries; text equality alone is insufficient for every duplication class. Do not automatically delete detected duplicates as part of validation.
 

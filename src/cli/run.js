@@ -9,7 +9,7 @@ import { renderFailure, renderSuccess } from './output.js';
 const PACKAGE_JSON_URL = new URL('../../package.json', import.meta.url);
 const PACKAGE_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 
-const USAGE = `Usage: agent-project-setup <command>
+const USAGE = `Usage: agent-init <command>
 
 Commands:
   install | update | doctor | uninstall
@@ -37,13 +37,13 @@ export async function runCli(argv, runtimeOverrides = {}) {
     metadata = await readPackageMetadata(runtimeOverrides.packageJsonUrl);
   } catch (error) {
     stderr.write(
-      `Agent Project Setup\n\nError [INVALID_PACKAGE_PAYLOAD]: Package metadata cannot be read.\nPath: ${fileURLToPath(runtimeOverrides.packageJsonUrl ?? PACKAGE_JSON_URL)}\nWhy stopped: the running package identity cannot be validated.\nChanged: none reported\nNext: Use an intact published package and retry.\n`,
+      `Agent Init\n\nError [INVALID_PACKAGE_PAYLOAD]: Package metadata cannot be read.\nPath: ${fileURLToPath(runtimeOverrides.packageJsonUrl ?? PACKAGE_JSON_URL)}\nWhy stopped: the running package identity cannot be validated.\nChanged: none reported\nNext: Use an intact published package and retry.\n`,
     );
     return 1;
   }
 
   if (argv.length === 1 && argv[0] === '--version') {
-    stdout.write(`agent-project-setup ${metadata.version}\n`);
+    stdout.write(`agent-init ${metadata.version}\n`);
     return 0;
   }
 

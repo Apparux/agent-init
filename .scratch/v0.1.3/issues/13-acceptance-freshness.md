@@ -1,8 +1,8 @@
-# 13 — APS-047 — Reject acceptance for stale release inputs
+# 13 — AI-047 — Reject acceptance for stale release inputs
 
 **Status:** ready-for-agent
 **Milestone:** 8 — Evaluation Completion
-**Blocked by:** APS-043 — Trigger threshold gate.
+**Blocked by:** AI-043 — Trigger threshold gate.
 **Dependency rationale:** The existing dual-Harness gate and digest-bearing artifacts are the direct prerequisites; Milestone 7 must be complete.
 **PRD requirements:** [PRD.md](../../../PRD.md) §19, §39; §40 Milestone 8 freshness requirement.
 
@@ -10,7 +10,7 @@
 
 ## Scope and implementation boundaries
 
-Compare the APS-040 artifact bindings against independently computed current mother Skill, generated Skill set, fixture, and corpus digests. Reuse existing canonical digest logic and artifact validation. Do not create a cache invalidation framework, timestamp-based substitute for content identity, or compatibility path for old incomplete artifacts.
+Compare the AI-040 artifact bindings against independently computed current mother Skill, generated Skill set, fixture, and corpus digests. Reuse existing canonical digest logic and artifact validation. Do not create a cache invalidation framework, timestamp-based substitute for content identity, or compatibility path for old incomplete artifacts.
 
 PRD.md remains the sole specification; §4–5 and §42 apply. Historical evidence remains historical; never rewrite its digests to make it current. No live rerun or credential use is implicitly authorized by adding the validator.
 

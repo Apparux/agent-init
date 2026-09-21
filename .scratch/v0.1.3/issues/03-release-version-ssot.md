@@ -1,4 +1,4 @@
-# 03 — APS-037 — Use one release version source end to end
+# 03 — AI-037 — Use one release version source end to end
 
 **Status:** ready-for-agent
 **Milestone:** 6 — Known Gap Closure

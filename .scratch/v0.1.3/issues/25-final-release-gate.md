@@ -1,8 +1,8 @@
-# 25 — APS-059 — Enforce final release gates and verify published artifact evidence
+# 25 — AI-059 — Enforce final release gates and verify published artifact evidence
 
 **Status:** ready-for-agent
 **Milestone:** 10 — Qualification
-**Blocked by:** APS-057 — Qualification artifact and traceability; APS-058 — Final lifecycle extraction.
+**Blocked by:** AI-057 — Qualification artifact and traceability; AI-058 — Final lifecycle extraction.
 **PRD requirements:** [PRD.md](../../../PRD.md) §3, §39, §43; §36–37 evidence contract.
 
 **What to build:** The final release can be declared 100% Qualified only when every required deterministic, cross-platform, live-Harness, traceability, and artifact check has current evidence for the exact payload, including registry verification after an independently authorized publish.
@@ -18,7 +18,7 @@ The user approved this interpretation of the §39/§43 ordering conflict without
 
 ## Scope and implementation boundaries
 
-Connect the existing checks/runners and APS-057 evidence consumer to the release gate with the smallest workflow/verifier changes. Reuse package metadata SSOT, current artifact digest logic, existing CI platforms, fixture/mutation suites, and the two concrete Harness runners. Do not create commit/push/PR automation, a new release framework, automatic credential provisioning, or a publish bypass.
+Connect the existing checks/runners and AI-057 evidence consumer to the release gate with the smallest workflow/verifier changes. Reuse package metadata SSOT, current artifact digest logic, existing CI platforms, fixture/mutation suites, and the two concrete Harness runners. Do not create commit/push/PR automation, a new release framework, automatic credential provisioning, or a publish bypass.
 
 PRD.md remains the sole specification; §4–5 and §42 apply. CI/configuration edits and remote actions retain their separate approval requirements. Keep credentials out of artifacts and logs. Missing live access or registry evidence blocks qualification rather than weakening the contract.
 

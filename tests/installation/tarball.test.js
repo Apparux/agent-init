@@ -13,7 +13,7 @@ function run(command, args, options = {}) {
 }
 
 test('packed artifact independently completes the distribution lifecycle', async (t) => {
-  const disposableRoot = await mkdtemp(path.join(tmpdir(), 'aps-tarball-'));
+  const disposableRoot = await mkdtemp(path.join(tmpdir(), 'ai-tarball-'));
   t.after(() => rm(disposableRoot, { recursive: true, force: true }));
   const packDir = path.join(disposableRoot, 'pack');
   const prefix = path.join(disposableRoot, 'prefix');
@@ -52,7 +52,7 @@ test('packed artifact independently completes the distribution lifecycle', async
   const packagedPaths = packResult.files.map((entry) => entry.path).sort();
   assert.equal(packagedPaths.includes('package.json'), true);
   assert.equal(packagedPaths.includes('LICENSE'), true);
-  assert.equal(packagedPaths.includes('bin/agent-project-setup.js'), true);
+  assert.equal(packagedPaths.includes('bin/agent-init.js'), true);
   assert.equal(packagedPaths.includes('skills/project-setup/SKILL.md'), true);
   assert.equal(
     packagedPaths.every(
@@ -81,9 +81,9 @@ test('packed artifact independently completes the distribution lifecycle', async
     prefix,
     'node_modules',
     '@apparux',
-    'agent-project-setup',
+    'agent-init',
     'bin',
-    'agent-project-setup.js',
+    'agent-init.js',
   );
   await rm(packDir, { recursive: true });
   await rm(npmCache, { recursive: true });
@@ -93,14 +93,14 @@ test('packed artifact independently completes the distribution lifecycle', async
   }
   const version = cli('--version');
   assert.equal(version.status, 0, version.stderr);
-  assert.equal(version.stdout, 'agent-project-setup 0.1.3-rc.0\n');
+  assert.equal(version.stdout, 'agent-init 0.1.3-rc.0\n');
 
   const install = cli('install');
   assert.equal(install.status, 0, install.stderr);
   const manifest = JSON.parse(
-    await readFile(path.join(homeDir, '.agent-project-setup', 'install.json'), 'utf8'),
+    await readFile(path.join(homeDir, '.agent-init', 'install.json'), 'utf8'),
   );
-  assert.equal(manifest.installRoot, path.join(homeDir, '.agent-project-setup'));
+  assert.equal(manifest.installRoot, path.join(homeDir, '.agent-init'));
   assert.equal(manifest.canonical.skillPath.includes(prefix), false);
   assert.equal((await lstat(manifest.targets.codex.path)).isSymbolicLink(), true);
   assert.equal((await lstat(manifest.targets.claude.path)).isSymbolicLink(), true);

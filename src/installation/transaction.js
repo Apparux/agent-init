@@ -46,7 +46,7 @@ function processIsAlive(pid) {
 }
 
 function operationPaths(homeDirectory, operationId) {
-  const base = `.agent-project-setup.operation-${operationId}`;
+  const base = `.agent-init.operation-${operationId}`;
   const journalPrefix = path.join(homeDirectory, `${base}.journal-`);
   return {
     descriptorPath: path.join(homeDirectory, `${base}.owner.json`),
@@ -65,7 +65,7 @@ async function listJournalSnapshots(descriptor) {
   const names = await readdir(homeDirectory);
   const candidates = names.filter((name) => name.startsWith(prefixName));
   const pattern = new RegExp(
-    `^\\.agent-project-setup\\.operation-${descriptor.operationId}\\.journal-(\\d{${SNAPSHOT_WIDTH}})\\.json$`,
+    `^\\.agent-init\\.operation-${descriptor.operationId}\\.journal-(\\d{${SNAPSHOT_WIDTH}})\\.json$`,
   );
   const indexed = candidates.map((name) => {
     const match = pattern.exec(name);
@@ -567,11 +567,11 @@ export async function removeRecoveredOperation(control) {
 
 async function listOrphanControlPaths(paths) {
   const names = await readdir(paths.logicalHome);
-  const ownerPattern = /^\.agent-project-setup\.operation-[a-f0-9]{32}\.owner\.json$/;
+  const ownerPattern = /^\.agent-init\.operation-[a-f0-9]{32}\.owner\.json$/;
   const journalPattern =
-    /^\.agent-project-setup\.operation-[a-f0-9]{32}\.journal-\d{6}\.json$/;
+    /^\.agent-init\.operation-[a-f0-9]{32}\.journal-\d{6}\.json$/;
   const tempPattern =
-    /^\.(?:\.agent-project-setup\.operation-[a-f0-9]{32}\.(?:owner|journal-\d{6})\.json)\.[a-z0-9-]+\.tmp$/;
+    /^\.(?:\.agent-init\.operation-[a-f0-9]{32}\.(?:owner|journal-\d{6})\.json)\.[a-z0-9-]+\.tmp$/;
   return names
     .filter(
       (name) =>

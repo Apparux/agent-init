@@ -1,8 +1,8 @@
-# 24 — APS-058 — Extract only independently invariant lifecycle flows
+# 24 — AI-058 — Extract only independently invariant lifecycle flows
 
 **Status:** ready-for-agent
 **Milestone:** 10 — Qualification
-**Blocked by:** APS-057 — Evidence-backed qualification and traceability.
+**Blocked by:** AI-057 — Evidence-backed qualification and traceability.
 **Dependency rationale:** PRD §38 places maintainability extraction in the final stage, after correctness and safety behavior is established.
 **PRD requirements:** [PRD.md](../../../PRD.md) §38.
 
@@ -20,10 +20,10 @@ PRD.md remains the sole specification; §4–5 and §42 apply. Do not fix new be
 - [ ] The selected extracted flow has an explicit independent invariant and a bounded interface; dependencies remain understandable without one-layer forwarding wrappers.
 - [ ] Public executeLifecycle arguments, return values, error behavior, and observable filesystem outcomes remain unchanged.
 - [ ] The extraction is mechanical: no altered ownership policy, approval model, recovery ordering, platform behavior, or parent-cleanup semantics.
-- [ ] The same characterization cases pass before and after, including APS-036's parent rollback and existing no-follow/race/crash coverage.
+- [ ] The same characterization cases pass before and after, including AI-036's parent rollback and existing no-follow/race/crash coverage.
 - [ ] No unrelated formatting sweep, module rewrite, framework, or forced four-file decomposition is included.
 - [ ] Qualification/traceability references remain valid, with changed code requiring fresh final release checks rather than reuse of stale run evidence.
 
 ## Verification
 
-Run characterization tests before extraction and preserve the results; run the same tests after, followed by `npm test` and relevant package/lifecycle checks. Inspect the diff for pure movement versus behavior changes and review the security/concurrency-sensitive boundaries. APS-059 reruns final cross-platform and exact-payload checks after this ticket.
+Run characterization tests before extraction and preserve the results; run the same tests after, followed by `npm test` and relevant package/lifecycle checks. Inspect the diff for pure movement versus behavior changes and review the security/concurrency-sensitive boundaries. AI-059 reruns final cross-platform and exact-payload checks after this ticket.

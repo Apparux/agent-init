@@ -1,4 +1,4 @@
-# 02 — APS-036 — Roll back operation-created discovery parents safely
+# 02 — AI-036 — Roll back operation-created discovery parents safely
 
 **Status:** ready-for-agent
 **Milestone:** 6 — Known Gap Closure

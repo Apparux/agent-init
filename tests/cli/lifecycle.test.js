@@ -6,10 +6,10 @@ import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-const binPath = fileURLToPath(new URL('../../bin/agent-project-setup.js', import.meta.url));
+const binPath = fileURLToPath(new URL('../../bin/agent-init.js', import.meta.url));
 
 async function createCliHome(t) {
-  const disposableRoot = await mkdtemp(path.join(tmpdir(), 'aps-cli-'));
+  const disposableRoot = await mkdtemp(path.join(tmpdir(), 'ai-cli-'));
   t.after(() => rm(disposableRoot, { recursive: true, force: true }));
   const homeDir = path.join(disposableRoot, 'home');
   const repository = path.join(disposableRoot, 'repository');
@@ -46,15 +46,15 @@ test('spawned CLI completes install, doctor, update no-op, and uninstall', async
   const install = run('install');
   assert.equal(install.status, 0, install.stderr);
   assert.equal(install.stderr, '');
-  assert.match(install.stdout, /Agent Project Setup 0\.1\.3-rc\.0/);
+  assert.match(install.stdout, /Agent Init 0\.1\.3-rc\.0/);
   assert.match(install.stdout, /Installation/);
   assert.match(install.stdout, /Ready\./);
   assert.match(install.stdout, /\/project-setup/);
   assert.match(install.stdout, /\$project-setup/);
 
-  const manifestPath = path.join(homeDir, '.agent-project-setup', 'install.json');
+  const manifestPath = path.join(homeDir, '.agent-init', 'install.json');
   const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-  assert.equal(manifest.installRoot, path.join(homeDir, '.agent-project-setup'));
+  assert.equal(manifest.installRoot, path.join(homeDir, '.agent-init'));
   assert.equal((await lstat(manifest.targets.codex.path)).isSymbolicLink(), true);
   assert.equal((await lstat(manifest.targets.claude.path)).isSymbolicLink(), true);
 

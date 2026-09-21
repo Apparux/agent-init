@@ -1,17 +1,17 @@
-# 15 — APS-049 — Retire an obsolete Skill bundle and its discovery reference
+# 15 — AI-049 — Retire an obsolete Skill bundle and its discovery reference
 
 **Status:** ready-for-agent
 **Milestone:** 9 — Safe Pruning
-**Blocked by:** APS-048 — Safe unreferenced document retirement.
+**Blocked by:** AI-048 — Safe unreferenced document retirement.
 **PRD requirements:** [PRD.md](../../../PRD.md) §24–30; §35 canonical/discovery consistency.
 
 **What to build:** An obsolete canonical project Skill and its corresponding Claude discovery reference can be retired together without leaving a dangling reference or deleting unapproved content.
 
 ## Scope and implementation boundaries
 
-Extend the existing complete RETIRE path to the canonical Skill tree and the project's existing supported discovery-reference representation. Preserve all evidence, approval, identity, containment, and reference checks from APS-048. Treat the pair as one coordinated Proposal scope, not as permission to delete every similarly named Skill.
+Extend the existing complete RETIRE path to the canonical Skill tree and the project's existing supported discovery-reference representation. Preserve all evidence, approval, identity, containment, and reference checks from AI-048. Treat the pair as one coordinated Proposal scope, not as permission to delete every similarly named Skill.
 
-Use existing tree-digest and no-follow identity primitives, not installer manifest ownership. Do not delete only the Skill entry document while leaving its approved bundle's references/scripts behind. External incoming references other than the explicitly handled discovery relationship still block this slice; APS-050 supports their coordinated updates.
+Use existing tree-digest and no-follow identity primitives, not installer manifest ownership. Do not delete only the Skill entry document while leaving its approved bundle's references/scripts behind. External incoming references other than the explicitly handled discovery relationship still block this slice; AI-050 supports their coordinated updates.
 
 PRD.md remains the sole specification; §4–5 and §42 apply. Deletion tests use disposable repositories; real asset deletion requires the user's backup/confirmation procedure. No new generic transaction engine or project Apply API is authorized.
 

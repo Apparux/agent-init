@@ -1,8 +1,8 @@
-# 08 — APS-042 — Record real Codex routing in fresh sessions
+# 08 — AI-042 — Record real Codex routing in fresh sessions
 
 **Status:** ready-for-agent
 **Milestone:** 7 — Real Trigger Qualification
-**Blocked by:** APS-040 — Executable trigger corpus and acceptance artifact contract.
+**Blocked by:** AI-040 — Executable trigger corpus and acceptance artifact contract.
 **PRD requirements:** [PRD.md](../../../PRD.md) §15, §17–18.
 
 **What to build:** A concrete Codex acceptance runner follows the same observable setup-and-routing protocol as Claude while keeping the Harness-specific invocation and selection observation explicit.
@@ -20,7 +20,7 @@ PRD.md remains the sole specification; §4–5 and §42 apply. Live execution re
 - [ ] Setup context is discarded before routing; independent cases use fresh sessions without prior-case context contamination.
 - [ ] Corpus prompts and explicit invocation probes produce actual observable Skill-selection evidence, not merely answer text suggesting that a workflow was followed.
 - [ ] Missing/malformed observations and execution failures remain non-pass outcomes; genuine observed no-load results can be evaluated normally.
-- [ ] Recorded artifacts contain actual Harness version and payload digests and pass the shared APS-040 validator.
+- [ ] Recorded artifacts contain actual Harness version and payload digests and pass the shared AI-040 validator.
 - [ ] At least one complete real run proves install, generation, approval, session separation, and artifact capture; failed routing expectations are retained rather than relabeled.
 - [ ] Only owned disposable assets are cleaned up, and no artifact includes credentials or unrelated user content.
 

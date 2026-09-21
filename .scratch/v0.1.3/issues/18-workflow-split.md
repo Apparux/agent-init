@@ -1,8 +1,8 @@
-# 18 — APS-052 — Reconcile a workflow split within one approved Proposal
+# 18 — AI-052 — Reconcile a workflow split within one approved Proposal
 
 **Status:** ready-for-agent
 **Milestone:** 9 — Safe Pruning
-**Blocked by:** APS-050 — Coordinated reference updates and retirement.
+**Blocked by:** AI-050 — Coordinated reference updates and retirement.
 **PRD requirements:** [PRD.md](../../../PRD.md) §31.2, §7, §28–30.
 
 **What to build:** An obsolete combined workflow is replaced by two evidence-backed workflows, with the new assets, references, and old retirement visible and approved together.
@@ -25,4 +25,4 @@ PRD.md remains the sole specification; §4–5 and §42 apply. The old Skill is 
 
 ## Verification
 
-Extend the split fixture through full Proposal, approval, physical Apply snapshots, and final evaluation. Test incomplete approval, missing evidence, and mutation drift; extend the invariant matrix. Run focused reconciliation/fixture tests and `npm test`. APS-054 supplies the second-run zero-write acceptance across transition types.
+Extend the split fixture through full Proposal, approval, physical Apply snapshots, and final evaluation. Test incomplete approval, missing evidence, and mutation drift; extend the invariant matrix. Run focused reconciliation/fixture tests and `npm test`. AI-054 supplies the second-run zero-write acceptance across transition types.

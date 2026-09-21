@@ -1,8 +1,8 @@
-# 10 — APS-044 — Prove evaluator invariants with isolated mutations
+# 10 — AI-044 — Prove evaluator invariants with isolated mutations
 
 **Status:** ready-for-agent
 **Milestone:** 8 — Evaluation Completion
-**Blocked by:** APS-043 — Trigger threshold gate.
+**Blocked by:** AI-043 — Trigger threshold gate.
 **Dependency rationale:** Milestone 7 qualification precedes Milestone 8 under PRD §41.
 **PRD requirements:** [PRD.md](../../../PRD.md) §21.
 

@@ -1,8 +1,8 @@
-# 20 — APS-054 — Prove zero-write reconcile after pruning
+# 20 — AI-054 — Prove zero-write reconcile after pruning
 
 **Status:** ready-for-agent
 **Milestone:** 9 — Safe Pruning
-**Blocked by:** APS-051 — Workflow rename; APS-052 — Workflow split; APS-053 — Workflow merge.
+**Blocked by:** AI-051 — Workflow rename; AI-052 — Workflow split; AI-053 — Workflow merge.
 **Dependency rationale:** These incorporate the prerequisite document, Skill, remove, and reference-retirement paths; all must be covered before the M9 completion gate.
 **PRD requirements:** [PRD.md](../../../PRD.md) §26, §31–32, §43.
 

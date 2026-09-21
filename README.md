@@ -1,12 +1,21 @@
-# Agent Project Setup
+# Agent Init
 
 简体中文 | [English](./docs/README.en.md)
 
-Agent Project Setup 为 Claude Code 和 Codex 安装一个共享的 `project-setup` Skill。该 Skill 会进入现有仓库，收集证据，提出最小化的 Agent 环境方案，并且仅在获得明确批准后写入文件。
+Agent Init 为 Claude Code 和 Codex 安装一个共享的 `project-setup` Skill。该 Skill 会进入现有仓库，收集证据，提出最小化的 Agent 环境方案，并且仅在获得明确批准后写入文件。
 
 > 状态：v0.1.2。
 >
 > 许可证：MIT。
+
+## 从 `@apparux/agent-project-setup` 迁移
+
+本包原名 `@apparux/agent-project-setup`,现已更名为 `@apparux/agent-init`。旧包已弃用,不再接收更新。如之前安装过旧包,请先卸载再安装新包(新旧包使用不同的安装根目录,新包不会自动迁移旧安装):
+
+```bash
+npx @apparux/agent-project-setup@latest uninstall
+npx @apparux/agent-init@latest install
+```
 
 ## 环境要求
 
@@ -19,13 +28,13 @@ Agent Project Setup 为 Claude Code 和 Codex 安装一个共享的 `project-set
 推荐使用 `npx`，无需全局安装包：
 
 ```bash
-npx @apparux/agent-project-setup@latest install
+npx @apparux/agent-init@latest install
 ```
 
 安装器会将规范母 Skill 复制到以下稳定位置：
 
 ```text
-~/.agent-project-setup/current/skills/project-setup
+~/.agent-init/current/skills/project-setup
 ```
 
 随后，它会向两个 Harness 暴露同一个规范 Skill：
@@ -47,15 +56,15 @@ npx @apparux/agent-project-setup@latest install
 使用最新包负载执行生命周期操作：
 
 ```bash
-npx @apparux/agent-project-setup@latest install
-npx @apparux/agent-project-setup@latest update
-npx @apparux/agent-project-setup@latest doctor
-npx @apparux/agent-project-setup@latest uninstall
-npx @apparux/agent-project-setup@latest --version
-npx @apparux/agent-project-setup@latest --help
+npx @apparux/agent-init@latest install
+npx @apparux/agent-init@latest update
+npx @apparux/agent-init@latest doctor
+npx @apparux/agent-init@latest uninstall
+npx @apparux/agent-init@latest --version
+npx @apparux/agent-init@latest --help
 ```
 
-如果该包是全局安装的，运行 `agent-project-setup update` 只会应用当前已安装包的负载。若要获取最新发布的负载，请使用 `npx @apparux/agent-project-setup@latest update`，或先更新全局包。
+如果该包是全局安装的，运行 `agent-init update` 只会应用当前已安装包的负载。若要获取最新发布的负载，请使用 `npx @apparux/agent-init@latest update`，或先更新全局包。
 
 ### `install`
 

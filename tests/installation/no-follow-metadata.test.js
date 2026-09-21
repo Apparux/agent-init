@@ -43,7 +43,7 @@ test('symlinked install manifest is never followed for ownership', async (t) => 
 test('symlinked canonical marker is never followed for ownership', async (t) => {
   const { disposableRoot, homeDir, runtime } = await createInstallationFixture(t);
   const installed = await executeLifecycle({ operation: 'install' }, runtime);
-  const marker = path.join(installed.manifest.canonical.root, '.agent-project-setup-owner.json');
+  const marker = path.join(installed.manifest.canonical.root, '.agent-init-owner.json');
   await replaceWithMatchingSymlink(marker, path.join(disposableRoot, 'outside-owner.json'));
   const before = await snapshotTree(homeDir);
 
@@ -61,7 +61,7 @@ test('symlinked managed-copy marker is drifted and preserved', async (t) => {
   const copyRuntime = { ...runtime, createDirectorySymlink: unsupportedSymlink };
   const installed = await executeLifecycle({ operation: 'install' }, copyRuntime);
   const codexPath = installed.manifest.targets.codex.path;
-  const marker = path.join(codexPath, '.agent-project-setup-owner.json');
+  const marker = path.join(codexPath, '.agent-init-owner.json');
   await replaceWithMatchingSymlink(marker, path.join(disposableRoot, 'outside-copy-owner.json'));
   const beforeDoctor = await snapshotTree(homeDir);
 

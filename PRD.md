@@ -1,6 +1,6 @@
-# PRD — Agent Project Setup v0.1.3
+# PRD — Agent Init v0.1.3
 
-**项目：** Agent Project Setup  
+**项目：** Agent Init  
 **版本：** v0.1.3  
 **状态：** Ready for Implementation  
 **基线：** v0.1.2 / `main`  
@@ -11,7 +11,7 @@
 
 # 1. 背景
 
-Agent Project Setup v0.1.2 已完成核心产品架构：
+Agent Init v0.1.2 已完成核心产品架构：
 
 ```text
 Lightweight Node CLI
@@ -609,12 +609,12 @@ TASKS.md
 Status: Historical v0.1 Roadmap
 ```
 
-APS-001 ~ APS-034 保留为历史实现路线。
+AI-001 ~ AI-034 保留为历史实现路线。
 
 v0.1.3 新任务从：
 
 ```text
-APS-035
+AI-035
 ```
 
 继续。
@@ -1455,49 +1455,49 @@ fail
 ## Milestone 6 — Known Gap Closure
 
 ```text
-APS-035 Generated Skill Routing Metadata
-APS-036 Operation-Created Parent Rollback
-APS-037 Release Version SSOT
-APS-038 CI Supply-Chain Pinning
-APS-039 Product Document Status Reconciliation
+AI-035 Generated Skill Routing Metadata
+AI-036 Operation-Created Parent Rollback
+AI-037 Release Version SSOT
+AI-038 CI Supply-Chain Pinning
+AI-039 Product Document Status Reconciliation
 ```
 
 ## Milestone 7 — Real Trigger Qualification
 
 ```text
-APS-040 Trigger Evaluation Corpus
-APS-041 External Acceptance Artifact
-APS-042 Claude Code Live Acceptance
-APS-043 Codex Live Acceptance
-APS-044 Trigger Release Gate
+AI-040 Trigger Evaluation Corpus
+AI-041 External Acceptance Artifact
+AI-042 Claude Code Live Acceptance
+AI-043 Codex Live Acceptance
+AI-044 Trigger Release Gate
 ```
 
 ## Milestone 8 — Evaluation Completion
 
 ```text
-APS-045 Evaluator Mutation Matrix
-APS-046 Behavioral Fixture Expansion
-APS-047 Payload-Bound Acceptance Freshness
+AI-045 Evaluator Mutation Matrix
+AI-046 Behavioral Fixture Expansion
+AI-047 Payload-Bound Acceptance Freshness
 ```
 
 ## Milestone 9 — Safe Pruning
 
 ```text
-APS-048 RETIRE Decision
-APS-049 Agent-Plane Reference Safety
-APS-050 RETIRE Apply Protocol
-APS-051 Workflow Identity Reconciliation
-APS-052 Pruning Idempotency
+AI-048 RETIRE Decision
+AI-049 Agent-Plane Reference Safety
+AI-050 RETIRE Apply Protocol
+AI-051 Workflow Identity Reconciliation
+AI-052 Pruning Idempotency
 ```
 
 ## Milestone 10 — Qualification
 
 ```text
-APS-053 Context Architecture Contract
-APS-054 Release Qualification Artifact
-APS-055 Acceptance Traceability
-APS-056 Lifecycle Maintainability Refactor
-APS-057 100% Release Gate
+AI-053 Context Architecture Contract
+AI-054 Release Qualification Artifact
+AI-055 Acceptance Traceability
+AI-056 Lifecycle Maintainability Refactor
+AI-057 100% Release Gate
 ```
 
 ---
@@ -1507,15 +1507,15 @@ APS-057 100% Release Gate
 必须按以下顺序推进：
 
 ```text
-APS-035 → APS-039
+AI-035 → AI-039
         ↓
-APS-040 → APS-044
+AI-040 → AI-044
         ↓
-APS-045 → APS-047
+AI-045 → AI-047
         ↓
-APS-048 → APS-052
+AI-048 → AI-052
         ↓
-APS-053 → APS-057
+AI-053 → AI-057
 ```
 
 不得优先实现：
@@ -1600,7 +1600,7 @@ registry artifact verified
 
 # 44. 最终目标
 
-v0.1.3 完成后，Agent Project Setup 不只是：
+v0.1.3 完成后，Agent Init 不只是：
 
 ```text
 生成 AGENTS.md 和 Skills 的工具

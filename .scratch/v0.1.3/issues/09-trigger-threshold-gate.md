@@ -1,8 +1,8 @@
-# 09 — APS-043 — Gate trigger qualification on measured routing thresholds
+# 09 — AI-043 — Gate trigger qualification on measured routing thresholds
 
 **Status:** ready-for-agent
 **Milestone:** 7 — Real Trigger Qualification
-**Blocked by:** APS-041 — Claude Code live acceptance; APS-042 — Codex live acceptance.
+**Blocked by:** AI-041 — Claude Code live acceptance; AI-042 — Codex live acceptance.
 **PRD requirements:** [PRD.md](../../../PRD.md) §18, §39, §43.
 
 **What to build:** A complete set of real acceptance records produces an explainable trigger pass/fail decision using the PRD thresholds, without hiding failed cases or substituting local evaluator success for external routing evidence.
@@ -11,7 +11,7 @@
 
 Extend the existing acceptance result evaluator with focused aggregation. Use the versioned corpus and explicit invocation probes as the declared run inventory. Preserve Harness-specific results so one Harness cannot mask failures in the other. Do not introduce numerical Skill scoring, a statistical framework, or thresholds stricter/weaker than the PRD.
 
-PRD.md remains the sole specification; §4–5 and §42 apply. This is an intermediate trigger gate, not a declaration that the whole release is Qualified. APS-047 adds full current-payload freshness enforcement; APS-059 consumes the final complete gate.
+PRD.md remains the sole specification; §4–5 and §42 apply. This is an intermediate trigger gate, not a declaration that the whole release is Qualified. AI-047 adds full current-payload freshness enforcement; AI-059 consumes the final complete gate.
 
 ## Acceptance criteria
 

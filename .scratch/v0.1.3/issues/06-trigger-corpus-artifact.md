@@ -1,8 +1,8 @@
-# 06 — APS-040 — Evaluate versioned trigger cases through acceptance artifacts
+# 06 — AI-040 — Evaluate versioned trigger cases through acceptance artifacts
 
 **Status:** ready-for-agent
 **Milestone:** 7 — Real Trigger Qualification
-**Blocked by:** APS-035 — Routing metadata; APS-036 — Parent rollback; APS-037 — Version SSOT; APS-038 — Action pinning; APS-039 — Document status.
+**Blocked by:** AI-035 — Routing metadata; AI-036 — Parent rollback; AI-037 — Version SSOT; AI-038 — Action pinning; AI-039 — Document status.
 **Dependency rationale:** All Milestone 6 work must finish before Milestone 7 starts, as required by PRD §41; metadata is also a direct input to trigger evaluation.
 **PRD requirements:** [PRD.md](../../../PRD.md) §13–15, §19.
 
@@ -27,4 +27,4 @@ PRD.md remains the sole specification; §4–5 and §42 apply. Synthetic artifac
 
 ## Verification
 
-Test the complete case-to-artifact-to-result path with existing fixture builders and explicit synthetic test inputs. Run focused corpus/artifact tests and `npm test`. No live Harness claim is made here; APS-041 and APS-042 supply real observations, and APS-047 enforces comparison with the current payload.
+Test the complete case-to-artifact-to-result path with existing fixture builders and explicit synthetic test inputs. Run focused corpus/artifact tests and `npm test`. No live Harness claim is made here; AI-041 and AI-042 supply real observations, and AI-047 enforces comparison with the current payload.

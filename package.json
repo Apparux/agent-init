@@ -1,17 +1,17 @@
 {
-  "name": "@apparux/agent-project-setup",
+  "name": "@apparux/agent-init",
   "version": "0.1.3-rc.0",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Apparux/agent-project-setup.git"
+    "url": "git+https://github.com/Apparux/agent-init.git"
   },
   "publishConfig": {
     "access": "public"
   },
   "bin": {
-    "agent-project-setup": "bin/agent-project-setup.js"
+    "agent-init": "bin/agent-init.js"
   },
   "files": [
     "bin",

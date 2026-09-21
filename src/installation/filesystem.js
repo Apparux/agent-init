@@ -89,7 +89,7 @@ export async function digestTree(root, options = {}) {
   entries.sort((left, right) => left.relativePath.localeCompare(right.relativePath, 'en'));
 
   const hash = createHash('sha256');
-  addField(hash, 'agent-project-setup-tree-v1');
+  addField(hash, 'agent-init-tree-v1');
   for (const entry of entries) {
     addField(hash, entry.type);
     addField(hash, entry.relativePath);

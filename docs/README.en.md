@@ -1,12 +1,21 @@
-# Agent Project Setup
+# Agent Init
 
 [简体中文](../README.md) | English
 
-Agent Project Setup installs a shared `project-setup` Skill for Claude Code and Codex. The Skill enters an existing repository, gathers evidence, proposes a minimal Agent environment, and writes only after explicit approval.
+Agent Init installs a shared `project-setup` Skill for Claude Code and Codex. The Skill enters an existing repository, gathers evidence, proposes a minimal Agent environment, and writes only after explicit approval.
 
 > Status: v0.1.2.
 >
 > License: MIT.
+
+## Migrating from `@apparux/agent-project-setup`
+
+This package was previously published as `@apparux/agent-project-setup`, which is now deprecated and will not receive updates. If you installed the old package, uninstall it before installing the new one (the two packages use different install roots; the new package does not migrate the old installation automatically):
+
+```bash
+npx @apparux/agent-project-setup@latest uninstall
+npx @apparux/agent-init@latest install
+```
 
 ## Requirements
 
@@ -19,13 +28,13 @@ Agent Project Setup installs a shared `project-setup` Skill for Claude Code and 
 The recommended installation path is `npx`, so a global package installation is not required:
 
 ```bash
-npx @apparux/agent-project-setup@latest install
+npx @apparux/agent-init@latest install
 ```
 
 The installer copies the canonical mother Skill into a stable location under:
 
 ```text
-~/.agent-project-setup/current/skills/project-setup
+~/.agent-init/current/skills/project-setup
 ```
 
 It then exposes that same canonical Skill to both harnesses:
@@ -47,15 +56,15 @@ After installation:
 Use the latest package payload for lifecycle operations:
 
 ```bash
-npx @apparux/agent-project-setup@latest install
-npx @apparux/agent-project-setup@latest update
-npx @apparux/agent-project-setup@latest doctor
-npx @apparux/agent-project-setup@latest uninstall
-npx @apparux/agent-project-setup@latest --version
-npx @apparux/agent-project-setup@latest --help
+npx @apparux/agent-init@latest install
+npx @apparux/agent-init@latest update
+npx @apparux/agent-init@latest doctor
+npx @apparux/agent-init@latest uninstall
+npx @apparux/agent-init@latest --version
+npx @apparux/agent-init@latest --help
 ```
 
-If the package was installed globally, running `agent-project-setup update` only applies the payload of that installed package. Use `npx @apparux/agent-project-setup@latest update`, or update the global package first, to obtain the latest published payload.
+If the package was installed globally, running `agent-init update` only applies the payload of that installed package. Use `npx @apparux/agent-init@latest update`, or update the global package first, to obtain the latest published payload.
 
 ### `install`
 

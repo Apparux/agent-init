@@ -1,8 +1,8 @@
-# 17 — APS-051 — Reconcile workflow renames as semantic continuity
+# 17 — AI-051 — Reconcile workflow renames as semantic continuity
 
 **Status:** ready-for-agent
 **Milestone:** 9 — Safe Pruning
-**Blocked by:** APS-050 — Coordinated reference updates and retirement.
+**Blocked by:** AI-050 — Coordinated reference updates and retirement.
 **PRD requirements:** [PRD.md](../../../PRD.md) §31.1, §5.1; existing §7 and §28–30 contracts.
 
 **What to build:** A workflow whose name changes is recognized as the same continuing workflow and receives the smallest evidence-backed migration Proposal, rather than being independently recreated and retired.
@@ -25,4 +25,4 @@ PRD.md remains the sole specification; §4–5 and §42 apply. Distinguish seman
 
 ## Verification
 
-Extend the existing renamed fixture with a complete proposed/approved/applied migration and physical final-state validation. Add a non-continuity counterexample and edited-asset/drift refusal cases. Run reconciliation, fixture, mutation tests and `npm test`. Broader second-run pruning coverage is delivered by APS-054.
+Extend the existing renamed fixture with a complete proposed/approved/applied migration and physical final-state validation. Add a non-continuity counterexample and edited-asset/drift refusal cases. Run reconciliation, fixture, mutation tests and `npm test`. Broader second-run pruning coverage is delivered by AI-054.
