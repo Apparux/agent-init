@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFile, readlink, rm, symlink, writeFile } from 'node:fs/promises';
+import { readFile, readlink, rename, rm, symlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 
@@ -66,8 +66,12 @@ test('same-destination symlink replacement is drifted because identity changed',
   const installed = await executeLifecycle({ operation: 'install' }, runtime);
   const codex = installed.manifest.targets.codex;
   const linkText = await readlink(codex.path);
-  await rm(codex.path);
-  await symlink(linkText, codex.path, 'dir');
+  // Stage the replacement beside the original and rename it over: the staged
+  // symlink coexists with the original, so its identity is guaranteed to
+  // differ. Recreating in place would race inode reuse on Linux.
+  const stagedLink = `${codex.path}.replacement`;
+  await symlink(linkText, stagedLink, 'dir');
+  await rename(stagedLink, codex.path);
 
   const doctor = await executeLifecycle({ operation: 'doctor' }, runtime);
   assert.equal(doctor.ok, false);
