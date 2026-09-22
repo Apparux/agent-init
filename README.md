@@ -10,12 +10,20 @@ Agent Init 为 Claude Code 和 Codex 安装一个共享的 `project-setup` Skill
 
 ## 从 `@apparux/agent-project-setup` 迁移
 
-本包原名 `@apparux/agent-project-setup`,现已更名为 `@apparux/agent-init`。旧包已弃用,不再接收更新。如之前安装过旧包,请先卸载再安装新包(新旧包使用不同的安装根目录,新包不会自动迁移旧安装):
+本包原名 `@apparux/agent-project-setup`,现已更名为 `@apparux/agent-init`。旧包已弃用,不再接收更新。新旧包使用不同的安装根目录,新包不会自动迁移旧安装,请按以下顺序迁移:
 
 ```bash
-npx @apparux/agent-project-setup@latest uninstall
+# 1. 安装新包(若提示目标已存在,先执行第 2 步再重试本命令)
 npx @apparux/agent-init@latest install
+
+# 2. 卸载旧包
+npx @apparux/agent-project-setup@latest uninstall
 ```
+
+说明:
+
+- 第 2 步卸载旧包时,可能列出 `Preserved` 及 `~/.claude/skills/project-setup`、`~/.agents/skills/project-setup` 等条目并带 `!` 标记。这是旧包的安全设计:这些条目已由新包接管,所有权证据不匹配,旧包拒绝删除不属于自己的内容。**这是预期行为,不是残留问题**,无需处理。
+- 若卸载后确实留下了指向 `~/.agent-project-setup/` 的悬空符号链接(可用 `ls -la ~/.claude/skills` 确认),先删除它们再执行第 1 步。
 
 ## 环境要求
 

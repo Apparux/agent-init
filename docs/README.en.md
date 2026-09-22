@@ -10,12 +10,20 @@ Agent Init installs a shared `project-setup` Skill for Claude Code and Codex. Th
 
 ## Migrating from `@apparux/agent-project-setup`
 
-This package was previously published as `@apparux/agent-project-setup`, which is now deprecated and will not receive updates. If you installed the old package, uninstall it before installing the new one (the two packages use different install roots; the new package does not migrate the old installation automatically):
+This package was previously published as `@apparux/agent-project-setup`, which is now deprecated and will not receive updates. The two packages use different install roots and the new package does not migrate the old installation automatically. Migrate in this order:
 
 ```bash
-npx @apparux/agent-project-setup@latest uninstall
+# 1. Install the new package (if it reports existing targets, run step 2 first, then retry)
 npx @apparux/agent-init@latest install
+
+# 2. Uninstall the old package
+npx @apparux/agent-project-setup@latest uninstall
 ```
+
+Notes:
+
+- During step 2, the old uninstaller may list entries such as `~/.claude/skills/project-setup` and `~/.agents/skills/project-setup` under `Preserved` with a `!` marker. This is the old package's safety design: those entries are now owned by the new package, the ownership evidence does not match, and the old package refuses to delete what it does not own. **This is expected, not a leftover** — no action is needed.
+- If the old uninstall does leave dangling symlinks into `~/.agent-project-setup/` (check with `ls -la ~/.claude/skills`), remove them before running step 1.
 
 ## Requirements
 
