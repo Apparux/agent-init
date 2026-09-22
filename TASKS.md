@@ -49,8 +49,8 @@
 | AI-011 | 实现 ownership-safe uninstall | AI-007, AI-008, AI-009 | AC-D10, AC-D11 |
 | AI-012 | 完成 symlink fallback 与平台差异 | AI-009, AI-010, AI-011 | AC-D12 |
 | AI-013 | 验证 npm tarball distribution lifecycle | AI-009–AI-012, AI-014 | AC-D01–AC-D03, AC-D06–AC-D13（update 除外） |
-| AI-014 | 建立可发现的 mother Skill skeleton | AI-001 | Project Setup packaging foundation |
-| AI-015 | 建立 project fixture/evaluation harness | AI-002, AI-014 | Project Setup Testing Focus |
+| AI-014 | 建立可发现的 mother Skill skeleton | AI-001 | Agent Init packaging foundation |
+| AI-015 | 建立 project fixture/evaluation harness | AI-002, AI-014 | Agent Init Testing Focus |
 | AI-016 | 实现 optional deterministic fact collector | AI-014, AI-015 | Explore optimization |
 | AI-017 | 定义并验证 Preflight 与 Explore | AI-015 | Phase 0–1 |
 | AI-018 | 定义 Project Profile 与 Evidence Ledger | AI-017 | Phase 2, AC-P13 |
@@ -485,7 +485,7 @@
 
 ---
 
-# Milestone 2 — Core Project Setup
+# Milestone 2 — Core Agent Init
 
 ## AI-014 — 建立可发现的 mother Skill skeleton
 
@@ -493,14 +493,14 @@
 
 **目标**
 
-先建立可由 package 分发、符合共享 discovery metadata contract 的 `project-setup` skeleton；AI-015 建立 evaluation harness 与失败 behavioral evaluations，具体行为由 AI-017–AI-027 各自按 TDD 实现。
+先建立可由 package 分发、符合共享 discovery metadata contract 的 `agent-init` skeleton；AI-015 建立 evaluation harness 与失败 behavioral evaluations，具体行为由 AI-017–AI-027 各自按 TDD 实现。
 
 **实施清单**
 
 - [ ] 先写静态 format test；
-- [ ] 创建最小 `skills/project-setup/SKILL.md`；
+- [ ] 创建最小 `skills/agent-init/SKILL.md`；
 - [ ] frontmatter 至少包含 `name` 与 `description`；
-- [ ] `name: project-setup` 与 lowercase-hyphen directory 完全一致；
+- [ ] `name: agent-init` 与 lowercase-hyphen directory 完全一致；
 - [ ] description 清楚说明 what/when；
 - [ ] canonical metadata 只使用两种 Harness 共同支持的 field；
 - [ ] 建立 references 目录入口，但不在 evaluation harness 之前声称完整行为已实现；
@@ -511,9 +511,9 @@
 - 静态 metadata validation 通过；
 - Skill 不复制整份 PRD；
 - 两种 Agent target 可引用同一 canonical content；
-- Skill 不声称有尚未实现的 helper 或 project-setup behavior。
+- Skill 不声称有尚未实现的 helper 或 agent-init behavior。
 
-**PRD Trace:** Project Setup Skill、Project Setup Workflow、Progressive Disclosure、Evidence First。
+**PRD Trace:** Agent Init Skill、Agent Init Workflow、Progressive Disclosure、Evidence First。
 
 ---
 
@@ -544,7 +544,7 @@
 - fixture 初始状态可重复恢复；
 - evaluation 不读取 fixture 外文件。
 
-**PRD Trace:** Project Fixtures、Project Setup Testing Focus、AC-P01–AC-P09。
+**PRD Trace:** Project Fixtures、Agent Init Testing Focus、AC-P01–AC-P09。
 
 ---
 
@@ -927,7 +927,7 @@
 
 **目标**
 
-覆盖 PRD 要求的十类 repository，并完成 AI-027 之前已经实现的 core Project Setup behavior matrix；specialized guardrail/architecture coverage 由 AI-029/030 追加，完整 AC-P01–P18 签核留到 AI-033。
+覆盖 PRD 要求的十类 repository，并完成 AI-027 之前已经实现的 core Agent Init behavior matrix；specialized guardrail/architecture coverage 由 AI-029/030 追加，完整 AC-P01–P18 签核留到 AI-033。
 
 **实施清单**
 
@@ -947,7 +947,7 @@
 - classification、scope、preservation、evidence 与 cross-agent behavior 均被覆盖；
 - 不以 exact prose snapshot 代替行为验证。
 
-**PRD Trace:** Project Fixtures、Project Setup Testing Focus、AC-P01–AC-P16、AC-P18。
+**PRD Trace:** Project Fixtures、Agent Init Testing Focus、AC-P01–AC-P16、AC-P18。
 
 ---
 
@@ -1025,10 +1025,10 @@
 
 - [ ] 编写 README，默认优先推荐 `npx`；
 - [ ] 文档化 install/update/doctor/uninstall/version；明确 `Already up to date` 表示相对当前 running package，并要求 global-install 用户用 `npx @apparux/agent-init@latest update`（或先更新 global package）获取最新 payload；
-- [ ] 文档化 Claude `/project-setup` 与 Codex `$project-setup`；
+- [ ] 文档化 Claude `/agent-init` 与 Codex `$agent-init`；
 - [ ] 解释 tool update 与 project reconcile 的区别；
 - [ ] 说明 stable directory、symlink fallback、platform support 与 ownership protection；
-- [ ] 说明 project setup 的 Proposal/approval、write scope、Unknown 与 non-goals；
+- [ ] 说明 agent-init 的 Proposal/approval、write scope、Unknown 与 non-goals；
 - [ ] 检查 package `files` 与 tarball contents；
 - [ ] README 将 license 标记为 release 前必须决策的事项，不在本任务自行猜测或添加 LICENSE；
 - [ ] 文档命令全部在 packed artifact 上验证。
@@ -1092,7 +1092,7 @@
 - [ ] 运行 doctor 并得到 Healthy；
 - [ ] recorded-run evaluator 在 fixture 上覆盖 no-approval Proposal 与零写入路径；至少一个 conforming oracle 覆盖 explore → proposal → approval → apply → validate；
 - [ ] approved apply 生成固定 project Skill 后，验证其 physical file state、metadata contract 与 `.agents/skills/<skill>` canonical content 一致；
-- [ ] 再次运行 project-setup 并验证 ideally zero diff；
+- [ ] 再次运行 agent-init 并验证 ideally zero diff；
 - [ ] 从旧版 fixture 执行 update 并再次 doctor；
 - [ ] 执行 uninstall 并证明 project assets 保留；
 - [ ] 完成 AC-D01–D13 与 AC-P01–P18 checklist；
@@ -1103,7 +1103,7 @@
 **完成验证**
 
 - 所有自动化测试通过；
-- full lifecycle 与 Project Setup workflow 都有用户可检查的最终产物；
+- full lifecycle 与 Agent Init workflow 都有用户可检查的最终产物；
 - acceptance matrix 无未解释 gap；
 - release candidate 未发送到 registry。
 
@@ -1163,7 +1163,7 @@
 | AC-D12 | AI-006, AI-012 |
 | AC-D13 | AI-010 |
 
-### Project Setup
+### Agent Init
 
 | PRD AC | 主要任务 |
 |---|---|

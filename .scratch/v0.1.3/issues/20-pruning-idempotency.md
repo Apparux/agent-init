@@ -6,7 +6,7 @@
 **Dependency rationale:** These incorporate the prerequisite document, Skill, remove, and reference-retirement paths; all must be covered before the M9 completion gate.
 **PRD requirements:** [PRD.md](../../../PRD.md) §26, §31–32, §43.
 
-**What to build:** After a successful approved retirement or migration, running project-setup again recognizes the stable repository and performs no mutations.
+**What to build:** After a successful approved retirement or migration, running agent-init again recognizes the stable repository and performs no mutations.
 
 ## Scope and implementation boundaries
 

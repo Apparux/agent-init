@@ -16,7 +16,7 @@ PRD.md remains the sole specification; §4–5 and §42 apply. Live execution re
 ## Acceptance criteria
 
 - [ ] The runner creates a disposable HOME and fixture repository, installs the current package, and records the exact tested payload digests.
-- [ ] A fresh real Claude Code session runs `/project-setup`; the generated fixture Proposal is explicitly approved and applied without bypassing the existing approval contract.
+- [ ] A fresh real Claude Code session runs `/agent-init`; the generated fixture Proposal is explicitly approved and applied without bypassing the existing approval contract.
 - [ ] The setup session closes before routing begins; each independent routing case starts without setup or prior-case conversation context.
 - [ ] Required corpus categories and explicit Skill invocation probes are executed using real prompts.
 - [ ] Actual selected Skills are extracted from observable Harness evidence; malformed/missing traces or execution failures produce an explicit non-pass outcome rather than inferred success.

@@ -11,7 +11,7 @@
 
 本文把 PRD 转换为可实现、可测试的技术设计，重点回答：
 
-- npm CLI 与 `project-setup` 母 Skill 如何分工；
+- npm CLI 与 `agent-init` 母 Skill 如何分工；
 - 安装、更新、诊断、卸载如何保证安全和幂等；
 - Claude Code 与 Codex 如何共享同一份母 Skill 和项目知识；
 - repository evidence 如何被探索、分类、提案、应用和验证；
@@ -54,7 +54,7 @@
 ```text
 Distribution Plane                         Repository Plane
 ──────────────────                         ────────────────
-@apparux/agent-init               project-setup mother Skill
+@apparux/agent-init               agent-init mother Skill
         │                                           │
         ▼                                           ▼
 Lightweight Node CLI                         Current repository
@@ -82,7 +82,7 @@ Node CLI 只管理本工具拥有的用户级资产：
 
 ### 3.2 Repository Plane
 
-`project-setup` 母 Skill 使用 Agent 能力理解当前 repository：
+`agent-init` 母 Skill 使用 Agent 能力理解当前 repository：
 
 - 先只读探索；
 - 建立 Project Profile 与 Evidence Ledger；
@@ -224,13 +224,13 @@ removeOwnedTarget(targetSpec, manifestRecord) -> RemovalResult
 
 Manifest Module 不修复文件系统，也不推断用户意图。
 
-### 4.6 Project Setup Skill Module
+### 4.6 Agent Init Skill Module
 
 **外部 Interface**
 
 ```text
-Claude Code: /project-setup
-Codex:       $project-setup
+Claude Code: /agent-init
+Codex:       $agent-init
 ```
 
 其 Interface 不只是触发命令，还包括以下行为约束：
@@ -247,7 +247,7 @@ Codex:       $project-setup
 `SKILL.md` 保持编排职责，详细规则按需放入 references：
 
 ```text
-skills/project-setup/
+skills/agent-init/
 ├── SKILL.md
 ├── references/
 │   ├── classification.md
@@ -283,14 +283,14 @@ agent-init/
 │       ├── manifest.js
 │       └── paths.js
 ├── skills/
-│   └── project-setup/
+│   └── agent-init/
 │       ├── SKILL.md
 │       ├── references/
 │       └── scripts/
 ├── tests/
 │   ├── cli/
 │   ├── installation/
-│   ├── project-setup/
+│   ├── agent-init/
 │   └── fixtures/
 ├── package.json
 └── package-lock.json
@@ -354,7 +354,7 @@ RuntimeContext
 ├── current/
 │   ├── .agent-init-owner.json
 │   └── skills/
-│       └── project-setup/
+│       └── agent-init/
 │           ├── SKILL.md
 │           ├── references/
 │           └── scripts/
@@ -366,14 +366,14 @@ Lifecycle control set 必须位于 removable installation root 之外，否则 f
 Discovery targets：
 
 ```text
-~/.agents/skills/project-setup
-~/.claude/skills/project-setup
+~/.agents/skills/agent-init
+~/.claude/skills/agent-init
 ```
 
 目标默认指向：
 
 ```text
-~/.agent-init/current/skills/project-setup
+~/.agent-init/current/skills/agent-init
 ```
 
 ### 7.1 Staging、journal 与 rollback
@@ -383,8 +383,8 @@ Canonical payload 在 installation root 所在文件系统 staging；每个 mana
 ```text
 ~/.agent-init/.staging-<operation-id>/
 ~/.agent-init/.rollback-<operation-id>/
-<target-parent>/.project-setup-staging-<operation-id>/
-<target-parent>/.project-setup-rollback-<operation-id>/
+<target-parent>/.agent-init-staging-<operation-id>/
+<target-parent>/.agent-init-rollback-<operation-id>/
 ```
 
 多资产操作使用 installation root 外的 control set 作为 exclusive lifecycle lock + 小型 durable JSON journal（不是大型 transaction framework）。协议为：
@@ -412,11 +412,11 @@ Journal 至少记录 process ownership evidence、operation id/type、previous/p
 
 创建 control set 或执行任何其他修改前，必须只读验证 npm package 内：
 
-- `skills/project-setup/SKILL.md` 存在且可读；
+- `skills/agent-init/SKILL.md` 存在且可读；
 - payload 只包含支持的文件类型；
 - package name 与 version 可读；
 - source tree digest 可计算；
-- `SKILL.md` frontmatter 至少含 `name: project-setup` 与可用 description，且 directory/name 一致。
+- `SKILL.md` frontmatter 至少含 `name: agent-init` 与可用 description，且 directory/name 一致。
 
 无效 package payload 不得触碰现有安装。安装时为 canonical root 写入与 manifest `installId` 匹配、且不属于 mother Skill payload 的 reserved ownership marker；canonical ownership validation 必须同时检查 marker identity 与 payload digest。
 
@@ -439,7 +439,7 @@ Journal 至少记录 process ownership evidence、operation id/type、previous/p
   "installRoot": "<absolute path>",
   "canonical": {
     "root": "<absolute path to ~/.agent-init/current>",
-    "skillPath": "<absolute path to current/skills/project-setup>",
+    "skillPath": "<absolute path to current/skills/agent-init>",
     "digest": "sha256:<payload digest>"
   },
   "targets": {
@@ -741,7 +741,7 @@ Recommended next action
 
 ---
 
-## 13. Project Setup Skill 工作流
+## 13. Agent Init Skill 工作流
 
 ### Phase 0 — Preflight
 
@@ -1059,7 +1059,7 @@ Merge only after approval
 
 ### 16.2 Reconcile
 
-后续 `/project-setup` 或 `$project-setup` 使用同一完整工作流，不建立独立更新器：
+后续 `/agent-init` 或 `$agent-init` 使用同一完整工作流，不建立独立更新器：
 
 - 重新探索当前事实；
 - 比较现有 Agent assets；
@@ -1072,7 +1072,7 @@ Merge only after approval
 | 操作 | 管理对象 | 禁止触碰 |
 |---|---|---|
 | CLI `update` | 用户级 mother Skill 与 discovery targets | 任意业务 repository asset |
-| `/project-setup` / `$project-setup` | 当前 repository 的 Agent assets | 用户级安装、业务源码、CI、Hook 默认行为 |
+| `/agent-init` / `$agent-init` | 当前 repository 的 Agent assets | 用户级安装、业务源码、CI、Hook 默认行为 |
 
 ---
 
@@ -1126,7 +1126,7 @@ exit: 0 success, non-zero unreadable/invalid root
 6. Project Apply 必须由明确 Proposal approval 解锁。
 7. Proposal 与 Apply 之间发生 target drift 时，批准失效。
 8. Distribution mutation allowlist 仅包括：外部 fixed lock、operation-bound descriptor/journal/temp control entries、tool root、两个 exact discovery targets、与 operation id 绑定的 target-parent-local sibling staging/quarantine entries，以及创建缺失 target parent / 回滚本次创建且仍为空 parent 所需的窄 `mkdir`/non-recursive `rmdir`。禁止修改 parent 中任何其他 entry，uninstall 永不删除 parent。
-9. Project Setup 默认写入范围固定在 PRD 允许的 Agent asset paths，并要求 physical target 位于 repository root 内。
+9. Agent Init 默认写入范围固定在 PRD 允许的 Agent asset paths，并要求 physical target 位于 repository root 内。
 10. 每个 destructive mutation 使用 mutation-time identity revalidation 与 detach-before-delete；preflight classification 不能单独授权删除。
 11. interrupted lifecycle 通过 durable journal 恢复或保守停机，不把 mixed state 当作普通 drift 静默处理。
 12. 失败时优先保留数据并报告 partial state，而不是追求“完成”。
@@ -1175,7 +1175,7 @@ exit: 0 success, non-zero unreadable/invalid root
 
 优先通过 CLI Runner 和 Installation Lifecycle Interface 测试；仅对 digest、path containment、manifest validation 等稳定纯逻辑增加窄测试。
 
-### 19.2 Project Setup fixture tests
+### 19.2 Agent Init fixture tests
 
 Fixtures 至少覆盖 PRD 指定场景：
 

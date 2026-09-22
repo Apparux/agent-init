@@ -16,7 +16,7 @@ PRD.md remains the sole specification; §4–5 and §42 apply. Live execution re
 ## Acceptance criteria
 
 - [ ] The runner prepares a disposable environment, installs the current package, and prepares a repository from the versioned fixture.
-- [ ] A fresh real Codex session invokes `$project-setup`, produces the exact fixture Proposal, and applies only explicitly approved actions.
+- [ ] A fresh real Codex session invokes `$agent-init`, produces the exact fixture Proposal, and applies only explicitly approved actions.
 - [ ] Setup context is discarded before routing; independent cases use fresh sessions without prior-case context contamination.
 - [ ] Corpus prompts and explicit invocation probes produce actual observable Skill-selection evidence, not merely answer text suggesting that a workflow was followed.
 - [ ] Missing/malformed observations and execution failures remain non-pass outcomes; genuine observed no-load results can be evaluated normally.

@@ -16,7 +16,7 @@ Agent Init v0.1.2 已完成核心产品架构：
 ```text
 Lightweight Node CLI
         ↓
-Canonical project-setup Mother Skill
+Canonical agent-init Mother Skill
         ↓
 Claude Code / Codex
         ↓
@@ -756,7 +756,7 @@ Prepare fixture repository
         ↓
 Fresh Claude Code session
         ↓
-Run /project-setup
+Run /agent-init
         ↓
 Apply approved fixture Proposal
         ↓
@@ -788,7 +788,7 @@ fixture repository
         ↓
 fresh Codex session
         ↓
-$project-setup
+$agent-init
         ↓
 generated project Skills
         ↓
@@ -1199,7 +1199,7 @@ RETIRE obsolete Skill
 UPDATE references
 ```
 
-后再次执行 project-setup：
+后再次执行 agent-init：
 
 ```text
 CREATE = 0
@@ -1563,7 +1563,7 @@ install succeeds
 Claude discovers mother Skill
 Codex discovers mother Skill
         ↓
-project-setup analyzes repository
+agent-init analyzes repository
         ↓
 Skill candidates are correctly CREATE / KEEP / SKIP
         ↓
