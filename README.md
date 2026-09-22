@@ -2,9 +2,9 @@
 
 简体中文 | [English](./docs/README.en.md)
 
-Agent Init 为 Claude Code 和 Codex 安装一个共享的 `agent-init` Skill。该 Skill 会进入现有仓库，收集证据，提出最小化的 Agent 环境方案，并且仅在获得明确批准后写入文件。
+Agent Init 为六个内置 Harness 及自定义 Harness 安装一个共享的用户级 `agent-init` Skill。项目级环境生成仍面向 Claude Code 和 Codex：该 Skill 会进入现有仓库，收集证据，提出最小化的 Agent 环境方案，并且仅在获得明确批准后写入文件。
 
-> 状态：v0.1.2。
+> 状态：本文描述当前仓库实现。多 Harness 扩展已合并，尚未随此次改动发布 npm 包；`@latest` 获取的是已发布版本，可能不包含下述新增能力。
 >
 > 许可证：MIT。
 
@@ -45,12 +45,18 @@ npx @apparux/agent-init@latest install
 ~/.agent-init/current/skills/agent-init
 ```
 
-随后，它会向两个 Harness 暴露同一个规范 Skill：
+随后，它会为六个内置 Harness 创建用户级发现目标，暴露同一个规范 Skill：
 
-```text
-~/.agents/skills/agent-init
-~/.claude/skills/agent-init
-```
+| Harness（ID） | 发现目标 | `verification` |
+| --- | --- | --- |
+| Codex（`codex`） | `~/.agents/skills/agent-init` | `accepted` |
+| Claude Code（`claude`） | `~/.claude/skills/agent-init` | `accepted` |
+| Cursor（`cursor`） | `~/.cursor/skills/agent-init` | `unverified` |
+| OpenCode（`opencode`） | `~/.config/opencode/skills/agent-init` | `unverified` |
+| Pi（`pi`） | `~/.pi/agent/skills/agent-init` | `unverified` |
+| Grok Build（`grok`） | `~/.grok/skills/agent-init` | `unverified` |
+
+`verification` 是 registry 中的验收标记，不是本机运行结果。后四个 Harness 尚未通过真实 Harness 验收，安装目标存在不代表已验证其发现或调用行为。
 
 安装器会优先使用符号链接。如果无法创建稳定且可验证所有权的符号链接，则可以改用托管副本，并在 `install.json` 中记录该模式。
 
@@ -58,6 +64,36 @@ npx @apparux/agent-init@latest install
 
 - Claude Code：`/agent-init`
 - Codex：`$agent-init`
+
+### 自定义 Harness
+
+在 `~/.config/agent-init/harnesses.json` 中追加配置（不会替换内置项）：
+
+```json
+{
+  "schemaVersion": 1,
+  "harnesses": [
+    {
+      "id": "myagent",
+      "label": "My Agent",
+      "skillsDir": ".myagent/skills",
+      "invocation": null
+    },
+    {
+      "id": "shared-agent",
+      "skillsDir": ".agents/skills"
+    }
+  ]
+}
+```
+
+- `schemaVersion` 必须为 `1`，`harnesses` 必须为数组。
+- `id` 必须匹配 `^[a-z][a-z0-9-]*$`，且不得与内置或其他自定义 ID 重复。
+- `skillsDir` 是 HOME 内的相对目录，不使用 `~` 或绝对路径，也不得越出 HOME；安装器会在其下创建 `agent-init` 目标。
+- `label` 可选，默认使用 ID；`invocation` 可选，仅用于显示调用提示，省略或设为 `null` 表示无提示，不构成调用验收。
+- 规范化后的 `skillsDir` 若与已有项相同，该项成为别名并共享目标及安装状态，不重复安装。上例的 `shared-agent` 共享 Codex 目标。独立自定义项标为 `unverified`，别名显示为 `alias`。
+
+首次安装使用 `install`；已有安装新增配置后使用 `update` 补齐目标，再用 `harnesses` 查看结果。无效配置会报错并停止，不会静默回退到内置列表。
 
 ## CLI
 
@@ -67,6 +103,7 @@ npx @apparux/agent-init@latest install
 npx @apparux/agent-init@latest install
 npx @apparux/agent-init@latest update
 npx @apparux/agent-init@latest doctor
+npx @apparux/agent-init@latest harnesses
 npx @apparux/agent-init@latest uninstall
 npx @apparux/agent-init@latest --version
 npx @apparux/agent-init@latest --help
@@ -76,15 +113,19 @@ npx @apparux/agent-init@latest --help
 
 ### `install`
 
-创建稳定的规范安装以及 Claude/Codex 发现目标。对同一健康版本重复执行安装时不会产生变更。安装器绝不会覆盖未知目标。
+创建稳定的规范安装，以及全部内置和自定义 Harness 的发现目标（别名共享目标）。对目标齐全的同一健康版本重复执行安装时不会产生变更。安装器绝不会覆盖未知目标。
 
 ### `update`
 
-仅更新由本安装器拥有的用户级母 Skill 和目标，不会扫描或修改当前仓库。同一版本、同一负载且安装健康时，会报告已是最新状态；遇到降级或完整性冲突时，会停止操作且不替换用户数据。
+仅更新用户级母 Skill 和托管目标，不会扫描或修改当前仓库。旧安装只有 Claude/Codex 两个目标，或配置新增自定义 Harness 时，只要现有托管资源健康且新增路径未被占用，就会补齐 registry 中尚未记录的目标，即使版本和负载未变。目标齐全、同一版本、同一负载且安装健康时，才会报告已是最新状态；遇到未知目标、降级或完整性冲突时，会停止操作且不替换用户数据。
 
 ### `doctor`
 
 以只读方式检查 manifest、规范 Skill、所有权证据、目标模式和目标内容，不会自动修复文件。
+
+### `harnesses`
+
+只读列出内置、自定义及别名 Harness 的目标路径、安装状态、模式和 `verification`，并显示已配置的调用提示。也会列出 manifest 中仍有记录、但已不在当前配置中的目标（`unregistered`）。该命令不安装或修复目标，也不执行真实 Harness 验收。
 
 ### `uninstall`
 

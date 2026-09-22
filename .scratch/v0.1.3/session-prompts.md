@@ -1,413 +1,168 @@
 # v0.1.3 票据实现 Session 提示词手册
 
-每张票据在**独立的新 session** 中实现。本文档提供两套可直接复制的提示词模板和 25 张票据的对照表。
+每张票据在独立 session 中通过 `/implement` 实现。使用下面的一套通用流程；依赖以当前票据的 `Blocked by` 为准，索引和批次表用于导航。
 
-- **模板 A**：可并行的票据，在独立 git worktree 中实现。
-- **模板 B**：必须等待前置票据的票据，先检查依赖，再在独立 worktree 中实现。
+## 调用方式与默认授权
 
-使用方法：打开新 session，复制对应模板，**只替换第一行的票据路径**，其余内容不变。
+**开发位置由本提示词明确指定，不依赖 `/implement` 自动询问或创建 worktree。** 每张票据使用独立 worktree 和专用分支（并行票据尤其如此）；完成验收后，由一个集成 session 在另行授权后逐个合入 `main` 并验证，不由各实现 session 并发更新 `main`。
 
-关键约束（所有 session 共同遵守）：
-
-- `main` 是统一集成基线。每个 worktree 都从最新 `origin/main` 创建。
-- 前置成果必须**先整合进 `origin/main` 并通过验收**，后续 session 才能开始。
-- 每个 session 只做一张票据；不自动 commit、push、合并或开始下一张。
-- worktree 隔离的是文件修改，不代替提交、合并与依赖验收——这些由你单独授权。
-
----
-
-## 模板 A：并行票据提示词
-
-下面以 **01** 为例。用于其他票据时，只替换最上面的票据路径。
+在仓库目录打开新 session，复制以下完整内容，只替换票据路径：
 
 ```text
-请实现这张票据：
-.scratch/v0.1.3/issues/01-generated-skill-routing.md
+/implement .scratch/v0.1.3/issues/01-generated-skill-routing.md
 
-本次 session 只负责这一张票据，不自动执行前置或后续票据。
-本票可以与同批次其他票据并行，但必须在独立 git worktree 中工作。
+读取并遵循 .scratch/v0.1.3/session-prompts.md 的通用实现流程。
+本次只实现这一张票据；先核实依赖、当前代码及票据 Comments 中的基线。
 
-一、先确认上下文和仓库状态
+本票必须在独立 git worktree 中开发：
+依赖验证通过后，从最新且已验证的 origin/main commit 创建本票专用分支和 worktree。
+所有编辑、测试和 review 都在该 worktree 内执行，不修改原工作区或其他 session 的工作树。
+若本票已有 worktree，按手册核对归属和基线后安全续做，不覆盖或强制复用。
 
-1. 读取并遵守仓库的 AGENTS.md、CLAUDE.md 和适用的局部规则；
-   扫描并使用匹配的可用 Skills。
-
-2. 进行 Git 预检，报告：
-   - 当前仓库；
-   - 当前分支；
-   - 工作树状态；
-   - 已有改动；
-   - origin 指向的仓库。
-
-3. 不覆盖、回退、暂存或提交他人的改动。
-   不修改其他 session 的工作树。
-
-4. 读取 PRD.md、当前票据及其 Blocked by 前置票据。
-   PRD.md 是唯一规格来源，不修改、替换或创建竞争规格。
-
-二、创建独立 worktree
-
-1. 更新并核对 origin/main。
-
-2. 从最新 origin/main 创建本票专用分支和独立 git worktree。
-   建议分支命名：
-   implement/v0.1.3-ticket-<票据文件序号>
-
-3. 不从当前 release 分支、过期本地 main 或其他票据的工作分支创建。
-
-4. 如果同名分支或 worktree 已存在：
-   - 先检查其用途、基线和改动；
-   - 不覆盖、不删除、不强制复用；
-   - 无法安全判断时报告并等待确认。
-
-5. 创建后输出：
-   - worktree 路径；
-   - 实现分支；
-   - 基线 commit；
-   - git status；
-   - git diff --stat。
-
-6. 验证 worktree 实际包含 v0.1.3 PRD 和当前票据。
-   不假设 worktree 工具自动选择了正确基线。
-
-7. 后续文件修改和测试全部在本票 worktree 中执行。
-
-三、检查前置依赖
-
-1. "可以并行"只表示同批次票据之间没有先后依赖，
-   不表示可以跳过上一批次。
-
-2. 检查所有 Blocked by 前置成果是否已经整合到当前 worktree 的基线，
-   并有符合票据要求的验收证据。
-
-3. 不能仅凭以下情况判断依赖满足：
-   - 其他 session 说已完成；
-   - 其他工作分支存在实现；
-   - 票据状态已修改；
-   - 历史聊天里说测试通过。
-
-4. 没有前置依赖时，明确说明本票可以开始。
-
-5. 前置依赖未满足时：
-   - 列出缺失成果和证据；
-   - 停止实现；
-   - 不代做前置票据；
-   - 不自行合并或 cherry-pick 其他工作分支。
-
-四、实现范围和方法
-
-1. 探索现有实现后，简要说明：
-   - 本票目标；
-   - 现有可复用能力；
-   - 最小修改范围；
-   - 验证方法。
-   再按仓库规则执行。
-
-2. 只实现本票交付行为、验收条件及直接必要的改动。
-
-3. 优先复用现有抽象、helpers、fixtures、测试和约定。
-
-4. 不引入兼容层、推测性抽象、通用框架或无关重构。
-
-5. 有测试体系时采用 TDD：
-   先写能暴露缺口的测试，再做最小实现。
-
-6. 不通过跳过测试、放宽断言、删除失败案例、
-   伪造 evidence 或修改预期来掩盖问题。
-
-7. 本票完成后必须独立有效、可测试。
-   不留下需要其他并行票据才能修复的半成品。
-
-8. 不顺手实现相邻票据的功能。
-   若需修改公共文件，只修改本票必要部分，
-   并在交接中列出可能发生整合冲突的位置。
-
-9. 不修改无关文档。
-   本次明确允许在当前票据中记录验收结果和 Comments。
-   不修改其他票据的验收结果或状态。
-
-五、权限与安全
-
-1. 本请求授权当前票据范围内的本地低风险实现，
-   以及为本票创建独立分支和 git worktree。
-
-2. 修改 CI、关键配置、用户环境等仍按仓库门禁处理：
-   说明范围、影响和回滚方式，必要时等待确认。
-
-3. 不擅自访问或复制凭证，不修改真实 HOME，
-   不对真实用户资产执行删除。
-
-4. 测试中的文件变更和故障注入使用隔离临时环境。
-
-5. 不执行 git commit、push、合并 main、创建 PR 或发布，
-   除非我另外明确授权。
-
-6. 不删除或自动清理本票 worktree。
-
-7. 如果需要真实 Harness、外部账号或人工操作而当前不可用，
-   报告阻塞，不得用 mock 冒充真实验收。
-
-六、验收与交接
-
-1. 逐条核对当前票据的 Acceptance criteria，
-   运行票据要求的针对性验证及完整测试。
-
-2. 对安全、权限、并发或文件删除相关改动追加专项 review，
-   只修复本票引入或直接相关的问题。
-
-3. 只有实际验证通过的验收项才能勾选；
-   未执行、失败或受阻的项目保持未完成。
-
-4. 在当前票据的 Comments 下记录：
-   - 实现摘要；
-   - 基线 commit；
-   - 验证命令和真实结果；
-   - 可定位的证据；
-   - 未完成项、阻塞和人工步骤。
-   不记录凭证或隐私。
-
-5. 不自行发明仓库未定义的 Status 值。
-   明确区分"代码实现完成"和"全部验收通过"。
-
-6. 最后报告：
-   - worktree 路径、分支和基线；
-   - 修改了哪些文件；
-   - 哪些验收项通过、失败或未运行；
-   - 与同批次票据可能冲突的公共文件；
-   - 工作树是否有效、可测试；
-   - 本票是否具备验收及整合条件。
-
-7. 完成当前票据后停止。
-   保留 worktree，不自动提交、合并或开始下一张票据。
+授权本票范围内的本地低风险实现，以及创建上述分支和 worktree。
+本次覆盖 /implement 的默认自动提交步骤：实现、验证、review 和交接后停止。
+不授权 commit、push、合并、创建 PR 或发布；这些操作等待另外明确授权。
+完成后保留 worktree，报告路径、分支和验收结果，等待我授权统一整合到 main。
+不自动开始下一张票据。
 ```
 
----
+此调用只授权本地实现；CI、关键配置、用户环境等仍遵守适用的确认门禁。以后若明确授权 commit，只提交本票改动；push、集成到 main、发布分别按明确授权执行。遵守当前运行环境的更高优先级规则。
 
-## 模板 B：有先后依赖的票据提示词
+本机 `/implement` 的流程包含 TDD、针对性检查、最终全套测试、`/code-review` 和提交。启动时读取实际安装的 Skill，以当前内容为准；上述调用明确覆盖其自动提交步骤，而非省略验证或 review。Skill 不可用时报告，不声称已调用。
 
-下面以 **06** 为例。用于其他票据时，只替换最上面的票据路径。
+## 通用实现流程
 
-```text
-请实现这张票据：
-.scratch/v0.1.3/issues/06-trigger-corpus-artifact.md
+### 1. 固定仓库和依赖基线
 
-本次 session 只负责这一张票据，不自动执行前置或后续票据。
-必须先验证前置依赖；全部满足后，才在独立 git worktree 中实现。
+- 读取仓库 `AGENTS.md`、`CLAUDE.md`、适用局部规则，以及 `docs/agents/issue-tracker.md`、`docs/agents/triage-labels.md`；使用匹配的可用 Skills。
+- 报告 hostname、当前目录、仓库根、分支、remote、`git status` 与 `git diff --stat`。保护已有工作区和暂存区改动，不带入本票提交。
+- 更新并核对 `origin/main`，记录其完整 SHA 为 `BASE_SHA`。拉取失败或远端不符时报告并停止；不把过期远端跟踪引用当作最新基线。
+- 从该 SHA 读取当前票据全文（含 Comments）、直接前置票据和 PRD 相关章节。PRD 是权威规格，不修改 PRD 或创建竞争规格。规格冲突若影响实现，报告具体冲突并等待澄清。
+- Comments 提供已合并能力及剩余缺口线索；逐项对照代码。区分已有、部分实现与未实现，复用已有机制。静态代码、状态标签、其他 session 的声明或聊天中的测试结论都不单独构成验收证据。
+- 输出依赖检查表：`前置票据文件序号 / 基线中的实现 / 可定位验收证据 / 是否满足`。核实适用的里程碑门禁和证据适用范围；不要求无关改动使全部历史证据失效，也不复用输入已变化的验收结果。
 
-一、先确认上下文和仓库状态
+**完成条件：** 依赖成果已进入 `BASE_SHA`，所需证据有效；没有依赖时明确说明。缺失时列出阻塞并停止，不代做前置票据，不自动合并或 cherry-pick 其他分支。
 
-1. 读取并遵守仓库的 AGENTS.md、CLAUDE.md 和适用的局部规则；
-   扫描并使用匹配的可用 Skills。
+原工作区未提交的代码、票据或文档不属于 `origin/main` 基线。所需输入尚未整合时报告；不能为绕过依赖检查而复制进 worktree。
 
-2. 进行 Git 预检，报告当前仓库、分支、远端、
-   工作树状态及已有改动。
+### 2. 创建或核对独立 worktree
 
-3. 不覆盖、回退、暂存或提交他人的改动。
+依赖满足后，从精确的 `BASE_SHA` 创建本票分支和 git worktree。建议名称：`implement/v0.1.3-ticket-<文件序号>`。
 
-4. 更新并核对 origin/main。
+- 核对实际基线、PRD 和票据均存在，不假设 worktree 工具自动选对起点。
+- 同名分支或 worktree 已存在时，先检查用途、基线及改动。只有确认属于本票且可安全续做时恢复；否则报告等待确认，不覆盖、删除或强制复用。
+- 输出 worktree 路径、分支、`BASE_SHA`、`git status` 和 `git diff --stat`。续做时说明已有提交和改动属于本票的证据。
+- 后续编辑、测试和 review 均在该 worktree 内执行，不修改原工作树或其他 session 的文件。
 
-5. 读取 origin/main 中的 PRD.md、当前票据及其
-   Blocked by 前置票据。
+**完成条件：** 工作目录、分支与已验证基线对应，且本票的既有改动归属清楚。
 
-6. PRD.md 是唯一规格来源。
-   不修改、替换或创建竞争规格。
+### 3. 确定最小实现与 TDD 接缝
 
-二、严格验证前置依赖
+先给出简短实施摘要：票据目标、已有能力、剩余缺口、最小文件范围、验收方法及可能冲突的公共文件。
 
-1. 列出本票的全部直接前置票据，
-   使用票据文件序号说明，而不是只列 APS 编号。
+- 为每个行为缺口指定测试接缝：现有公共入口、模块边界或 fixture/evaluator 层，以及可观察的失败。用户已约定的接缝优先；缺乏明确边界且选择会改变架构时先确认。
+- 在适用处用 `/tdd`：先建立失败的复现或行为测试，再做最小实现。纯文档或其他不适用场景记录原因及替代验证，不制造无意义测试。
+- 使用项目实际存在的检查命令。定期运行相关单文件测试和已有类型/语法检查；没有 typecheck 时标注不适用，不为满足泛化 Skill 指令引入新工具链。
+- 仅实现当前票据的交付行为及直接必要改动。复用现有 helpers、fixtures 和约定，保留安全断言和失败案例；不靠跳过测试、弱化预期或伪造 evidence 取得绿色结果。
+- 新发现的无关缺陷记录为后续问题；若它阻碍本票安全完成，报告阻塞，不把行为修复藏进机械抽取或扩展到相邻票据。
 
-2. 逐项确认：
-   - 前置实现已整合到 origin/main；
-   - 当前基线包含实际实现与测试；
-   - 所需验收证据存在；
-   - 证据适用于当前基线，不能使用已经失效的历史结果。
+**完成条件：** 本票实现独立有效，相关测试覆盖真实缺口；不存在依赖另一未整合分支才能工作的半成品。
 
-3. 输出依赖检查表：
-   前置票据序号 / 实现成果 / 验收证据 / 是否满足。
+### 4. 验证与两轴 review
 
-4. 不能仅凭以下情况判断依赖满足：
-   - 其他 session 说已完成；
-   - 其他工作分支存在实现；
-   - 票据状态已修改；
-   - 历史聊天里说测试通过。
+逐项对照 Acceptance criteria，先执行针对性验证，再调用 `/code-review`。提供以下明确输入，避免默认三点 diff 漏掉未提交实现：
 
-5. 如果任一前置条件不满足：
-   - 明确指出缺失成果或证据；
-   - 停止实现；
-   - 不代做前置票据；
-   - 不自动合并或 cherry-pick 前置分支；
-   - 不绕过里程碑门禁。
+- **固定点：** `BASE_SHA`；**Spec：** 当前票据路径、Comments 与 PRD 对应章节；**Standards：** 仓库规则。
+- **审查范围：** 本票相对固定点的全部提交、已暂存、未暂存及新增文件。已跟踪文件可用 `git diff BASE_SHA --` 查看最终差异；另列 `git ls-files --others --exclude-standard` 并审阅属于本票的新增文件。
+- `<BASE_SHA>...HEAD` 只覆盖提交历史，未提交实现时可能为空，不能作为唯一审查输入。当前 `/code-review` 若不能接收工作区范围，说明限制并做等价 Standards/Spec 两轴审查；不为制造 diff 擅自提交。
+- 涉及所有权、路径安全、权限、并发或删除时追加专项审查。记录发现、修复和剩余阻塞；只修本票引入或直接相关的问题。
 
-6. 如果规格存在影响本票实现的冲突，
-   报告具体冲突并停止，不自行弱化验收。
+修复 review 问题后重跑对应测试，最终内容稳定后运行完整测试套件和票据要求的其他验收。全套测试以最终实现为准；发生后续代码修改时补做受影响验证。不得用一次全套绿色替代真实 Harness、跨平台或发布证据。
 
-三、依赖满足后创建独立 worktree
+**完成条件：** 每条验收均有“通过 / 失败 / 未运行 / 受阻”的真实结论和证据；review 的必需修复已处理，未解决项明确披露。
 
-1. 从已验证满足前置条件的 origin/main commit，
-   创建本票专用分支和独立 git worktree。
+### 5. 发布清单与交接
 
-2. 建议分支命名：
-   implement/v0.1.3-ticket-<票据文件序号>
+若改动影响 npm 打包内容（包括 `README.md`）：
 
-3. 不从旧 release 分支、过期本地 main
-   或其他尚未整合的工作分支创建。
+1. 先查看 `scripts/release-manifest.js` 的产物/临时路径，确认不会覆盖已有用户文件。
+2. 最终内容确定后执行 `node scripts/release-manifest.js`，再执行 `node scripts/release-manifest.js --check`。
+3. 将必要的 `release-manifest.json` 变化作为本票派生交付物记录。整合多分支后必须按最终内容重新生成，不能手工合并 tree digest。生成清单不授权 npm 发布。
 
-4. 同名分支或 worktree 已存在时先检查，
-   不覆盖、不删除、不强制复用。
+遵循 tracker 规则，在当前票据的 `## Comments` 追加：实现摘要、基线 SHA、依赖结论、验证命令及真实结果、可定位证据、review 结果、未完成项和人工步骤。不记录凭证或隐私，不创建无关文档。只勾选已实际验证的验收项，保留其他票据不变，Status 仅使用仓库定义值。
 
-5. 创建后输出并核对：
-   - worktree 路径；
-   - 实现分支；
-   - 实际基线 commit；
-   - git status；
-   - git diff --stat。
+最后运行 `git diff --check` 并核对 Git 状态，报告：
 
-6. 确认实际基线与刚才通过依赖检查的基线一致。
+- worktree、分支、基线和修改文件；
+- 验收通过、失败、未运行和受阻项；
+- review 结论与共享文件冲突风险；
+- 代码实现、全部验收、集成就绪三个层次各自的状态；
+- 后续整合或人工操作所需条件。
 
-7. 后续修改和测试全部在本票 worktree 中执行，
-   不修改原工作树或其他 session 的 worktree。
+**完成条件：** 交付物与当前票据一致，证据可追溯，未验证事项未被写成完成。默认保留未提交改动与 worktree 后停止。
 
-四、实现范围和方法
+## 隔离、权限与真实验收
 
-1. 探索现有实现后，简要说明本票目标、
-   可复用能力、最小改动范围和验证方法，
-   再按仓库规则执行。
+- 测试、故障注入和删除验证使用隔离临时 HOME/仓库。真实用户资产、凭证、用户环境和远端操作继续遵守审批门禁；不得让 subagent 绕过权限限制。
+- CI/关键配置修改先说明范围、影响、回滚方式并取得所需批准。普通实现授权不自动包含这些动作。
+- 需要真实 Harness、账号或人工步骤但不可用时报告阻塞；mock 只用于程序测试，不冒充真实验收。
+- **06–09、13：** installer registry 的六 Harness 安装支持及静态 `verification` 标签，不是 Claude/Codex 当前输入的 live routing 证据。09 的 gate 程序通过单元测试，不等于两端真实阈值已通过。
+- **14–20：** 用户级 manifest-owned target 的 uninstall/reconcile 与项目级 Proposal/RETIRE 是两个范围，不能互相替代验收。
+- **23、25：** `release-manifest.json` 是分发产物证据，不是完整 `release-qualification.json`。25 必须区分发布前门禁、单独授权发布、发布后 registry 验证；全部必要证据通过后才能声明 100% Qualified。
+- **24：** 新增 characterization 测试是抽取前的基础，不证明历史两目标行为等价，也不证明机械抽取已完成。行为缺陷独立报告。
 
-2. 只实现本票交付行为、验收条件及直接必要改动。
+## 25 张票据索引
 
-3. 优先复用现有抽象、helpers、fixtures、测试和约定。
+前置序号对应文件名 `01～25`，票据正文使用 AI 编号。以下是导航快照；与当前票据 `Blocked by` 或 PRD 里程碑要求不一致时，先核实并报告差异，不按过时表格开工。
 
-4. 不引入兼容层、推测性抽象、通用框架或无关重构。
-
-5. 有测试体系时采用 TDD：
-   先写能暴露缺口的测试，再做最小实现。
-
-6. 不跳过测试、放宽断言、删除失败案例，
-   不伪造 evidence，不通过修改预期掩盖问题。
-
-7. 完成本票后，工作树必须有效、可测试。
-   不留下需要下一张票据才能修复的半成品。
-
-8. 不修改无关文档。
-   本次明确允许在当前票据记录验收结果和 Comments。
-   不修改其他票据的验收结果或状态。
-
-五、真实验收和权限边界
-
-1. 本请求授权当前票据范围内的本地低风险实现，
-   以及为本票创建独立分支和 git worktree。
-
-2. 修改 CI、关键配置、用户环境等仍遵守确认门禁，
-   说明范围、影响和回滚方式后等待所需确认。
-
-3. 不擅自访问或复制凭证，不修改真实 HOME，
-   不删除真实用户资产；测试使用隔离临时环境。
-
-4. 不执行 git commit、push、合并 main、创建 PR 或发布，
-   除非我另外明确授权。
-
-5. 不删除或自动清理本票 worktree。
-
-6. 如果需要真实 Harness、外部账号或人工操作而当前不可用，
-   报告阻塞，不能用 mock 冒充真实验收。
-
-7. 对票据 09：
-   必须取得 Claude 和 Codex 两端实际达到阈值的验收证据。
-   仅完成 gate 程序或通过单元测试，不等于 M7 完成。
-
-8. 对票据 25：
-   必须区分发布前门禁、独立授权发布、发布后 registry 验证。
-   全部必需证据通过后才能声明 100% Qualified。
-   本提示词本身不授权发布。
-
-六、验收与交接
-
-1. 逐条核对 Acceptance criteria，
-   执行本票要求的针对性验证及完整测试。
-
-2. 对安全、权限、并发或文件删除相关改动追加专项 review，
-   只修复本票引入或直接相关的问题。
-
-3. 只有实际通过的验收项才能勾选；
-   失败、未运行和受阻项保持未完成。
-
-4. 在当前票据 Comments 下记录：
-   - 前置依赖检查结果；
-   - 基线 commit；
-   - 实现摘要；
-   - 验证命令及真实结果；
-   - 可定位的证据；
-   - 剩余阻塞及人工步骤。
-   不记录凭证或隐私。
-
-5. 不自行发明仓库未定义的 Status 值。
-   区分"实现完成"和"全部验收通过"。
-
-6. 最后报告：
-   - worktree 路径、分支和基线；
-   - 修改文件；
-   - 验收通过、失败和未运行项；
-   - 工作树是否有效、可测试；
-   - 本票是否具备验收及整合条件；
-   - 后续票据还需要满足哪些条件才能开始。
-
-7. 完成后停止。
-   保留 worktree，不自动提交、合并或开始下一张票据。
-```
-
----
-
-## 25 张票据对照表
-
-"前置序号"对应 `.scratch/v0.1.3/issues/` 文件名前的 `01～25`。前置成果必须先整合到 `main` 并通过要求的验收，才能开始本票。
-
-| 文件序号 | 模板 | 前置序号 | 票据路径（替换进提示词第一行） |
-|---|---|---|---|
-| **01** | A：并行 | 无 | `.scratch/v0.1.3/issues/01-generated-skill-routing.md` |
-| **02** | A：并行 | 无 | `.scratch/v0.1.3/issues/02-operation-parent-rollback.md` |
-| **03** | A：并行 | 无 | `.scratch/v0.1.3/issues/03-release-version-ssot.md` |
-| **04** | A：并行 | 无 | `.scratch/v0.1.3/issues/04-ci-action-pinning.md` |
-| **05** | A：并行 | 无 | `.scratch/v0.1.3/issues/05-product-document-status.md` |
-| **06** | B：先后依赖 | 01、02、03、04、05 | `.scratch/v0.1.3/issues/06-trigger-corpus-artifact.md` |
-| **07** | A：并行 | 06 | `.scratch/v0.1.3/issues/07-claude-live-acceptance.md` |
-| **08** | A：并行 | 06 | `.scratch/v0.1.3/issues/08-codex-live-acceptance.md` |
-| **09** | B：先后依赖 | 07、08 | `.scratch/v0.1.3/issues/09-trigger-threshold-gate.md` |
-| **10** | A：并行 | 09 | `.scratch/v0.1.3/issues/10-evaluator-mutation-matrix.md` |
-| **11** | A：并行 | 09 | `.scratch/v0.1.3/issues/11-workflow-transition-fixtures.md` |
-| **12** | A：并行 | 09 | `.scratch/v0.1.3/issues/12-ambiguous-evidence-fixtures.md` |
-| **13** | A：并行 | 09 | `.scratch/v0.1.3/issues/13-acceptance-freshness.md` |
-| **14** | B：先后依赖 | 10、11、12、13 | `.scratch/v0.1.3/issues/14-unreferenced-document-retirement.md` |
-| **15** | B：先后依赖 | 14 | `.scratch/v0.1.3/issues/15-skill-bundle-retirement.md` |
-| **16** | B：先后依赖 | 15 | `.scratch/v0.1.3/issues/16-coordinated-reference-retirement.md` |
-| **17** | A：并行 | 16 | `.scratch/v0.1.3/issues/17-workflow-rename.md` |
-| **18** | A：并行 | 16 | `.scratch/v0.1.3/issues/18-workflow-split.md` |
-| **19** | A：并行 | 16 | `.scratch/v0.1.3/issues/19-workflow-merge.md` |
-| **20** | B：先后依赖 | 17、18、19 | `.scratch/v0.1.3/issues/20-pruning-idempotency.md` |
-| **21** | B：先后依赖 | 20 | `.scratch/v0.1.3/issues/21-context-architecture.md` |
-| **22** | B：先后依赖 | 21 | `.scratch/v0.1.3/issues/22-context-duplication.md` |
-| **23** | B：先后依赖 | 22 | `.scratch/v0.1.3/issues/23-qualification-traceability.md` |
-| **24** | B：先后依赖 | 23 | `.scratch/v0.1.3/issues/24-lifecycle-pure-extraction.md` |
-| **25** | B：先后依赖 | 23、24 | `.scratch/v0.1.3/issues/25-final-release-gate.md` |
-
-## 执行批次总览
-
-同一批次内可并行；批次全部完成并整合验收后，才能进入下一批次。
-
-| 批次 | 文件序号 | 并行方式 |
+| 文件序号 | 前置序号 | 票据路径 |
 |---|---|---|
-| 1 | 01、02、03、04、05 | 可并行（03 与 04 都可能改 release workflow，整合时注意冲突） |
-| 2 | 06 | 单独执行 |
-| 3 | 07、08 | 可并行 |
-| 4 | 09 | 单独执行；必须以两端真实阈值通过为完成条件 |
-| 5 | 10、11、12、13 | 可并行 |
+| **01** | 无 | `.scratch/v0.1.3/issues/01-generated-skill-routing.md` |
+| **02** | 无 | `.scratch/v0.1.3/issues/02-operation-parent-rollback.md` |
+| **03** | 无 | `.scratch/v0.1.3/issues/03-release-version-ssot.md` |
+| **04** | 无 | `.scratch/v0.1.3/issues/04-ci-action-pinning.md` |
+| **05** | 无 | `.scratch/v0.1.3/issues/05-product-document-status.md` |
+| **06** | 01、02、03、04、05 | `.scratch/v0.1.3/issues/06-trigger-corpus-artifact.md` |
+| **07** | 06 | `.scratch/v0.1.3/issues/07-claude-live-acceptance.md` |
+| **08** | 06 | `.scratch/v0.1.3/issues/08-codex-live-acceptance.md` |
+| **09** | 07、08 | `.scratch/v0.1.3/issues/09-trigger-threshold-gate.md` |
+| **10** | 09 | `.scratch/v0.1.3/issues/10-evaluator-mutation-matrix.md` |
+| **11** | 09 | `.scratch/v0.1.3/issues/11-workflow-transition-fixtures.md` |
+| **12** | 09 | `.scratch/v0.1.3/issues/12-ambiguous-evidence-fixtures.md` |
+| **13** | 09 | `.scratch/v0.1.3/issues/13-acceptance-freshness.md` |
+| **14** | 10、11、12、13 | `.scratch/v0.1.3/issues/14-unreferenced-document-retirement.md` |
+| **15** | 14 | `.scratch/v0.1.3/issues/15-skill-bundle-retirement.md` |
+| **16** | 15 | `.scratch/v0.1.3/issues/16-coordinated-reference-retirement.md` |
+| **17** | 16 | `.scratch/v0.1.3/issues/17-workflow-rename.md` |
+| **18** | 16 | `.scratch/v0.1.3/issues/18-workflow-split.md` |
+| **19** | 16 | `.scratch/v0.1.3/issues/19-workflow-merge.md` |
+| **20** | 17、18、19 | `.scratch/v0.1.3/issues/20-pruning-idempotency.md` |
+| **21** | 20 | `.scratch/v0.1.3/issues/21-context-architecture.md` |
+| **22** | 21 | `.scratch/v0.1.3/issues/22-context-duplication.md` |
+| **23** | 22 | `.scratch/v0.1.3/issues/23-qualification-traceability.md` |
+| **24** | 23 | `.scratch/v0.1.3/issues/24-lifecycle-pure-extraction.md` |
+| **25** | 23、24 | `.scratch/v0.1.3/issues/25-final-release-gate.md` |
+
+## 调度与集成
+
+批次表示依赖上的候选集合，不承诺共享状态独立。只有明确列出互不依赖的子任务，且写入范围独立或共享接口已固定，才并行实施；共享语义或核心文件冲突明显时串行。worktree 隔离文件，不解决协议分歧。
+
+| 批次 | 文件序号 | 调度提醒 |
+|---|---|---|
+| 1 | 01、02、03、04、05 | 核对共享文件；03/04 可能同时修改 release workflow |
+| 2 | 06 | 建立后续 runner 共用契约 |
+| 3 | 07、08 | 共享契约固定后可独立执行；分别保留真实证据 |
+| 4 | 09 | 两端真实阈值证据是门禁的一部分 |
+| 5 | 10、11、12、13 | 核对 evaluator、fixture 和 artifact 接口冲突 |
 | 6 | 14 | 单独执行 |
 | 7 | 15 | 单独执行 |
 | 8 | 16 | 单独执行 |
-| 9 | 17、18、19 | 可并行 |
+| 9 | 17、18、19 | 共享 reconciliation/RETIRE 语义；接口未固定时串行 |
 | 10 | 20 | 单独执行 |
 | 11 | 21 | 单独执行 |
 | 12 | 22 | 单独执行 |
 | 13 | 23 | 单独执行 |
-| 14 | 24 | 单独执行 |
-| 15 | 25 | 单独执行；发布需独立授权，发布后验证 registry digest 才算 Qualified |
+| 14 | 24 | 单独执行，保留抽取前后证据 |
+| 15 | 25 | 发布需独立授权，registry 验证后才可完成资格判定 |
+
+集成由一个 session 在明确授权后串行处理，目标是 `main`。每次按当前 main 复核差异、解决冲突、重新生成受影响的发布摘要并验证组合结果；不能以各分支单独通过代替整合验收。推送后确认远端提交，后续票据再从新的 `origin/main` 验证依赖。具体提交/分支操作服从当前工具规则，不让多个实现 session 并发更新 main。

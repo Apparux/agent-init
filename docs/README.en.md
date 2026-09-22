@@ -2,9 +2,9 @@
 
 [简体中文](../README.md) | English
 
-Agent Init installs a shared `agent-init` Skill for Claude Code and Codex. The Skill enters an existing repository, gathers evidence, proposes a minimal Agent environment, and writes only after explicit approval.
+Agent Init installs a shared user-level `agent-init` Skill for six built-in harnesses and custom harnesses. Project-level environment generation still targets Claude Code and Codex: the Skill enters an existing repository, gathers evidence, proposes a minimal Agent environment, and writes only after explicit approval.
 
-> Status: v0.1.2.
+> Status: this document describes the current repository implementation. Multi-harness support has been merged, but no npm package has been published for these changes; `@latest` resolves to the published version and may not include the additions described below.
 >
 > License: MIT.
 
@@ -45,12 +45,18 @@ The installer copies the canonical mother Skill into a stable location under:
 ~/.agent-init/current/skills/agent-init
 ```
 
-It then exposes that same canonical Skill to both harnesses:
+It then creates user-level discovery targets for six built-in harnesses, exposing that same canonical Skill:
 
-```text
-~/.agents/skills/agent-init
-~/.claude/skills/agent-init
-```
+| Harness (ID) | Discovery target | `verification` |
+| --- | --- | --- |
+| Codex (`codex`) | `~/.agents/skills/agent-init` | `accepted` |
+| Claude Code (`claude`) | `~/.claude/skills/agent-init` | `accepted` |
+| Cursor (`cursor`) | `~/.cursor/skills/agent-init` | `unverified` |
+| OpenCode (`opencode`) | `~/.config/opencode/skills/agent-init` | `unverified` |
+| Pi (`pi`) | `~/.pi/agent/skills/agent-init` | `unverified` |
+| Grok Build (`grok`) | `~/.grok/skills/agent-init` | `unverified` |
+
+`verification` is a registry acceptance marker, not a local runtime result. The last four harnesses have not passed live harness acceptance; an installed target does not establish that discovery or invocation works.
 
 A symlink is preferred. Where a stable, ownership-verifiable symlink cannot be created, the installer may use a managed copy and records that mode in `install.json`.
 
@@ -58,6 +64,36 @@ After installation:
 
 - Claude Code: `/agent-init`
 - Codex: `$agent-init`
+
+### Custom harnesses
+
+Add entries in `~/.config/agent-init/harnesses.json` (built-ins are retained):
+
+```json
+{
+  "schemaVersion": 1,
+  "harnesses": [
+    {
+      "id": "myagent",
+      "label": "My Agent",
+      "skillsDir": ".myagent/skills",
+      "invocation": null
+    },
+    {
+      "id": "shared-agent",
+      "skillsDir": ".agents/skills"
+    }
+  ]
+}
+```
+
+- `schemaVersion` must be `1`, and `harnesses` must be an array.
+- `id` must match `^[a-z][a-z0-9-]*$` and must not duplicate a built-in or another custom ID.
+- `skillsDir` is a directory relative to HOME, without `~` or an absolute path, and must stay inside HOME; the installer creates an `agent-init` target beneath it.
+- `label` is optional and defaults to the ID. `invocation` is an optional display hint; omitted or `null` means no hint, not verified invocation support.
+- If the normalized `skillsDir` matches an existing entry, the entry becomes an alias sharing its target and installation state, without a duplicate installation. Above, `shared-agent` shares the Codex target. Independent custom entries are marked `unverified`; aliases display `alias`.
+
+Use `install` for a first installation. After adding configuration to an existing installation, use `update` to add the targets, then `harnesses` to inspect the result. Invalid configuration stops with an error rather than silently falling back to built-ins.
 
 ## CLI
 
@@ -67,6 +103,7 @@ Use the latest package payload for lifecycle operations:
 npx @apparux/agent-init@latest install
 npx @apparux/agent-init@latest update
 npx @apparux/agent-init@latest doctor
+npx @apparux/agent-init@latest harnesses
 npx @apparux/agent-init@latest uninstall
 npx @apparux/agent-init@latest --version
 npx @apparux/agent-init@latest --help
@@ -76,15 +113,19 @@ If the package was installed globally, running `agent-init update` only applies 
 
 ### `install`
 
-Creates the stable canonical installation and the Claude/Codex discovery targets. Repeating a healthy same-version install is a no-op. Unknown targets are never overwritten.
+Creates the stable canonical installation and discovery targets for all built-in and custom harnesses (aliases share targets). Repeating a healthy same-version install with all targets present is a no-op. Unknown targets are never overwritten.
 
 ### `update`
 
-Updates only the user-level mother Skill and targets owned by this installer. It does not scan or modify the current repository. A same-version, same-payload healthy installation reports that it is already up to date; downgrade and integrity conflicts stop without replacing user data.
+Updates only the user-level mother Skill and managed targets; it does not scan or modify the current repository. If an older installation has only Claude/Codex targets, or configuration adds a custom harness, it adds registry targets not yet recorded in the manifest when existing managed assets are healthy and the new paths are unoccupied—even at the same version and payload. Only a healthy same-version, same-payload installation with all targets present reports that it is already up to date. Unknown targets, downgrade and integrity conflicts stop without replacing user data.
 
 ### `doctor`
 
 Performs a read-only health check of the manifest, canonical Skill, ownership evidence, target modes and target contents. It does not repair files automatically.
+
+### `harnesses`
+
+Lists built-in, custom and alias harnesses with target paths, installation state, modes, `verification` and configured invocation hints, read-only. Targets still recorded in the manifest but absent from the current configuration also appear as `unregistered`. This command neither installs or repairs targets nor performs live harness acceptance.
 
 ### `uninstall`
 
