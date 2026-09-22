@@ -138,7 +138,7 @@ jobs:
             repository: 'git+https://github.com/Apparux/agent-init.git',
             entryCount: 22,
             treeDigest:
-              'sha256:3946dae710f193814ab48e35f56ccd783e4a98ee97b69a8d7ae48244997f2d5e',
+              'sha256:b3eb6b282e8dc84699fb083244f8c51b29629dfe2b7033729b77ac4aa8f445e8',
           };
           for (const field of ['name', 'version', 'filename', 'entryCount']) {
             if (artifact?.[field] !== expected[field]) {
