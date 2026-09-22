@@ -14,6 +14,7 @@ import path from 'node:path';
 import test from 'node:test';
 
 import { executeLifecycle } from '../../src/installation/lifecycle.js';
+import { HARNESS_REGISTRY } from '../../src/installation/harnesses.js';
 import {
   assertSentinelsUnchanged,
   createInstallationFixture,
@@ -209,9 +210,9 @@ test('schema-1 manifests without linkText remain readable and safely removable',
     () => lstat(path.join(homeDir, '.agent-init')),
     { code: 'ENOENT' },
   );
-  for (const name of ['codex', 'claude']) {
+  for (const entry of HARNESS_REGISTRY) {
     await assert.rejects(
-      () => lstat(path.join(homeDir, name === 'codex' ? '.agents' : '.claude', 'skills', 'agent-init')),
+      () => lstat(path.join(homeDir, ...entry.skillsDir.split('/'), 'agent-init')),
       { code: 'ENOENT' },
     );
   }

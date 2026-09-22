@@ -92,7 +92,16 @@ async function readMarker(targetPath) {
 }
 
 export async function inspectTarget(paths, name, manifestRecord, manifest) {
-  const targetPath = paths.targets[name];
+  // Unregistered manifest records (written under a since-removed harness
+  // config) are inspected at their recorded path so they stay removable.
+  const targetPath = paths.targets[name] ?? manifestRecord?.path;
+  if (targetPath === undefined) {
+    throw new InstallationError(
+      'OWNERSHIP_MISMATCH',
+      `No path is known for managed target: ${name}`,
+      { remediation: 'Run doctor and inspect the installation manifest.' },
+    );
+  }
   const fingerprint = await entryFingerprint(targetPath);
   if (fingerprint.type === 'missing') {
     return {

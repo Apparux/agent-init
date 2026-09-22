@@ -1,4 +1,4 @@
-name: Publish npm v0.1.3-rc.2
+name: Publish npm
 
 on:
   workflow_dispatch:
@@ -7,12 +7,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: publish-npm-v0.1.3-rc.2
+  group: publish-npm-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   publish:
-    name: Publish @apparux/agent-init@0.1.3-rc.2
+    name: Publish @apparux/agent-init
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -29,6 +29,18 @@ jobs:
       - name: Pin npm CLI
         run: npm install --global npm@11.17.0
       - run: npm ci --ignore-scripts
+      - name: Derive release version from package.json
+        id: version
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync, readFileSync } from 'node:fs';
+          const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+          const filename = `${pkg.name.replace(/^@/, '').replace('/', '-')}-${pkg.version}.tgz`;
+          appendFileSync(
+            process.env.GITHUB_OUTPUT,
+            `version=${pkg.version}\nfilename=${filename}\n`,
+          );
+          NODE
       - name: Verify release metadata
         run: |
           node --input-type=module <<'NODE'
@@ -36,13 +48,11 @@ jobs:
           const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
           const expected = {
             name: '@apparux/agent-init',
-            version: '0.1.3-rc.2',
             access: 'public',
             repository: 'git+https://github.com/Apparux/agent-init.git',
           };
           if (
             pkg.name !== expected.name ||
-            pkg.version !== expected.version ||
             pkg.publishConfig?.access !== expected.access ||
             pkg.repository?.url !== expected.repository
           ) {
@@ -53,13 +63,16 @@ jobs:
               repository: pkg.repository?.url,
             })}`);
           }
+          if (!/^0|[1-9]/.test(pkg.version)) {
+            throw new Error(`Invalid package version: ${pkg.version}`);
+          }
           NODE
       - run: npm test
       - name: Build release artifact
         run: |
           mkdir -p .release-artifact/unpacked
           npm pack --ignore-scripts --json --pack-destination .release-artifact > .release-artifact/pack.json
-          tar -xzf .release-artifact/apparux-agent-init-0.1.3-rc.2.tgz -C .release-artifact/unpacked
+          tar -xzf .release-artifact/${{ steps.version.outputs.filename }} -C .release-artifact/unpacked
       - name: Verify release artifact
         id: artifact
         run: |
@@ -131,14 +144,18 @@ jobs:
           const [artifact] = JSON.parse(
             readFileSync('.release-artifact/pack.json', 'utf8'),
           );
+          const releaseManifest = JSON.parse(
+            readFileSync('release-manifest.json', 'utf8'),
+          );
+          const version = '${{ steps.version.outputs.version }}';
+          const filename = '${{ steps.version.outputs.filename }}';
           const expected = {
             name: '@apparux/agent-init',
-            version: '0.1.3-rc.2',
-            filename: 'apparux-agent-init-0.1.3-rc.2.tgz',
+            version,
+            filename,
             repository: 'git+https://github.com/Apparux/agent-init.git',
-            entryCount: 22,
-            treeDigest:
-              'sha256:b3eb6b282e8dc84699fb083244f8c51b29629dfe2b7033729b77ac4aa8f445e8',
+            entryCount: releaseManifest.entryCount,
+            treeDigest: releaseManifest.treeDigest,
           };
           for (const field of ['name', 'version', 'filename', 'entryCount']) {
             if (artifact?.[field] !== expected[field]) {
@@ -148,30 +165,7 @@ jobs:
             }
           }
 
-          const expectedFiles = [
-            ['LICENSE', 0o644],
-            ['README.md', 0o644],
-            ['bin/agent-init.js', 0o755],
-            ['package.json', 0o644],
-            ['skills/agent-init/SKILL.md', 0o644],
-            ['skills/agent-init/references/agents-guidelines.md', 0o644],
-            ['skills/agent-init/references/classification.md', 0o644],
-            ['skills/agent-init/references/detection-guidelines.md', 0o644],
-            ['skills/agent-init/references/evaluation-guidelines.md', 0o644],
-            ['skills/agent-init/references/proposal-guidelines.md', 0o644],
-            ['skills/agent-init/references/reconciliation-guidelines.md', 0o644],
-            ['skills/agent-init/references/skills-guidelines.md', 0o644],
-            ['skills/agent-init/scripts/detect-project.js', 0o644],
-            ['src/cli/output.js', 0o644],
-            ['src/cli/run.js', 0o644],
-            ['src/installation/filesystem.js', 0o644],
-            ['src/installation/lifecycle.js', 0o644],
-            ['src/installation/manifest.js', 0o644],
-            ['src/installation/paths.js', 0o644],
-            ['src/installation/payload.js', 0o644],
-            ['src/installation/targets.js', 0o644],
-            ['src/installation/transaction.js', 0o644],
-          ].sort(([left], [right]) => left.localeCompare(right, 'en'));
+          const expectedFiles = releaseManifest.files;
           const actualFiles = artifact.files
             .map(({ path, mode }) => [path, mode])
             .sort(([left], [right]) => left.localeCompare(right, 'en'));
@@ -227,18 +221,19 @@ jobs:
           console.log(`Runner artifact integrity: ${artifact.integrity}`);
           NODE
       - name: Publish npm package
-        run: npm publish .release-artifact/apparux-agent-init-0.1.3-rc.2.tgz --access public --tag latest
+        run: npm publish .release-artifact/${{ steps.version.outputs.filename }} --access public --tag latest
       - name: Verify published registry artifact
         env:
           EXPECTED_SHASUM: ${{ steps.artifact.outputs.shasum }}
           EXPECTED_INTEGRITY: ${{ steps.artifact.outputs.integrity }}
+          EXPECTED_VERSION: ${{ steps.version.outputs.version }}
         run: |
           node --input-type=module <<'NODE'
           import { createHash } from 'node:crypto';
           import { setTimeout as delay } from 'node:timers/promises';
 
           const packageName = '@apparux/agent-init';
-          const version = '0.1.3-rc.2';
+          const version = process.env.EXPECTED_VERSION;
           const registryRoot = `https://registry.npmjs.org/${encodeURIComponent(packageName)}`;
           const getJson = async (url) => {
             const response = await fetch(url, {

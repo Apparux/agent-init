@@ -4,11 +4,13 @@ import path from 'node:path';
 import test from 'node:test';
 
 import { executeLifecycle } from '../../src/installation/lifecycle.js';
+import { HARNESS_REGISTRY } from '../../src/installation/harnesses.js';
 import { createInstallationFixture, snapshotTree } from './helpers.js';
 
 test('target parent replacement race never follows a newly inserted symlink', async (t) => {
   const { disposableRoot, homeDir, runtime } = await createInstallationFixture(t);
-  await rm(path.join(homeDir, '.agents'), { recursive: true });
+  const raceRoot = path.join(homeDir, HARNESS_REGISTRY[0].skillsDir.split('/')[0]);
+  await rm(raceRoot, { recursive: true });
   const outside = path.join(disposableRoot, 'outside');
   await mkdir(outside);
   const sentinel = path.join(outside, 'sentinel.txt');
@@ -17,9 +19,9 @@ test('target parent replacement race never follows a newly inserted symlink', as
   const racingRuntime = {
     ...runtime,
     async beforeMutation(name) {
-      if (!injected && name === 'parent:create:.agents') {
+      if (!injected && name === `parent:create:${HARNESS_REGISTRY[0].skillsDir.split('/')[0]}`) {
         injected = true;
-        await symlink(outside, path.join(homeDir, '.agents'), 'dir');
+        await symlink(outside, raceRoot, 'dir');
       }
     },
   };
@@ -36,19 +38,18 @@ test('target parent replacement race never follows a newly inserted symlink', as
 
 test('missing discovery parents are created incrementally and retained after install', async (t) => {
   const { homeDir, runtime } = await createInstallationFixture(t);
-  await rm(path.join(homeDir, '.agents'), { recursive: true });
-  await rm(path.join(homeDir, '.claude'), { recursive: true });
+  for (const entry of HARNESS_REGISTRY) {
+    await rm(path.join(homeDir, entry.skillsDir.split('/')[0]), { recursive: true });
+  }
 
   const result = await executeLifecycle({ operation: 'install' }, runtime);
 
   assert.equal(result.ok, true);
   assert.equal(result.outcome, 'installed');
-  assert.equal(
-    (await (await import('node:fs/promises')).lstat(path.join(homeDir, '.agents', 'skills'))).isDirectory(),
-    true,
-  );
-  assert.equal(
-    (await (await import('node:fs/promises')).lstat(path.join(homeDir, '.claude', 'skills'))).isDirectory(),
-    true,
-  );
+  for (const entry of HARNESS_REGISTRY) {
+    assert.equal(
+      (await (await import('node:fs/promises')).lstat(path.join(homeDir, ...entry.skillsDir.split('/')))).isDirectory(),
+      true,
+    );
+  }
 });

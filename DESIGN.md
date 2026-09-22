@@ -125,6 +125,7 @@ agent-init install
 agent-init update
 agent-init doctor
 agent-init uninstall
+agent-init harnesses
 agent-init --version
 agent-init --help
 ```
@@ -613,8 +614,7 @@ Doctor 完全只读，检查：
 - manifest 存在性、schema 与路径；
 - installed/running version；
 - canonical directory、`SKILL.md` 与 digest；
-- Codex target；
-- Claude target；
+- 每个 harness registry target（含未被当前 registry 认领的 manifest 记录：报告 `UNREGISTERED_TARGET`）；
 - symlink destination 或 managed copy digest；
 - read permissions；
 - stale staging/rollback；
@@ -722,6 +722,10 @@ v0.1 不引入更多不稳定的细粒度 exit code。
 - `OWNERSHIP_MISMATCH`
 - `MANAGED_COPY_DRIFT`
 - `ROLLBACK_FAILED`
+- `VERSION_MISMATCH`
+- `NOT_INSTALLED`
+- `INVALID_HARNESSES_CONFIG`
+- `INVALID_HARNESS_REGISTRY`
 
 每个用户可见错误必须包含：
 

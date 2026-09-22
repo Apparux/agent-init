@@ -137,7 +137,25 @@ export async function rollbackCreatedParents(createdDirectories) {
   }
 }
 
-export async function resolveInstallationPaths(homeDir) {
+// Effective target view for a (possibly stale) manifest: registry keys plus
+// any manifest record whose path is not covered by the registry. This lets
+// inspect/uninstall handle targets written under a harness config that has
+// since been removed, without ever widening what may be deleted: a manifest
+// record's path is used verbatim, never re-derived.
+export function withManifestTargets(paths, manifest) {
+  const targets = { ...paths.targets };
+  const targetParents = { ...paths.targetParents };
+  if (manifest?.targets && typeof manifest.targets === 'object') {
+    for (const [name, record] of Object.entries(manifest.targets)) {
+      if (targets[name] !== undefined || typeof record?.path !== 'string') continue;
+      targets[name] = record.path;
+      targetParents[name] = path.dirname(record.path);
+    }
+  }
+  return { targets, targetParents };
+}
+
+export async function resolveInstallationPaths(homeDir, registry) {
   if (typeof homeDir !== 'string' || !path.isAbsolute(homeDir)) {
     throw new InstallationError(
       'INVALID_HOME',
@@ -166,9 +184,44 @@ export async function resolveInstallationPaths(homeDir) {
     );
   }
 
+  if (
+    !registry ||
+    !Array.isArray(registry.entries) ||
+    registry.entries.length === 0
+  ) {
+    throw new InstallationError(
+      'INVALID_HOME',
+      'Harness registry must be a non-empty array.',
+      { remediation: 'Load the harness registry before resolving installation paths.' },
+    );
+  }
+
+  const aliases = registry.aliases ?? new Map();
   const installRoot = path.join(homeDir, '.agent-init');
   const canonicalRoot = path.join(installRoot, 'current');
   const canonicalSkill = path.join(canonicalRoot, 'skills', 'agent-init');
+  const targets = {};
+  const targetParents = {};
+  for (const entry of registry.entries) {
+    if (!entry || typeof entry.key !== 'string' || typeof entry.skillsDir !== 'string') {
+      throw new InstallationError(
+        'INVALID_HARNESS_REGISTRY',
+        `Harness registry entry is invalid: ${JSON.stringify(entry)}`,
+        { remediation: 'Use entries produced by loadHarnessRegistry.' },
+      );
+    }
+    const parent = path.join(homeDir, ...entry.skillsDir.split('/'));
+    const target = path.join(parent, 'agent-init');
+    if (targets[entry.key] !== undefined || targetParents[entry.key] !== undefined) {
+      throw new InstallationError(
+        'INVALID_HARNESS_REGISTRY',
+        `Harness registry has duplicate keys: ${entry.key}`,
+        { remediation: 'Use a registry with unique harness keys.' },
+      );
+    }
+    targets[entry.key] = target;
+    targetParents[entry.key] = parent;
+  }
   const paths = {
     logicalHome: path.resolve(homeDir),
     physicalHome,
@@ -177,16 +230,13 @@ export async function resolveInstallationPaths(homeDir) {
     canonicalSkill,
     manifest: path.join(installRoot, 'install.json'),
     canonicalMarker: path.join(canonicalRoot, '.agent-init-owner.json'),
-    targets: {
-      codex: path.join(homeDir, '.agents', 'skills', 'agent-init'),
-      claude: path.join(homeDir, '.claude', 'skills', 'agent-init'),
-    },
-    targetParents: {
-      codex: path.join(homeDir, '.agents', 'skills'),
-      claude: path.join(homeDir, '.claude', 'skills'),
-    },
+    targets,
+    targetParents,
+    registry: registry.entries,
+    aliases,
     lock: path.join(homeDir, '.agent-init.operation.lock'),
   };
+
 
   for (const candidate of [
     paths.installRoot,

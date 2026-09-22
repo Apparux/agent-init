@@ -4,6 +4,7 @@ import path from 'node:path';
 import test from 'node:test';
 
 import { executeLifecycle } from '../../src/installation/lifecycle.js';
+import { HARNESS_REGISTRY } from '../../src/installation/harnesses.js';
 import {
   assertSentinelsUnchanged,
   createInstallationFixture,
@@ -31,7 +32,7 @@ test('invalid package payload causes zero HOME mutation', async (t) => {
 test('foreign discovery target stops install before any control-set mutation', async (t) => {
   const { disposableRoot, homeDir, runtime, sentinels } =
     await createInstallationFixture(t);
-  const target = path.join(homeDir, '.agents', 'skills', 'agent-init');
+  const target = path.join(homeDir, ...HARNESS_REGISTRY[0].skillsDir.split('/'), 'agent-init');
   await mkdir(target);
   await writeFile(path.join(target, 'SKILL.md'), 'foreign skill\n', { mode: 0o600 });
   const before = await snapshotTree(disposableRoot);
@@ -76,8 +77,9 @@ test('symlinked discovery parent is rejected without following it', async (t) =>
   await mkdir(outside);
   const outsideSentinel = path.join(outside, 'outside.txt');
   await writeFile(outsideSentinel, 'outside foreign\n', { mode: 0o600 });
-  await rm(path.join(homeDir, '.agents'), { recursive: true });
-  await symlink(outside, path.join(homeDir, '.agents'), 'dir');
+  const codexRoot = path.join(homeDir, HARNESS_REGISTRY[0].skillsDir.split('/')[0]);
+  await rm(codexRoot, { recursive: true });
+  await symlink(outside, codexRoot, 'dir');
   const before = await snapshotTree(disposableRoot);
 
   const result = await executeLifecycle({ operation: 'install' }, runtime);
@@ -87,7 +89,7 @@ test('symlinked discovery parent is rejected without following it', async (t) =>
   assert.deepEqual(await snapshotTree(disposableRoot), before);
   assert.equal(await (await import('node:fs/promises')).readFile(outsideSentinel, 'utf8'), 'outside foreign\n');
   for (const [name, sentinel] of Object.entries(sentinels)) {
-    if (!sentinel.includes(`${path.sep}.agents${path.sep}`)) {
+    if (!sentinel.includes(`${path.sep}${HARNESS_REGISTRY[0].skillsDir.split('/')[0]}${path.sep}`)) {
       const content = await (await import('node:fs/promises')).readFile(sentinel, 'utf8');
       assert.equal(content, `foreign:${name}\n`);
     }

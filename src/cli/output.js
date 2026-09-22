@@ -1,5 +1,7 @@
 import path from 'node:path';
 
+import { HARNESS_REGISTRY } from '../installation/harnesses.js';
+
 function displayPath(value, homeDir) {
   if (!value) return '(not available)';
   if (value === homeDir) return '~';
@@ -11,7 +13,7 @@ function displayPath(value, homeDir) {
 }
 
 function targetLabel(name) {
-  return name === 'claude' ? 'Claude Code' : 'Codex';
+  return HARNESS_REGISTRY.find((entry) => entry.key === name)?.label ?? name;
 }
 
 export function renderSuccess(result, runtime) {
@@ -25,7 +27,7 @@ export function renderSuccess(result, runtime) {
         `  ✓ ${displayPath(result.paths.canonicalRoot, runtime.homeDir)}`,
         '',
       );
-      for (const name of ['codex', 'claude']) {
+      for (const name of Object.keys(result.manifest.targets)) {
         const record = result.manifest.targets[name];
         lines.push(
           targetLabel(name),
@@ -34,7 +36,11 @@ export function renderSuccess(result, runtime) {
         );
       }
     }
-    lines.push('Ready.', '', 'Claude Code:', '  /agent-init', '', 'Codex:', '  $agent-init');
+    lines.push('Ready.', '');
+    for (const entry of HARNESS_REGISTRY) {
+      if (!entry.invocation) continue;
+      lines.push(entry.label, `  ${entry.invocation}`, '');
+    }
   } else if (result.operation === 'update') {
     lines.push(
       result.outcome === 'already-up-to-date'
@@ -49,7 +55,9 @@ export function renderSuccess(result, runtime) {
       '',
     );
     for (const check of result.checks) {
-      lines.push(`${check.status === 'ok' ? '  ✓' : '  !'} ${check.message}`);
+      lines.push(
+        `${check.status === 'ok' ? '  ✓' : check.status === 'warning' ? '  •' : '  !'} ${check.message}`,
+      );
     }
     lines.push('', 'Status', '  ✓ Healthy');
   } else if (result.operation === 'uninstall') {
@@ -61,6 +69,28 @@ export function renderSuccess(result, runtime) {
       for (const preserved of result.preserved) {
         lines.push(`  ! ${displayPath(preserved, runtime.homeDir)}`);
       }
+    }
+  } else if (result.operation === 'harnesses') {
+    lines.push(
+      'Harnesses',
+      `  Installed: ${result.installedVersion ?? 'Not installed'}`,
+      '',
+    );
+    for (const harness of result.harnesses) {
+      const state = harness.installed
+        ? `✓ ${harness.mode ?? 'installed'}`
+        : harness.status === 'missing'
+          ? 'not installed'
+          : `! ${harness.status}`;
+      lines.push(
+        `${harness.label} (${harness.key})`,
+        `  ${state} · ${displayPath(harness.path, runtime.homeDir)}`,
+        `  verification: ${harness.verification}`,
+      );
+      if (harness.invocation) {
+        lines.push(`  invoke: ${harness.invocation}`);
+      }
+      lines.push('');
     }
   }
   return `${lines.join('\n')}\n`;

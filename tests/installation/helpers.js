@@ -2,6 +2,8 @@ import { lstat, mkdir, mkdtemp, readFile, readdir, readlink, rm, writeFile } fro
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
+import { HARNESS_REGISTRY } from '../../src/installation/harnesses.js';
+
 export const PACKAGE_NAME = '@apparux/agent-init';
 
 export async function createInstallationFixture(t, options = {}) {
@@ -10,8 +12,9 @@ export async function createInstallationFixture(t, options = {}) {
 
   const homeDir = path.join(disposableRoot, 'home');
   const packageRoot = path.join(disposableRoot, 'package');
-  await mkdir(path.join(homeDir, '.agents', 'skills'), { recursive: true });
-  await mkdir(path.join(homeDir, '.claude', 'skills'), { recursive: true });
+  for (const entry of HARNESS_REGISTRY) {
+    await mkdir(path.join(homeDir, ...entry.skillsDir.split('/')), { recursive: true });
+  }
   await mkdir(path.join(packageRoot, 'skills', 'agent-init', 'references'), {
     recursive: true,
   });
@@ -30,13 +33,16 @@ export async function createInstallationFixture(t, options = {}) {
     options.guide ?? '# Guide\n',
   );
 
-  const sentinels = {
-    home: path.join(homeDir, 'user-home-sentinel.txt'),
-    agents: path.join(homeDir, '.agents', 'user-agents-sentinel.txt'),
-    agentsSkills: path.join(homeDir, '.agents', 'skills', 'user-skill.txt'),
-    claude: path.join(homeDir, '.claude', 'user-claude-sentinel.txt'),
-    claudeSkills: path.join(homeDir, '.claude', 'skills', 'user-skill.txt'),
-  };
+  const sentinels = { home: path.join(homeDir, 'user-home-sentinel.txt') };
+  for (const entry of HARNESS_REGISTRY) {
+    const segments = entry.skillsDir.split('/');
+    sentinels[`${entry.key}Root`] = path.join(homeDir, ...segments, `user-${entry.key}-sentinel.txt`);
+    sentinels[`${entry.key}Skills`] = path.join(
+      homeDir,
+      ...segments,
+      'user-skill.txt',
+    );
+  }
   for (const [name, sentinelPath] of Object.entries(sentinels)) {
     await writeFile(sentinelPath, `foreign:${name}\n`, { mode: 0o640 });
   }

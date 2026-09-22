@@ -5,6 +5,7 @@ import test from 'node:test';
 
 import { renderFailure } from '../../src/cli/output.js';
 import { executeLifecycle } from '../../src/installation/lifecycle.js';
+import { HARNESS_REGISTRY } from '../../src/installation/harnesses.js';
 import {
   assertSentinelsUnchanged,
   createInstallationFixture,
@@ -52,10 +53,11 @@ test('uninstall removes only verified owned assets and preserves project assets'
   assert.equal(result.ok, true);
   assert.equal(result.outcome, 'uninstalled');
   assert.equal(await exists(path.join(homeDir, '.agent-init')), false);
-  assert.equal(await exists(path.join(homeDir, '.agents', 'skills', 'agent-init')), false);
-  assert.equal(await exists(path.join(homeDir, '.claude', 'skills', 'agent-init')), false);
-  assert.equal(await exists(path.join(homeDir, '.agents', 'skills')), true);
-  assert.equal(await exists(path.join(homeDir, '.claude', 'skills')), true);
+  for (const entry of HARNESS_REGISTRY) {
+    const segments = entry.skillsDir.split('/');
+    assert.equal(await exists(path.join(homeDir, ...segments, 'agent-init')), false);
+    assert.equal(await exists(path.join(homeDir, ...segments)), true);
+  }
   assert.deepEqual(await snapshotTree(repository), projectBefore);
   await assertSentinelsUnchanged(sentinels);
 });

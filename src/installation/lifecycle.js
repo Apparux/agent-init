@@ -33,7 +33,9 @@ import {
   InstallationError,
   resolveInstallationPaths,
   validateManagedAncestors,
+  withManifestTargets,
 } from './paths.js';
+import { loadHarnessRegistry } from './harnesses.js';
 import { compareVersions, validatePackagePayload } from './payload.js';
 import {
   inspectTarget,
@@ -115,7 +117,13 @@ async function inspectInitialState(paths, runtime) {
   }
 
   const targets = {};
-  for (const name of ['codex', 'claude']) {
+  // Inspect the union of registry keys and manifest-recorded paths so
+  // targets written under a since-removed harness config stay visible (and
+  // removable) everywhere; inspectTarget uses the recorded path verbatim.
+  const effectiveTargets = manifest
+    ? withManifestTargets(paths, manifest).targets
+    : paths.targets;
+  for (const name of Object.keys(effectiveTargets)) {
     targets[name] = await inspectTarget(
       paths,
       name,
@@ -359,13 +367,25 @@ async function repairMissingTargets(payload, paths, runtime, operation, oldManif
       { path: paths.installRoot, remediation: 'Run doctor and inspect the changed ownership evidence.' },
     );
   }
-  const repairNames = Object.values(current.targets)
-    .filter((target) => target.status === 'owned-broken' && target.fingerprint.type === 'missing')
-    .map((target) => target.name);
+  // Repair scope is judged over manifest-claimed targets; unclaimed registry
+  // keys (added by a newer release) must simply be absent.
+  const claimedEntries = Object.entries(current.targets).filter(
+    ([name]) => current.manifest.targets[name] !== undefined,
+  );
+  const unclaimedAbsent = Object.entries(current.targets)
+    .filter(([name]) => current.manifest.targets[name] === undefined)
+    .every(([, target]) => target.status === 'missing');
+  const repairNames = claimedEntries
+    .filter(
+      ([, target]) =>
+        target.status === 'owned-broken' && target.fingerprint.type === 'missing',
+    )
+    .map(([name]) => name);
   if (
+    !unclaimedAbsent ||
     repairNames.length === 0 ||
-    Object.values(current.targets).some(
-      (target) => !['owned-valid', 'owned-broken'].includes(target.status),
+    claimedEntries.some(
+      ([, target]) => !['owned-valid', 'owned-broken'].includes(target.status),
     )
   ) {
     throw new InstallationError(
@@ -443,7 +463,7 @@ async function repairMissingTargets(payload, paths, runtime, operation, oldManif
       packageName: runtime.packageName,
       paths,
     });
-    for (const name of ['codex', 'claude']) {
+    for (const name of Object.keys(verified.targets)) {
       const target = await inspectTarget(paths, name, verified.targets[name], verified);
       if (target.status !== 'owned-valid') {
         throw new InstallationError(
@@ -532,10 +552,9 @@ async function repairMissingTargets(payload, paths, runtime, operation, oldManif
 async function installFresh(payload, paths, runtime, operation) {
   const installId = randomHex(runtime);
   const installedAt = isoNow(runtime);
-  const targetIds = {
-    codex: randomHex(runtime),
-    claude: randomHex(runtime),
-  };
+  const targetIds = Object.fromEntries(
+    Object.keys(paths.targets).map((name) => [name, randomHex(runtime)]),
+  );
   const created = {
     installRoot: false,
     canonical: null,
@@ -621,7 +640,7 @@ async function installFresh(payload, paths, runtime, operation) {
     await callAfterMutation(runtime, 'install:canonical-published');
 
     const targetRecords = {};
-    for (const name of ['codex', 'claude']) {
+    for (const name of Object.keys(paths.targets)) {
       const record = await materializeTarget({
         paths,
         name,
@@ -696,7 +715,7 @@ async function installFresh(payload, paths, runtime, operation) {
     });
     const canonical = await inspectCanonical(paths, verifiedManifest);
     const verifiedTargets = {};
-    for (const name of ['codex', 'claude']) {
+    for (const name of Object.keys(paths.targets)) {
       verifiedTargets[name] = await inspectTarget(
         paths,
         name,
@@ -730,8 +749,7 @@ async function installFresh(payload, paths, runtime, operation) {
       targets: verifiedTargets,
       changed: [
         paths.canonicalRoot,
-        paths.targets.codex,
-        paths.targets.claude,
+        ...Object.values(paths.targets),
         paths.manifest,
       ],
       preserved: [],
@@ -773,9 +791,9 @@ async function describeUninstallFailure(paths, operation, manifest, error) {
     if (completion.action === 'remove-install-root') changed.push(paths.installRoot);
     if (completion.action === 'preserve-target') preserved.push(completion.path);
   }
+  const effectiveTargets = manifest ? withManifestTargets(paths, manifest).targets : paths.targets;
   for (const candidate of [
-    paths.targets.codex,
-    paths.targets.claude,
+    ...Object.values(effectiveTargets),
     paths.canonicalRoot,
     paths.manifest,
     paths.installRoot,
@@ -811,6 +829,78 @@ async function describeUninstallFailure(paths, operation, manifest, error) {
 
 function doctorCheck(id, status, code, checkPath, message, remediation) {
   return { id, status, code, path: checkPath, message, remediation };
+}
+
+// Read-only listing of the effective harness registry plus per-target state
+// from the current installation (when present).
+async function runHarnesses(paths, runtime, state) {
+  const registryByKey = new Map(paths.registry.map((entry) => [entry.key, entry]));
+  const manifestKeys =
+    state.manifest?.targets && typeof state.manifest.targets === 'object'
+      ? Object.keys(state.manifest.targets)
+      : [];
+  const harnesses = paths.registry.map((entry) => {
+    const target = state.targets[entry.key] ?? null;
+    const record = state.manifest?.targets?.[entry.key] ?? null;
+    return {
+      key: entry.key,
+      label: entry.label,
+      skillsDir: entry.skillsDir,
+      invocation: entry.invocation,
+      verification: entry.verification,
+      installed: target?.status === 'owned-valid',
+      mode: record?.mode ?? null,
+      status: target?.status ?? 'missing',
+      path: target?.path ?? paths.targets[entry.key],
+    };
+  });
+  const aliases = paths.aliases ?? new Map();
+  const aliasRows = [...aliases.entries()].map(([key, alias]) => {
+    const owner = paths.registry.find((entry) => entry.skillsDir === alias.skillsDir);
+    const ownerTarget = state.targets[owner?.key] ?? null;
+    const ownerRecord = state.manifest?.targets?.[owner?.key] ?? null;
+    return {
+      key,
+      label: alias.label,
+      skillsDir: alias.skillsDir,
+      invocation: alias.invocation,
+      verification: 'alias',
+      installed: ownerTarget?.status === 'owned-valid',
+      mode: ownerRecord?.mode ?? null,
+      status: ownerTarget?.status ?? 'missing',
+      path: paths.targets[owner?.key] ?? null,
+    };
+  });
+  const unregistered = [];
+  for (const name of manifestKeys.filter((name) => !registryByKey.has(name))) {
+    const record = state.manifest.targets[name];
+    // inspectInitialState inspects the union view, so unregistered records
+    // normally have live state; fall back to a direct inspection when the
+    // caller passes a hand-built state.
+    const target =
+      state.targets[name] ?? (await inspectTarget(paths, name, record, state.manifest));
+    unregistered.push({
+      key: name,
+      label: name,
+      skillsDir: null,
+      invocation: null,
+      verification: 'unregistered',
+      installed: target?.status === 'owned-valid',
+      mode: record.mode ?? null,
+      status: target?.status ?? 'missing',
+      path: record.path ?? null,
+    });
+  }
+  return {
+    ok: true,
+    outcome: 'harnesses',
+    operation: 'harnesses',
+    version: runtime.packageVersion,
+    installedVersion: state.manifest?.version ?? null,
+    harnesses: [...harnesses, ...aliasRows, ...unregistered],
+    checks: [],
+    changed: [],
+  };
 }
 
 function lifecycleControlDoctorChecks(paths, control) {
@@ -863,7 +953,7 @@ async function inspectLifecycleResidue(paths) {
         /^\.install\.json\.[a-f0-9]{32}-[a-z0-9-]+\.tmp$/,
       ],
     },
-    ...['codex', 'claude'].map((name) => ({
+    ...Object.keys(paths.targets).map((name) => ({
       directory: paths.targetParents[name],
       patterns: [
         new RegExp(
@@ -916,7 +1006,7 @@ async function runDoctor(paths, runtime, payload, state, knownControl = undefine
         'Run install after resolving any foreign targets.',
       ),
     );
-    for (const name of ['codex', 'claude']) {
+    for (const name of Object.keys(paths.targets)) {
       const target = state.targets[name];
       checks.push(
         doctorCheck(
@@ -1005,12 +1095,41 @@ async function runDoctor(paths, runtime, payload, state, knownControl = undefine
         : 'Use an intact package published under a new version.',
     ),
   );
-  for (const name of ['codex', 'claude']) {
+  const registryKeys = new Set(paths.registry.map((entry) => entry.key));
+  for (const name of Object.keys(state.manifest.targets).sort()) {
+    if (registryKeys.has(name)) continue;
+    const target = await inspectTarget(
+      paths,
+      name,
+      state.manifest.targets[name],
+      state.manifest,
+    );
+    checks.push(
+      doctorCheck(
+        `target-${name}`,
+        target.status === 'owned-valid' ? 'warning' : 'error',
+        'UNREGISTERED_TARGET',
+        target.path,
+        `Manifest owns a target that is not in the harness registry: ${target.path}`,
+        'Run uninstall to remove it, or restore the harnesses config that declared it.',
+      ),
+    );
+  }
+  for (const name of Object.keys(paths.targets)) {
     const target = state.targets[name];
-    const status = target.status === 'owned-valid' ? 'ok' : 'error';
-    const code =
-      target.status === 'owned-valid'
-        ? 'TARGET_VALID'
+    const claimed = state.manifest.targets[name] !== undefined;
+    // Registry keys the manifest does not claim are expected to be absent
+    // until a reconcile runs; report them as missing, not as drift.
+    const unclaimedMissing = !claimed && target.status === 'missing';
+    const status = target.status === 'owned-valid'
+      ? 'ok'
+      : unclaimedMissing
+        ? 'warning'
+        : 'error';
+    const code = target.status === 'owned-valid'
+      ? 'TARGET_VALID'
+      : unclaimedMissing
+        ? 'TARGET_MISSING'
         : target.status === 'owned-broken'
           ? 'BROKEN_TARGET'
           : target.status === 'foreign'
@@ -1022,12 +1141,16 @@ async function runDoctor(paths, runtime, payload, state, knownControl = undefine
         status,
         code,
         target.path,
-        `${target.reason}${state.manifest.targets[name] ? ` Mode: ${state.manifest.targets[name].mode}.` : ''}`,
+        unclaimedMissing
+          ? 'Not installed yet; this agent-init release added this harness target.'
+          : `${target.reason}${state.manifest.targets[name] ? ` Mode: ${state.manifest.targets[name].mode}.` : ''}`,
         status === 'ok'
           ? null
-          : target.status === 'owned-broken'
-            ? 'Run install or update to repair only the missing managed target.'
-            : 'Preserve the target and resolve ownership drift manually.',
+          : unclaimedMissing
+            ? 'Run update to add the new harness target.'
+            : target.status === 'owned-broken'
+              ? 'Run install or update to repair only the missing managed target.'
+              : 'Preserve the target and resolve ownership drift manually.',
       ),
     );
   }
@@ -1243,7 +1366,11 @@ async function uninstallOwned(paths, runtime, payload, operation, plannedManifes
   });
 
   const targetResults = [];
-  for (const name of ['codex', 'claude']) {
+  // Uninstall removes every manifest-owned target, including ones written
+  // under a since-removed harness config (their records live only in the
+  // manifest, so they must not outlive it).
+  const effectiveTargets = withManifestTargets(paths, locked.manifest).targets;
+  for (const name of Object.keys(effectiveTargets)) {
     const targetResult = await removeOwnedTarget({
       paths,
       name,
@@ -1437,8 +1564,9 @@ async function stageUpdateAssets(paths, payload, manifest, operation, runtime) {
     });
     await callAfterMutation(runtime, 'update:canonical-staged');
 
-    for (const name of ['codex', 'claude']) {
+    for (const name of Object.keys(paths.targets)) {
       const record = manifest.targets[name];
+      if (!record) continue;
       if (record.mode !== 'copy') continue;
       const staging = path.join(
         path.dirname(record.path),
@@ -1562,6 +1690,202 @@ async function restoreDirectorySwap(swap, validateOld, validateNew) {
   return unresolved;
 }
 
+// Adds registry targets that are missing from an existing healthy manifest
+// (the registry grew). Targets are materialized from the installed canonical
+// payload so the installation stays self-consistent at its current version,
+// even if a later upgrade step never runs. Reuses materializeTarget with
+// journal intents so an interruption is replayed by the reconcile recovery.
+async function reconcileRegistryTargets(paths, runtime, operation, manifest) {
+  const missingNames = Object.keys(paths.targets).filter(
+    (name) => manifest.targets[name] === undefined,
+  );
+  if (missingNames.length === 0) {
+    throw new InstallationError(
+      'PARTIAL_INSTALLATION',
+      'Reconcile requested without missing registry targets.',
+      { path: paths.manifest, remediation: 'Run doctor and inspect the installation.' },
+    );
+  }
+
+  await updateOperation(operation, { previousManifest: manifest });
+
+  const installId = manifest.installId;
+  const targetIds = Object.fromEntries(
+    missingNames.map((name) => [name, randomHex(runtime)]),
+  );
+
+  for (const name of missingNames) {
+    await recordIntent(operation, {
+      action: 'reconcile-target',
+      name,
+      expected: 'missing',
+      targetId: targetIds[name],
+    });
+  }
+
+  const createdTargets = {};
+  const createdNames = [];
+  let manifestReplaced = false;
+  try {
+    for (const name of missingNames) {
+      const record = await materializeTarget({
+        paths,
+        name,
+        targetId: targetIds[name],
+        installId,
+        digest: manifest.canonical.digest,
+        sourceSkill: paths.canonicalSkill,
+        operation,
+        beforeMutation: runtime.beforeMutation,
+        afterMutation: runtime.afterMutation,
+      });
+      createdTargets[name] = record;
+      createdNames.push(name);
+      await callAfterMutation(runtime, `reconcile:${name}-published`);
+    }
+
+    const nextManifest = structuredClone(manifest);
+    nextManifest.updatedAt = isoNow(runtime);
+    for (const name of missingNames) {
+      nextManifest.targets[name] = {
+        path: paths.targets[name],
+        mode: createdTargets[name].mode,
+        source: paths.canonicalSkill,
+        targetId: targetIds[name],
+        entryIdentity: createdTargets[name].entryIdentity,
+        ...(createdTargets[name].linkText !== undefined
+          ? { linkText: createdTargets[name].linkText }
+          : {}),
+        digest: createdTargets[name].digest,
+      };
+    }
+
+    const manifestFingerprint = await entryFingerprint(paths.manifest);
+    if (manifestFingerprint.type !== 'file') {
+      throw new InstallationError(
+        'PARTIAL_INSTALLATION',
+        `Manifest is not a regular file: ${paths.manifest}`,
+        { path: paths.manifest, remediation: 'Run doctor and inspect the installation.' },
+      );
+    }
+    await recordIntent(operation, {
+      action: 'replace-manifest-reconcile',
+      path: paths.manifest,
+      expectedIdentity: manifestFingerprint.identity,
+    });
+    await replaceJsonCas(
+      paths.manifest,
+      nextManifest,
+      `${operation.operationId}-manifest-reconcile`,
+      manifestFingerprint.identity,
+    );
+    manifestReplaced = true;
+    await recordCompletion(operation, {
+      action: 'replace-manifest-reconcile',
+      path: paths.manifest,
+    });
+
+    const verifiedManifest = await readManifest(paths.manifest, {
+      packageName: runtime.packageName,
+      paths,
+    });
+    const verifiedCanonical = await inspectCanonical(paths, verifiedManifest);
+    const verifiedTargets = {};
+    for (const name of Object.keys(paths.targets)) {
+      verifiedTargets[name] = await inspectTarget(
+        paths,
+        name,
+        verifiedManifest.targets[name],
+        verifiedManifest,
+      );
+    }
+    if (
+      verifiedCanonical.status !== 'owned-valid' ||
+      Object.values(verifiedTargets).some((target) => target.status !== 'owned-valid')
+    ) {
+      throw new InstallationError(
+        'PARTIAL_INSTALLATION',
+        `Reconciled installation failed final validation: ${paths.installRoot}`,
+        { path: paths.installRoot, remediation: 'Preserve operation evidence and run doctor.' },
+      );
+    }
+
+    await updateOperation(operation, {
+      phase: 'committed',
+      committed: true,
+    });
+    await callAfterMutation(runtime, 'reconcile:journal-committed');
+
+    return {
+      ok: true,
+      outcome: 'updated',
+      operation: 'update',
+      version: runtime.packageVersion,
+      previousVersion: manifest.version,
+      paths,
+      manifest: verifiedManifest,
+      canonical: verifiedCanonical,
+      targets: verifiedTargets,
+      changed: [
+        ...missingNames.map((name) => paths.targets[name]),
+        paths.manifest,
+      ],
+      preserved: [],
+      unresolved: [],
+    };
+  } catch (error) {
+    // Roll back any targets this operation created; once the CAS swap has
+    // replaced the manifest the new targets are owned by it, so post-commit
+    // failures must not delete them — recovery owns the state instead.
+    if (createdNames.length > 0 && manifestReplaced !== true) {
+      const rollbackUnresolved = [];
+      for (const name of [...createdNames].reverse()) {
+        await removeOwnedTarget({
+          paths,
+          name,
+          manifest: {
+            ...manifest,
+            targets: {
+              ...manifest.targets,
+              [name]: {
+                path: paths.targets[name],
+                mode: createdTargets[name].mode,
+                source: paths.canonicalSkill,
+                targetId: targetIds[name],
+                entryIdentity: createdTargets[name].entryIdentity,
+                linkText: createdTargets[name].linkText,
+                digest: createdTargets[name].digest,
+              },
+            },
+          },
+          operation,
+          afterMutation: runtime.afterMutation,
+        }).catch((rollbackError) => {
+          rollbackUnresolved.push(paths.targets[name], rollbackError);
+        });
+      }
+      if (rollbackUnresolved.length > 0) {
+        await updateOperation(operation, {
+          phase: 'rolled-back',
+          committed: false,
+          failureCode: error?.code ?? 'UNEXPECTED_ERROR',
+        }).catch(() => {});
+        throw new InstallationError(
+          'ROLLBACK_FAILED',
+          `Reconcile failed and rollback could not prove every created target: ${paths.installRoot}`,
+          {
+            path: paths.installRoot,
+            cause: error,
+            unresolved: rollbackUnresolved.filter((entry) => typeof entry === 'string'),
+            remediation: 'Run doctor and inspect the retained lifecycle journal before changing files.',
+          },
+        );
+      }
+    }
+    throw error;
+  }
+}
+
 async function upgradeOwned(paths, runtime, payload, operation, plannedManifest) {
   const locked = await inspectInitialState(paths, runtime);
   if (
@@ -1577,9 +1901,19 @@ async function upgradeOwned(paths, runtime, payload, operation, plannedManifest)
     );
   }
   const oldCanonical = await inspectCanonical(paths, locked.manifest);
+  // Ownership is judged over manifest-claimed targets; registry keys the
+  // old manifest does not claim are expected to be absent (a same-version
+  // reconcile has already materialized them before upgrade runs).
+  const claimedValid = Object.entries(locked.targets)
+    .filter(([name]) => locked.manifest.targets[name] !== undefined)
+    .every(([, target]) => target.status === 'owned-valid');
+  const unclaimedAbsent = Object.entries(locked.targets)
+    .filter(([name]) => locked.manifest.targets[name] === undefined)
+    .every(([, target]) => target.status === 'missing');
   if (
     oldCanonical.status !== 'owned-valid' ||
-    Object.values(locked.targets).some((target) => target.status !== 'owned-valid')
+    !claimedValid ||
+    !unclaimedAbsent
   ) {
     throw new InstallationError(
       'OWNERSHIP_MISMATCH',
@@ -1677,8 +2011,9 @@ async function upgradeOwned(paths, runtime, payload, operation, plannedManifest)
       path: canonicalSwap.live,
     });
 
-    for (const name of ['codex', 'claude']) {
+    for (const name of Object.keys(paths.targets)) {
       const record = locked.manifest.targets[name];
+      if (!record) continue;
       if (record.mode !== 'copy') continue;
       const initialTarget = locked.targets[name];
       const swap = {
@@ -1761,8 +2096,11 @@ async function upgradeOwned(paths, runtime, payload, operation, plannedManifest)
     nextManifest.version = runtime.packageVersion;
     nextManifest.updatedAt = isoNow(runtime);
     nextManifest.canonical.digest = payload.digest;
-    for (const name of ['codex', 'claude']) {
-      if (nextManifest.targets[name].mode === 'copy') {
+    for (const name of Object.keys(paths.targets)) {
+      if (
+        nextManifest.targets[name] &&
+        nextManifest.targets[name].mode === 'copy'
+      ) {
         nextManifest.targets[name].digest = payload.digest;
       }
     }
@@ -1810,7 +2148,7 @@ async function upgradeOwned(paths, runtime, payload, operation, plannedManifest)
     });
     const verifiedCanonical = await inspectCanonical(paths, verifiedManifest);
     const verifiedTargets = {};
-    for (const name of ['codex', 'claude']) {
+    for (const name of Object.keys(paths.targets)) {
       verifiedTargets[name] = await inspectTarget(
         paths,
         name,
@@ -2115,7 +2453,7 @@ function validateFreshInstallJournal(paths, descriptor, journal) {
   }
 
   const targets = {};
-  for (const name of ['codex', 'claude']) {
+  for (const name of Object.keys(paths.targets)) {
     const linkIntent = singleJournalRecord(
       journal.intents,
       'create-target-link',
@@ -2272,7 +2610,7 @@ function freshManifestMatchesEvidence(manifest, evidence, paths) {
   ) {
     return false;
   }
-  for (const name of ['codex', 'claude']) {
+  for (const name of Object.keys(paths.targets)) {
     const targetEvidence = evidence.targets[name];
     const record = manifest.targets[name];
     if (
@@ -2346,7 +2684,7 @@ async function recoverInterruptedInstall(paths, runtime, control) {
         paths.canonicalRoot,
       );
     }
-    for (const name of ['codex', 'claude']) {
+    for (const name of Object.keys(paths.targets)) {
       const target = await inspectTarget(paths, name, manifest.targets[name], manifest);
       if (target.status !== 'owned-valid') {
         throw ambiguousRecovery(
@@ -2444,7 +2782,7 @@ async function recoverInterruptedInstall(paths, runtime, control) {
     }
   }
 
-  for (const name of ['codex', 'claude']) {
+  for (const name of Object.keys(paths.targets)) {
     const targetEvidence = evidence.targets[name];
     const targetState = await entryFingerprint(paths.targets[name]);
     targetStates[name] = targetState;
@@ -2578,7 +2916,7 @@ async function recoverInterruptedInstall(paths, runtime, control) {
       );
     }
   }
-  for (const name of ['claude', 'codex']) {
+  for (const name of [...paths.registry].reverse().map((entry) => entry.key)) {
     const plan = targetPlans[name];
     if (plan.evidence?.completion) {
       if (plan.evidence.mode === 'symlink') {
@@ -2756,6 +3094,287 @@ async function recoverInterruptedInstall(paths, runtime, control) {
   await removeRecoveredOperation(control);
 }
 
+// Reconcile journal actions are operation-bound to the previous manifest:
+// targets are created under per-name targetIds and the manifest CAS swap is
+// the commit point. Before the swap, created targets are removed and the
+// previous manifest is untouched; after the swap, the extended manifest owns
+// the new targets and cleanup only has to remove nothing (reconcile has no
+// staging or rollback assets beyond the target entries themselves).
+function validateInterruptedReconcileJournal(paths, runtime, descriptor, journal) {
+  const journalPath = descriptor.journalPath;
+  if (
+    !journal.previousManifest ||
+    typeof journal.previousManifest === 'string' ||
+    !Array.isArray(journal.intents) ||
+    !Array.isArray(journal.completed)
+  ) {
+    throw ambiguousRecovery('Interrupted reconcile lacks its ownership snapshot.', journalPath);
+  }
+  const manifest = validateManifest(
+    journal.previousManifest,
+    { packageName: runtime.packageName, paths },
+    journalPath,
+  );
+  const allowedActions = new Set([
+    'reconcile-target',
+    'create-target-link',
+    'create-target-copy',
+    'replace-manifest-reconcile',
+  ]);
+  if (
+    journal.intents.some((record) => !record || !allowedActions.has(record.action)) ||
+    journal.completed.some((record) => !record || !allowedActions.has(record.action))
+  ) {
+    throw ambiguousRecovery('Interrupted reconcile contains an unexpected action.', journalPath);
+  }
+  const reconcileNames = journal.intents
+    .filter((record) => record.action === 'reconcile-target')
+    .map((record) => record.name);
+  if (
+    reconcileNames.length === 0 ||
+    new Set(reconcileNames).size !== reconcileNames.length ||
+    reconcileNames.some(
+      (name) =>
+        typeof name !== 'string' ||
+        manifest.targets[name] !== undefined ||
+        paths.targets[name] === undefined,
+    )
+  ) {
+    throw ambiguousRecovery(
+      'Interrupted reconcile target evidence is not operation-bound.',
+      journalPath,
+    );
+  }
+  const swapIntent = singleJournalRecord(
+    journal.intents,
+    'replace-manifest-reconcile',
+    undefined,
+    journalPath,
+  );
+  const swapCompletion = singleJournalRecord(
+    journal.completed,
+    'replace-manifest-reconcile',
+    undefined,
+    journalPath,
+  );
+  if (swapCompletion && !swapIntent) {
+    throw ambiguousRecovery(
+      'Interrupted reconcile manifest swap evidence is not operation-bound.',
+      journalPath,
+    );
+  }
+  return { manifest, reconcileNames, swapIntent, swapCompletion };
+}
+
+async function recoverInterruptedReconcile(paths, runtime, control) {
+  const details = control.error.details;
+  const descriptor = details?.descriptor;
+  const journal = details?.journal;
+  if (
+    control.status !== 'recoverable' ||
+    descriptor?.operation !== 'update' ||
+    journal?.operation !== 'update' ||
+    journal.operationId !== descriptor.operationId
+  ) {
+    throw ambiguousRecovery(
+      'Interrupted lifecycle operation lacks safe reconcile recovery evidence.',
+      details?.path ?? paths.lock,
+    );
+  }
+  const evidence = validateInterruptedReconcileJournal(paths, runtime, descriptor, journal);
+  const manifestOnDisk = await readManifest(paths.manifest, {
+    packageName: runtime.packageName,
+    paths,
+  });
+
+  if (evidence.swapCompletion) {
+    // The CAS swap completed: the extended manifest owns the new targets.
+    if (!manifestOnDisk) {
+      throw ambiguousRecovery(
+        'Committed reconcile manifest is missing.',
+        descriptor.journalPath,
+        paths.manifest,
+      );
+    }
+    // Only the reconciled targets may differ from the snapshot.
+    const expectedKeys = new Set([
+      ...Object.keys(evidence.manifest.targets),
+      ...evidence.reconcileNames,
+    ]);
+    if (
+      manifestOnDisk.version !== evidence.manifest.version ||
+      manifestOnDisk.installId !== evidence.manifest.installId ||
+      manifestOnDisk.canonical.digest !== evidence.manifest.canonical.digest ||
+      Object.keys(manifestOnDisk.targets).length !== expectedKeys.size ||
+      evidence.reconcileNames.some((name) => manifestOnDisk.targets[name] === undefined)
+    ) {
+      throw ambiguousRecovery(
+        'Committed reconcile manifest does not match its snapshot.',
+        descriptor.journalPath,
+        paths.manifest,
+      );
+    }
+    for (const name of evidence.reconcileNames) {
+      const record = manifestOnDisk.targets[name];
+      const target = await inspectTarget(paths, name, record, manifestOnDisk);
+      if (target.status !== 'owned-valid') {
+        throw ambiguousRecovery(
+          `Committed reconcile ${name} target is not valid.`,
+          descriptor.journalPath,
+          target.path,
+        );
+      }
+    }
+    await removeRecoveredOperation(control);
+    return;
+  }
+
+  // Pre-swap: the previous manifest still owns the installation and any
+  // created targets must be proven absent or operation-owned, then removed.
+  if (!manifestOnDisk || serializeJson(manifestOnDisk) !== serializeJson(evidence.manifest)) {
+    throw ambiguousRecovery(
+      'Interrupted reconcile manifest changed before its swap.',
+      descriptor.journalPath,
+      paths.manifest,
+    );
+  }
+  for (const name of [...evidence.reconcileNames].reverse()) {
+    const intent = singleJournalRecord(
+      journal.intents,
+      'reconcile-target',
+      name,
+      descriptor.journalPath,
+    );
+    const completion = singleJournalRecord(
+      journal.completed,
+      'create-target-link',
+      name,
+      descriptor.journalPath,
+    ) ??
+      singleJournalRecord(
+        journal.completed,
+        'create-target-copy',
+        name,
+        descriptor.journalPath,
+      );
+    const targetState = await entryFingerprint(paths.targets[name]);
+    const staging = path.join(
+      path.dirname(paths.targets[name]),
+      `.agent-init-staging-${journal.operationId}-${name}`,
+    );
+    const stagingState = await entryFingerprint(staging);
+    if (completion) {
+      if (intent.targetId !== undefined) {
+        // Symlink targets carry no marker; the completion's identity must
+        // match the live entry exactly.
+        if (
+          targetState.type !== 'symlink' ||
+          targetState.identity !== completion.entryIdentity ||
+          !(await linkResolvesToCanonical(paths, paths.targets[name], targetState.linkText))
+        ) {
+          throw ambiguousRecovery(
+            `Interrupted reconcile ${name} symlink changed.`,
+            descriptor.journalPath,
+            paths.targets[name],
+          );
+        }
+        if (!(await removeIfSameSymlink(paths.targets[name], completion.entryIdentity))) {
+          throw ambiguousRecovery(
+            `Interrupted reconcile ${name} symlink changed before cleanup.`,
+            descriptor.journalPath,
+            paths.targets[name],
+          );
+        }
+      } else {
+        const quarantine = path.join(
+          path.dirname(paths.targets[name]),
+          `.agent-init-rollback-${journal.operationId}-${name}`,
+        );
+        if ((await entryFingerprint(quarantine)).type !== 'missing') {
+          throw ambiguousRecovery(
+            `Interrupted reconcile ${name} quarantine already exists.`,
+            descriptor.journalPath,
+            quarantine,
+          );
+        }
+        const removed = await detachAndDeleteOwnedDirectory({
+          livePath: paths.targets[name],
+          quarantinePath: quarantine,
+          expectedIdentity: completion.entryIdentity,
+          verifyDetached: async (detachedPath) => {
+            const copy = await validateManagedCopyDirectory(
+              detachedPath,
+              evidence.manifest,
+              {
+                targetId: intent.targetId,
+                digest: evidence.manifest.canonical.digest,
+              },
+            );
+            return copy.valid;
+          },
+        });
+        if (!removed) {
+          throw ambiguousRecovery(
+            `Interrupted reconcile ${name} managed copy changed before cleanup.`,
+            descriptor.journalPath,
+            paths.targets[name],
+          );
+        }
+      }
+    } else if (targetState.type !== 'missing') {
+      throw ambiguousRecovery(
+        `Interrupted reconcile ${name} target exists without completion evidence.`,
+        descriptor.journalPath,
+        paths.targets[name],
+      );
+    }
+    if (stagingState.type !== 'missing') {
+      if (completion === null || completion === undefined) {
+        throw ambiguousRecovery(
+          `Interrupted reconcile ${name} staging lacks operation-bound evidence.`,
+          descriptor.journalPath,
+          staging,
+        );
+      }
+      const quarantine = path.join(
+        path.dirname(staging),
+        `.agent-init-staging-cleanup-${journal.operationId}-${name}`,
+      );
+      if ((await entryFingerprint(quarantine)).type !== 'missing') {
+        throw ambiguousRecovery(
+          `Interrupted reconcile ${name} staging quarantine already exists.`,
+          descriptor.journalPath,
+          quarantine,
+        );
+      }
+      const removed = await detachAndDeleteOwnedDirectory({
+        livePath: staging,
+        quarantinePath: quarantine,
+        expectedIdentity: stagingState.identity,
+        verifyDetached: async (detachedPath) => {
+          const copy = await validateManagedCopyDirectory(
+            detachedPath,
+            evidence.manifest,
+            {
+              targetId: intent.targetId,
+              digest: evidence.manifest.canonical.digest,
+            },
+          );
+          return copy.valid;
+        },
+      });
+      if (!removed) {
+        throw ambiguousRecovery(
+          `Interrupted reconcile ${name} staging changed before cleanup.`,
+          descriptor.journalPath,
+          staging,
+        );
+      }
+    }
+  }
+  await removeRecoveredOperation(control);
+}
+
 function validateInterruptedUninstallJournal(paths, runtime, descriptor, journal) {
   const journalPath = descriptor.journalPath;
   if (
@@ -2794,7 +3413,10 @@ function validateInterruptedUninstallJournal(paths, runtime, descriptor, journal
   }
 
   const targets = {};
-  for (const name of ['codex', 'claude']) {
+  // The interrupted uninstall operated on the union of registry keys and
+  // manifest-recorded paths; recovery must validate the same key set.
+  const effectiveTargets = withManifestTargets(paths, manifest).targets;
+  for (const name of Object.keys(effectiveTargets)) {
     const intent = singleJournalRecord(
       journal.intents,
       'remove-target',
@@ -3030,7 +3652,7 @@ async function recoverInterruptedUninstall(paths, runtime, control) {
   }
 
   const targetStates = {};
-  for (const name of ['codex', 'claude']) {
+  for (const name of Object.keys(evidence.targets)) {
     const target = evidence.targets[name];
     const live = await entryFingerprint(target.record.path);
     const quarantine = await entryFingerprint(target.quarantine);
@@ -3192,7 +3814,7 @@ async function recoverInterruptedUninstall(paths, runtime, control) {
     afterJournalSnapshot: runtime.afterJournalSnapshot,
   });
   try {
-    for (const name of ['codex', 'claude']) {
+    for (const name of Object.keys(evidence.targets)) {
       const target = evidence.targets[name];
       if (target.removed || target.preserved) continue;
       const state = targetStates[name];
@@ -3565,7 +4187,7 @@ async function recoverInterruptedUpdate(paths, runtime, control) {
         { path: paths.canonicalRoot, remediation: 'Preserve all assets and inspect them manually.' },
       );
     }
-    for (const name of ['codex', 'claude']) {
+    for (const name of Object.keys(paths.targets)) {
       const target = await inspectTarget(
         paths,
         name,
@@ -3580,6 +4202,7 @@ async function recoverInterruptedUpdate(paths, runtime, control) {
         );
       }
       const oldRecord = previousManifest.targets[name];
+      if (!oldRecord) continue;
       if (oldRecord.mode !== 'copy') continue;
       const intent = requireManagedCopyUpdateIntent(
         journal,
@@ -3718,8 +4341,9 @@ async function recoverInterruptedUpdate(paths, runtime, control) {
     );
   }
 
-  for (const name of ['codex', 'claude']) {
+  for (const name of Object.keys(paths.targets)) {
     const record = previousManifest.targets[name];
+    if (!record) continue;
     if (record.mode !== 'copy') continue;
     const intent = requireManagedCopyUpdateIntent(
       journal,
@@ -3841,14 +4465,14 @@ async function recoverInterruptedUpdate(paths, runtime, control) {
       { path: paths.canonicalRoot, remediation: 'Preserve operation evidence for manual review.' },
     );
   }
-  for (const name of ['codex', 'claude']) {
+  for (const name of Object.keys(paths.targets)) {
     const target = await inspectTarget(
       paths,
       name,
-      previousManifest.targets[name],
+      previousManifest.targets[name] ?? null,
       previousManifest,
     );
-    if (target.status !== 'owned-valid') {
+    if (target.status !== 'owned-valid' && target.status !== 'missing') {
       throw new InstallationError(
         'AMBIGUOUS_OPERATION',
         `Recovered target did not validate: ${target.path}`,
@@ -3868,7 +4492,19 @@ async function recoverBeforeMutation(paths, runtime, control = undefined) {
   if (operation === 'install') {
     await recoverInterruptedInstall(paths, runtime, inspected);
   } else if (operation === 'update') {
-    await recoverInterruptedUpdate(paths, runtime, inspected);
+    // A reconcile operation is an update whose journal records per-target
+    // reconcile intents instead of the canonical swap intent.
+    const journal = inspected.error.details?.journal;
+    const isReconcile =
+      journal?.previousManifest !== undefined &&
+      Array.isArray(journal?.intents) &&
+      journal.intents.some((record) => record?.action === 'reconcile-target') &&
+      !journal.intents.some((record) => record?.action === 'swap-canonical-update');
+    if (isReconcile) {
+      await recoverInterruptedReconcile(paths, runtime, inspected);
+    } else {
+      await recoverInterruptedUpdate(paths, runtime, inspected);
+    }
   } else if (operation === 'uninstall') {
     await recoverInterruptedUninstall(paths, runtime, inspected);
   } else {
@@ -3881,14 +4517,15 @@ async function recoverBeforeMutation(paths, runtime, control = undefined) {
 }
 
 async function executeInternal(request, runtime) {
-  if (!request || !['install', 'update', 'doctor', 'uninstall'].includes(request.operation)) {
+  if (!request || !['install', 'update', 'doctor', 'uninstall', 'harnesses'].includes(request.operation)) {
     throw new InstallationError(
       'USAGE_ERROR',
       `Unsupported lifecycle operation: ${String(request?.operation)}`,
-      { remediation: 'Use install, update, doctor, or uninstall.' },
+      { remediation: 'Use install, update, doctor, uninstall, or harnesses.' },
     );
   }
-  const paths = await resolveInstallationPaths(runtime.homeDir);
+  const registry = await loadHarnessRegistry(runtime.homeDir);
+  const paths = await resolveInstallationPaths(runtime.homeDir, registry);
   const payload = await validatePackagePayload(runtime);
   const control = await inspectOperationControl(paths);
   if (request.operation !== 'doctor') {
@@ -3935,6 +4572,9 @@ async function executeInternal(request, runtime) {
   if (request.operation === 'doctor') {
     return runDoctor(paths, runtime, payload, initial, control);
   }
+  if (request.operation === 'harnesses') {
+    return runHarnesses(paths, runtime, initial);
+  }
   if (request.operation === 'update') {
     if (!initial.manifest) {
       throw new InstallationError(
@@ -3972,7 +4612,14 @@ async function executeInternal(request, runtime) {
       initial.manifest.version === runtime.packageVersion &&
       initial.manifest.canonical.digest === payload.digest &&
       canonical.status === 'owned-valid' &&
-      Object.values(initial.targets).every((target) => target.status === 'owned-valid')
+      // Up to date requires every registry target to be claimed: an old
+      // manifest missing keys a newer release added must reconcile first.
+      // (Manifest keys outside the registry are orphans; they count as
+      // claimed and must be owned-valid below.)
+      Object.keys(paths.targets).every((name) => initial.manifest.targets[name] !== undefined) &&
+      Object.entries(initial.targets)
+        .filter(([name]) => initial.manifest.targets[name] !== undefined)
+        .every(([, target]) => target.status === 'owned-valid')
     ) {
       return {
         ok: true,
@@ -3987,9 +4634,18 @@ async function executeInternal(request, runtime) {
       };
     }
     if (versionOrder > 0) {
+      // Ownership is judged over the keys the manifest claims; unclaimed
+      // registry keys (added by a newer release) must simply be absent.
+      const claimedValid = Object.entries(initial.targets)
+        .filter(([name]) => initial.manifest.targets[name] !== undefined)
+        .every(([, target]) => target.status === 'owned-valid');
+      const unclaimedAbsent = Object.entries(initial.targets)
+        .filter(([name]) => initial.manifest.targets[name] === undefined)
+        .every(([, target]) => target.status === 'missing');
       if (
         canonical.status !== 'owned-valid' ||
-        Object.values(initial.targets).some((target) => target.status !== 'owned-valid')
+        !claimedValid ||
+        !unclaimedAbsent
       ) {
         throw new InstallationError(
           'OWNERSHIP_MISMATCH',
@@ -3999,6 +4655,41 @@ async function executeInternal(request, runtime) {
             remediation: 'Run doctor and resolve ownership problems before upgrading.',
           },
         );
+      }
+      // The old manifest does not claim the registry targets a newer release
+      // added; reconcile them at the installed version first (from the
+      // installed canonical payload), then upgrade everything together.
+      if (
+        Object.keys(paths.targets).some(
+          (name) => initial.manifest.targets[name] === undefined,
+        )
+      ) {
+        const reconcileOperation = await acquireOperation(
+          paths,
+          request.operation,
+          randomHex(runtime),
+          isoNow(runtime),
+          { afterJournalSnapshot: runtime.afterJournalSnapshot },
+        );
+        try {
+          await reconcileRegistryTargets(
+            paths,
+            runtime,
+            reconcileOperation,
+            initial.manifest,
+          );
+          await releaseOperation(reconcileOperation);
+        } catch (error) {
+          if (
+            error?.code !== 'ROLLBACK_FAILED' &&
+            error?.code !== 'RECOVERABLE_OPERATION'
+          ) {
+            await releaseOperation(reconcileOperation).catch(() => {});
+          } else {
+            markOperationInactive(reconcileOperation);
+          }
+          throw error;
+        }
       }
       const operation = await acquireOperation(
         paths,
@@ -4012,6 +4703,51 @@ async function executeInternal(request, runtime) {
           paths,
           runtime,
           payload,
+          operation,
+          initial.manifest,
+        );
+        await releaseOperation(operation);
+        return result;
+      } catch (error) {
+        if (
+          error?.code !== 'ROLLBACK_FAILED' &&
+          error?.code !== 'RECOVERABLE_OPERATION'
+        ) {
+          await releaseOperation(operation).catch(() => {});
+        } else {
+          markOperationInactive(operation);
+        }
+        throw error;
+      }
+    }
+    // Same version, fully healthy, but the registry grew since install
+    // (e.g. this CLI release added harnesses): reconcile in new targets.
+    // Orphan manifest keys must still be owned-valid (they count as claimed).
+    const unclaimedRegistryKeys = Object.keys(paths.targets).filter(
+      (name) => initial.manifest.targets[name] === undefined,
+    );
+    if (
+      versionOrder === 0 &&
+      canonical.status === 'owned-valid' &&
+      unclaimedRegistryKeys.length > 0 &&
+      Object.entries(initial.targets)
+        .filter(([name]) => initial.manifest.targets[name] !== undefined)
+        .every(([, target]) => target.status === 'owned-valid') &&
+      unclaimedRegistryKeys.every(
+        (name) => initial.targets[name]?.status === 'missing',
+      )
+    ) {
+      const operation = await acquireOperation(
+        paths,
+        request.operation,
+        randomHex(runtime),
+        isoNow(runtime),
+        { afterJournalSnapshot: runtime.afterJournalSnapshot },
+      );
+      try {
+        const result = await reconcileRegistryTargets(
+          paths,
+          runtime,
           operation,
           initial.manifest,
         );
@@ -4141,9 +4877,17 @@ async function executeInternal(request, runtime) {
       );
     }
     const canonical = await inspectCanonical(paths, initial.manifest);
+    const claimed = Object.entries(initial.targets).filter(
+      ([name]) => initial.manifest.targets[name] !== undefined,
+    );
+    const unclaimed = Object.entries(initial.targets).filter(
+      ([name]) => initial.manifest.targets[name] === undefined,
+    );
+    const unclaimedAbsent = unclaimed.every(([, target]) => target.status === 'missing');
     if (
       canonical.status === 'owned-valid' &&
-      Object.values(initial.targets).every((target) => target.status === 'owned-valid')
+      unclaimedAbsent &&
+      claimed.every(([, target]) => target.status === 'owned-valid')
     ) {
       return {
         ok: true,
@@ -4160,11 +4904,12 @@ async function executeInternal(request, runtime) {
     }
     const repairable =
       canonical.status === 'owned-valid' &&
-      Object.values(initial.targets).some(
-        (target) => target.status === 'owned-broken' && target.fingerprint.type === 'missing',
+      unclaimedAbsent &&
+      claimed.some(
+        ([, target]) => target.status === 'owned-broken' && target.fingerprint.type === 'missing',
       ) &&
-      Object.values(initial.targets).every(
-        (target) =>
+      claimed.every(
+        ([, target]) =>
           target.status === 'owned-valid' ||
           (target.status === 'owned-broken' && target.fingerprint.type === 'missing'),
       );

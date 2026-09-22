@@ -3,7 +3,7 @@ import { link, lstat, open, unlink } from 'node:fs/promises';
 import path from 'node:path';
 
 import { readRegularFileNoFollow } from './filesystem.js';
-import { InstallationError } from './paths.js';
+import { InstallationError, isPathInside } from './paths.js';
 
 export const MANIFEST_SCHEMA_VERSION = 1;
 export const OWNER_MARKER = '.agent-init-owner.json';
@@ -229,9 +229,30 @@ export function validateManifest(manifest, expected, manifestPath) {
       { path: manifestPath, remediation: 'Inspect the installation before retrying.' },
     );
   }
-  for (const name of ['codex', 'claude']) {
-    const target = manifest.targets[name];
-    if (!target || target.path !== expected.paths.targets[name]) {
+  for (const [name, target] of Object.entries(manifest.targets)) {
+    if (!target || typeof target !== 'object') {
+      throw new InstallationError(
+        'CORRUPT_MANIFEST',
+        `Manifest ${name} target record is invalid: ${manifestPath}`,
+        { path: manifestPath, remediation: 'Inspect the installation before retrying.' },
+      );
+    }
+    // Registry targets must sit at their registered path; unregistered
+    // targets (written under a since-removed harness config) only need a
+    // usable path inside HOME so they stay inspectable and removable.
+    if (expected.paths.targets[name] !== undefined) {
+      if (target.path !== expected.paths.targets[name]) {
+        throw new InstallationError(
+          'CORRUPT_MANIFEST',
+          `Manifest ${name} target path is invalid: ${manifestPath}`,
+          { path: manifestPath, remediation: 'Inspect the installation before retrying.' },
+        );
+      }
+    } else if (
+      typeof target.path !== 'string' ||
+      target.path.length === 0 ||
+      !isPathInside(expected.paths.logicalHome, target.path)
+    ) {
       throw new InstallationError(
         'CORRUPT_MANIFEST',
         `Manifest ${name} target path is invalid: ${manifestPath}`,

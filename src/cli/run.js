@@ -12,7 +12,7 @@ const PACKAGE_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 const USAGE = `Usage: agent-init <command>
 
 Commands:
-  install | update | doctor | uninstall
+  install | update | doctor | uninstall | harnesses
 
 Options:
   --help
@@ -47,7 +47,7 @@ export async function runCli(argv, runtimeOverrides = {}) {
     return 0;
   }
 
-  const commands = new Set(['install', 'update', 'doctor', 'uninstall']);
+  const commands = new Set(['install', 'update', 'doctor', 'uninstall', 'harnesses']);
   if (argv.length !== 1 || !commands.has(argv[0])) {
     stderr.write(USAGE);
     return 2;
