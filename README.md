@@ -45,25 +45,24 @@ npx @apparux/agent-init@latest install
 ~/.agent-init/current/skills/agent-init
 ```
 
-随后，它会为六个内置 Harness 创建用户级发现目标，暴露同一个规范 Skill：
+六个 Harness 通过各自的发现入口共享这一份规范 Skill；安装器只创建单个 `agent-init` 入口，不替换整个 `skills` 父目录：
 
-| Harness（ID） | 发现目标 | `verification` |
+| Harness（ID） | 发现目标 | 安装后的使用方式 |
 | --- | --- | --- |
-| Codex（`codex`） | `~/.agents/skills/agent-init` | `accepted` |
-| Claude Code（`claude`） | `~/.claude/skills/agent-init` | `accepted` |
-| Cursor（`cursor`） | `~/.cursor/skills/agent-init` | `unverified` |
-| OpenCode（`opencode`） | `~/.config/opencode/skills/agent-init` | `unverified` |
-| Pi（`pi`） | `~/.pi/agent/skills/agent-init` | `unverified` |
-| Grok Build（`grok`） | `~/.grok/skills/agent-init` | `unverified` |
+| Codex（`codex`） | `~/.agents/skills/agent-init` | `$agent-init` |
+| Claude Code（`claude`） | `~/.claude/skills/agent-init` | `/agent-init` |
+| Cursor（`cursor`） | `~/.cursor/skills/agent-init` | 在 Agent chat 输入 `/`，选择 `agent-init` |
+| OpenCode（`opencode`） | `~/.config/opencode/skills/agent-init` | 请求 agent 使用原生 `skill` 工具加载 `agent-init` |
+| Pi（`pi`） | `~/.pi/agent/skills/agent-init` | `/skill:agent-init`，需启用 skill commands |
+| Grok Build（`grok`） | `~/.grok/skills/agent-init` | `/agent-init` |
 
-`verification` 是 registry 中的验收标记，不是本机运行结果。后四个 Harness 尚未通过真实 Harness 验收，安装目标存在不代表已验证其发现或调用行为。
+这些入口通常都是指向 `~/.agent-init/current/skills/agent-init` 的目录软链接。无法创建软链接时，安装器可回退为托管副本，并在 `install.json` 记录模式与所有权证据。副本通过 `update` 同步，不是实时引用。此回退处理文件系统能力限制，不代表能自动解决 Harness 不识别软链接的问题。
 
-安装器会优先使用符号链接。如果无法创建稳定且可验证所有权的符号链接，则可以改用托管副本，并在 `install.json` 中记录该模式。
+内置项的 `verification: documented` 表示发现规则有官方文档依据，不表示真实 Harness 会话已通过验收。`harnesses` 检查的是磁盘安装状态，不测试模型选择或调用行为。表中提示在对应 Harness 内使用，不是终端命令；OpenCode 的 `skill({ name: "agent-init" })` 是由 agent 发起的工具调用。
 
-安装完成后：
+官方发现与调用说明：[Codex](https://learn.chatgpt.com/docs/build-skills)、[Claude Code](https://code.claude.com/docs/en/skills)、[Cursor](https://prod.cursor.com/docs/skills)、[OpenCode](https://opencode.ai/docs/skills)、[Pi](https://pi.dev/docs/latest/skills)、[Grok Build](https://docs.x.ai/build/features/skills-plugins-marketplaces)。Codex 官方文档明确支持 `~/.agents/skills` 用户级目录，因此保留已有安装路径。
 
-- Claude Code：`/agent-init`
-- Codex：`$agent-init`
+未来新增 Harness 仍需支持兼容的 `SKILL.md` 格式，并提供正确的发现目录。统一存储不意味着任意工具都能自动发现 Skill。
 
 ### 自定义 Harness
 
@@ -133,7 +132,7 @@ npx @apparux/agent-init@latest --help
 
 ## 项目设置工作流
 
-`/agent-init` 和 `$agent-init` 在当前仓库中运行，与 CLI 的 `update` 操作相互独立：
+通过上述各 Harness 的方式调用 `agent-init` 后，Skill 在当前仓库中运行，与 CLI 的 `update` 操作相互独立：
 
 1. 预检和只读探索
 2. 项目画像和证据账本

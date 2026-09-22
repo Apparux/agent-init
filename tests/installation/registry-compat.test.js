@@ -233,6 +233,49 @@ test('reconcile failure before manifest swap rolls back created targets', async 
   assert.equal(healthy.ok, true);
 });
 
+test('reconcile honors copy fallback and copies update with canonical content', async (t) => {
+  const { runtime, packageRoot, sentinels } = await createLegacyInstallationFixture(t);
+  const copyRuntime = {
+    ...runtime,
+    createDirectorySymlink() {
+      throw Object.assign(new Error('symlinks unavailable'), { code: 'ENOTSUP' });
+    },
+  };
+  const reconciled = await executeLifecycle({ operation: 'update' }, copyRuntime);
+  assert.equal(reconciled.ok, true);
+  for (const name of ['cursor', 'opencode', 'pi', 'grok']) {
+    assert.equal(reconciled.manifest.targets[name].mode, 'copy');
+  }
+  await writeFile(path.join(packageRoot, 'package.json'), JSON.stringify({
+    name: runtime.packageName, version: '0.2.0',
+  }));
+  await writeFile(path.join(packageRoot, 'skills', 'agent-init', 'SKILL.md'),
+    '---\nname: agent-init\ndescription: Updated shared skill.\n---\n\n# Updated\n');
+  const upgraded = await executeLifecycle({ operation: 'update' }, {
+    ...copyRuntime, packageVersion: '0.2.0',
+  });
+  assert.equal(upgraded.ok, true);
+  const canonical = await readFile(upgraded.paths.canonicalSkill + '/SKILL.md', 'utf8');
+  for (const record of Object.values(upgraded.manifest.targets)) {
+    assert.equal(await readFile(path.join(record.path, 'SKILL.md'), 'utf8'), canonical);
+    if (record.mode === 'copy') assert.equal(record.digest, upgraded.manifest.canonical.digest);
+  }
+  await assertSentinelsUnchanged(sentinels);
+});
+
+test('legacy install output only advertises manifest-owned harnesses', async (t) => {
+  const { runtime } = await createLegacyInstallationFixture(t);
+  const { renderSuccess } = await import('../../src/cli/output.js');
+  const result = await executeLifecycle({ operation: 'install' }, runtime);
+  assert.equal(result.ok, true);
+  const output = renderSuccess(result, runtime);
+  assert.match(output, /\$agent-init/);
+  assert.match(output, /Claude Code/);
+  for (const name of ['Cursor', 'OpenCode', 'Pi', 'Grok Build']) {
+    assert.equal(output.includes(name), false);
+  }
+});
+
 test('legacy two-target manifest stays valid for install idempotence', async (t) => {
   const { runtime } = await createLegacyInstallationFixture(t);
   const install = await executeLifecycle({ operation: 'install' }, runtime);

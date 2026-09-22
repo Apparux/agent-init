@@ -37,10 +37,16 @@ export function renderSuccess(result, runtime) {
       }
     }
     lines.push('Ready.', '');
-    for (const entry of HARNESS_REGISTRY) {
-      if (!entry.invocation) continue;
+    const registry = result.paths.registry;
+    const aliases = [...(result.paths.aliases ?? new Map()).values()].map((alias) => ({
+      ...alias,
+      key: registry.find((entry) => entry.skillsDir === alias.skillsDir)?.key,
+    }));
+    for (const entry of [...registry, ...aliases]) {
+      if (!entry.invocation || !result.manifest.targets[entry.key]) continue;
       lines.push(entry.label, `  ${entry.invocation}`, '');
     }
+    lines.push('Installation checked; live harness invocation not tested.');
   } else if (result.operation === 'update') {
     lines.push(
       result.outcome === 'already-up-to-date'
@@ -74,6 +80,8 @@ export function renderSuccess(result, runtime) {
     lines.push(
       'Harnesses',
       `  Installed: ${result.installedVersion ?? 'Not installed'}`,
+      '  documented = official discovery documentation, not live acceptance.',
+      '  Installation state is checked on disk; alias/unregistered describe registry membership.',
       '',
     );
     for (const harness of result.harnesses) {

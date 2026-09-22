@@ -45,25 +45,24 @@ The installer copies the canonical mother Skill into a stable location under:
 ~/.agent-init/current/skills/agent-init
 ```
 
-It then creates user-level discovery targets for six built-in harnesses, exposing that same canonical Skill:
+One canonical Skill is shared through individual discovery entries; the installer does not replace any harness's entire `skills` directory:
 
-| Harness (ID) | Discovery target | `verification` |
+| Harness (ID) | Discovery target | How to use after installation |
 | --- | --- | --- |
-| Codex (`codex`) | `~/.agents/skills/agent-init` | `accepted` |
-| Claude Code (`claude`) | `~/.claude/skills/agent-init` | `accepted` |
-| Cursor (`cursor`) | `~/.cursor/skills/agent-init` | `unverified` |
-| OpenCode (`opencode`) | `~/.config/opencode/skills/agent-init` | `unverified` |
-| Pi (`pi`) | `~/.pi/agent/skills/agent-init` | `unverified` |
-| Grok Build (`grok`) | `~/.grok/skills/agent-init` | `unverified` |
+| Codex (`codex`) | `~/.agents/skills/agent-init` | `$agent-init` |
+| Claude Code (`claude`) | `~/.claude/skills/agent-init` | `/agent-init` |
+| Cursor (`cursor`) | `~/.cursor/skills/agent-init` | Type `/` in Agent chat and select `agent-init` |
+| OpenCode (`opencode`) | `~/.config/opencode/skills/agent-init` | Ask the agent to load `agent-init` using its native `skill` tool |
+| Pi (`pi`) | `~/.pi/agent/skills/agent-init` | `/skill:agent-init`, with skill commands enabled |
+| Grok Build (`grok`) | `~/.grok/skills/agent-init` | `/agent-init` |
 
-`verification` is a registry acceptance marker, not a local runtime result. The last four harnesses have not passed live harness acceptance; an installed target does not establish that discovery or invocation works.
+Each target normally symlinks to `~/.agent-init/current/skills/agent-init`. Where symlink creation is unavailable, the installer can fall back to a managed copy and records its mode and ownership evidence in `install.json`. Copies are synchronized by `update`, not live references. This fallback handles filesystem capabilities, not a harness refusing to discover symlinks.
 
-A symlink is preferred. Where a stable, ownership-verifiable symlink cannot be created, the installer may use a managed copy and records that mode in `install.json`.
+Built-in `verification: documented` means the discovery convention has an official documentation basis, not that a live harness session has passed acceptance. `harnesses` checks installation state on disk; it does not test model selection or invocation. Invocation hints apply inside the respective harness, not in a shell; OpenCode's `skill({ name: "agent-init" })` is an agent tool call.
 
-After installation:
+Official discovery and usage references: [Codex](https://learn.chatgpt.com/docs/build-skills), [Claude Code](https://code.claude.com/docs/en/skills), [Cursor](https://prod.cursor.com/docs/skills), [OpenCode](https://opencode.ai/docs/skills), [Pi](https://pi.dev/docs/latest/skills), and [Grok Build](https://docs.x.ai/build/features/skills-plugins-marketplaces). Codex documents `~/.agents/skills` as a user-level location; existing installations keep that path.
 
-- Claude Code: `/agent-init`
-- Codex: `$agent-init`
+A future harness still needs compatible `SKILL.md` support and a known discovery location. A shared source alone cannot make every tool discover skills automatically.
 
 ### Custom harnesses
 
@@ -133,7 +132,7 @@ Removes only user-level assets whose ownership can still be proven. Replaced, dr
 
 ## Project setup workflow
 
-`/agent-init` and `$agent-init` operate on the current repository, independently of CLI `update`:
+Invoking `agent-init` through the harness-specific method above operates on the current repository, independently of CLI `update`:
 
 1. Preflight and read-only exploration
 2. Project Profile and evidence ledger

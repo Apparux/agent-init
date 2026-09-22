@@ -1736,6 +1736,7 @@ async function reconcileRegistryTargets(paths, runtime, operation, manifest) {
         digest: manifest.canonical.digest,
         sourceSkill: paths.canonicalSkill,
         operation,
+        createDirectorySymlink: runtime.createDirectorySymlink,
         beforeMutation: runtime.beforeMutation,
         afterMutation: runtime.afterMutation,
       });

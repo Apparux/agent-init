@@ -10,7 +10,7 @@ import {
 } from '../../src/installation/harnesses.js';
 import { InstallationError } from '../../src/installation/paths.js';
 
-test('built-in registry shape: unique keys, unique dirs, accepted for codex/claude', () => {
+test('built-in registry has unique paths and documented invocation hints', () => {
   const keys = HARNESS_REGISTRY.map((entry) => entry.key);
   assert.deepEqual(keys, ['codex', 'claude', 'cursor', 'opencode', 'pi', 'grok']);
   const dirs = HARNESS_REGISTRY.map((entry) => entry.skillsDir);
@@ -20,12 +20,12 @@ test('built-in registry shape: unique keys, unique dirs, accepted for codex/clau
     assert.equal(typeof entry.label, 'string');
     assert.ok(entry.label.length > 0);
     assert.ok(!path.isAbsolute(entry.skillsDir));
-    assert.ok(['accepted', 'unverified'].includes(entry.verification));
+    assert.equal(entry.verification, 'documented');
+    assert.equal(typeof entry.invocation, 'string');
+    assert.ok(entry.invocation.length > 0);
   }
-  assert.equal(
-    HARNESS_REGISTRY.filter((entry) => entry.verification === 'accepted').length,
-    2,
-  );
+  assert.match(HARNESS_REGISTRY.find((entry) => entry.key === 'pi').invocation, /\/skill:agent-init/);
+  assert.match(HARNESS_REGISTRY.find((entry) => entry.key === 'opencode').invocation, /native skill tool/);
 });
 
 test('loadHarnessRegistry without config returns the built-in registry', async () => {

@@ -45,6 +45,26 @@ test('harnesses lists every registry entry when nothing is installed', async (t)
   }
 });
 
+test('install shows all installed harness hints including custom entries', async (t) => {
+  const { homeDir, runtime } = await createCliFixture(t);
+  await mkdir(path.join(homeDir, '.config', 'agent-init'), { recursive: true });
+  await writeFile(path.join(homeDir, '.config', 'agent-init', 'harnesses.json'), JSON.stringify({
+    schemaVersion: 1,
+    harnesses: [
+      { id: 'custom', skillsDir: '.custom/skills', invocation: 'Load custom agent-init' },
+      { id: 'shared', skillsDir: '.agents/skills', invocation: 'Load shared agent-init' },
+    ],
+  }));
+  assert.equal(await runCli(['install'], runtime), 0);
+  const output = runtime.stdout.toString();
+  for (const entry of HARNESS_REGISTRY) {
+    assert.equal(typeof entry.invocation, 'string');
+    assert.ok(output.includes(entry.invocation));
+  }
+  assert.ok(output.includes('Load custom agent-init'));
+  assert.ok(output.includes('Load shared agent-init'));
+});
+
 test('harnesses reports installed mode and status after install', async (t) => {
   const fixture = await createInstallationFixture(t);
   const { executeLifecycle } = await import(

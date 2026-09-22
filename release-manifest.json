@@ -3,7 +3,7 @@
   "name": "@apparux/agent-init",
   "filename": "apparux-agent-init-0.1.3-rc.2.tgz",
   "entryCount": 23,
-  "treeDigest": "sha256:74f154f5e5a43d0f298426f90e21fc2d91313f4915836f8adc65b0a10483db7d",
+  "treeDigest": "sha256:5f717758903d4cfbf83e561beed69c42278b0ec20ee9729b71269e5db4d4c20c",
   "files": [
     [
       "bin/agent-init.js",
