@@ -52,8 +52,8 @@ test('uninstall removes only verified owned assets and preserves project assets'
   assert.equal(result.ok, true);
   assert.equal(result.outcome, 'uninstalled');
   assert.equal(await exists(path.join(homeDir, '.agent-init')), false);
-  assert.equal(await exists(path.join(homeDir, '.agents', 'skills', 'project-setup')), false);
-  assert.equal(await exists(path.join(homeDir, '.claude', 'skills', 'project-setup')), false);
+  assert.equal(await exists(path.join(homeDir, '.agents', 'skills', 'agent-init')), false);
+  assert.equal(await exists(path.join(homeDir, '.claude', 'skills', 'agent-init')), false);
   assert.equal(await exists(path.join(homeDir, '.agents', 'skills')), true);
   assert.equal(await exists(path.join(homeDir, '.claude', 'skills')), true);
   assert.deepEqual(await snapshotTree(repository), projectBefore);
@@ -88,7 +88,7 @@ test('partial uninstall reports changed, preserved, and unresolved assets', asyn
   runtime.randomBytes = () => Buffer.from(operationId, 'hex');
   const claudeQuarantine = path.join(
     path.dirname(installed.manifest.targets.claude.path),
-    `.project-setup-rollback-${operationId}-claude`,
+    `.agent-init-rollback-${operationId}-claude`,
   );
   let injected = false;
   runtime.afterMutation = async (name) => {

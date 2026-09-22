@@ -46,11 +46,11 @@ test('spawned CLI completes install, doctor, update no-op, and uninstall', async
   const install = run('install');
   assert.equal(install.status, 0, install.stderr);
   assert.equal(install.stderr, '');
-  assert.match(install.stdout, /Agent Init 0\.1\.3-rc\.1/);
+  assert.match(install.stdout, /Agent Init 0\.1\.3-rc\.2/);
   assert.match(install.stdout, /Installation/);
   assert.match(install.stdout, /Ready\./);
-  assert.match(install.stdout, /\/project-setup/);
-  assert.match(install.stdout, /\$project-setup/);
+  assert.match(install.stdout, /\/agent-init/);
+  assert.match(install.stdout, /\$agent-init/);
 
   const manifestPath = path.join(homeDir, '.agent-init', 'install.json');
   const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));

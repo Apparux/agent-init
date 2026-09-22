@@ -1,9 +1,9 @@
 ---
-name: project-setup
+name: agent-init
 description: Set up or reconcile an existing repository's minimal, evidence-based Agent environment for Claude Code and Codex. Use when initializing project Agent instructions, scoped project Skills, or agent documentation, and when repository changes require those assets to be reconciled.
 ---
 
-# Project Setup
+# Agent Init
 
 Build the repository plane from current evidence. The phases are ordered gates: complete each phase before entering the next. Preflight and Explore are strictly read-only. There are no file writes until the user explicitly approves an exact Proposal; after approval, only its exact approved `CREATE` and `UPDATE` action IDs may write.
 

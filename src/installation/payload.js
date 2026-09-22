@@ -21,13 +21,13 @@ function parseFrontmatter(content, skillPath) {
     if (separator <= 0) continue;
     metadata[line.slice(0, separator).trim()] = line.slice(separator + 1).trim();
   }
-  if (metadata.name !== 'project-setup' || !metadata.description) {
+  if (metadata.name !== 'agent-init' || !metadata.description) {
     throw new InstallationError(
       'INVALID_PACKAGE_PAYLOAD',
       `Mother Skill metadata is invalid: ${skillPath}`,
       {
         path: skillPath,
-        remediation: 'Use a package whose project-setup/SKILL.md has matching name and description.',
+        remediation: 'Use a package whose agent-init/SKILL.md has matching name and description.',
       },
     );
   }
@@ -92,7 +92,7 @@ export async function validatePackagePayload(runtime) {
     );
   }
 
-  const skillPath = path.join(runtime.packageRoot, 'skills', 'project-setup');
+  const skillPath = path.join(runtime.packageRoot, 'skills', 'agent-init');
   const skillFile = path.join(skillPath, 'SKILL.md');
   try {
     await validateRegularTree(skillPath);

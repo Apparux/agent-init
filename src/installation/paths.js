@@ -168,7 +168,7 @@ export async function resolveInstallationPaths(homeDir) {
 
   const installRoot = path.join(homeDir, '.agent-init');
   const canonicalRoot = path.join(installRoot, 'current');
-  const canonicalSkill = path.join(canonicalRoot, 'skills', 'project-setup');
+  const canonicalSkill = path.join(canonicalRoot, 'skills', 'agent-init');
   const paths = {
     logicalHome: path.resolve(homeDir),
     physicalHome,
@@ -178,8 +178,8 @@ export async function resolveInstallationPaths(homeDir) {
     manifest: path.join(installRoot, 'install.json'),
     canonicalMarker: path.join(canonicalRoot, '.agent-init-owner.json'),
     targets: {
-      codex: path.join(homeDir, '.agents', 'skills', 'project-setup'),
-      claude: path.join(homeDir, '.claude', 'skills', 'project-setup'),
+      codex: path.join(homeDir, '.agents', 'skills', 'agent-init'),
+      claude: path.join(homeDir, '.claude', 'skills', 'agent-init'),
     },
     targetParents: {
       codex: path.join(homeDir, '.agents', 'skills'),

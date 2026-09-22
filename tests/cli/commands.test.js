@@ -13,7 +13,7 @@ test('--version is read from package metadata', () => {
   const result = run(['--version']);
 
   assert.equal(result.status, 0);
-  assert.equal(result.stdout, 'agent-init 0.1.3-rc.1\n');
+  assert.equal(result.stdout, 'agent-init 0.1.3-rc.2\n');
   assert.equal(result.stderr, '');
 });
 

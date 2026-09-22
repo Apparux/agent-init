@@ -348,7 +348,7 @@ async function createCopyTarget(
   const targetPath = paths.targets[name];
   const staging = path.join(
     path.dirname(targetPath),
-    `.project-setup-staging-${operation.operationId}-${name}`,
+    `.agent-init-staging-${operation.operationId}-${name}`,
   );
   await recordIntent(operation, {
     action: 'create-target-copy',
@@ -417,7 +417,7 @@ export async function removeOwnedTarget(spec) {
 
   const quarantine = path.join(
     path.dirname(initial.path),
-    `.project-setup-rollback-${operation.operationId}-${name}`,
+    `.agent-init-rollback-${operation.operationId}-${name}`,
   );
   await recordIntent(operation, {
     action: 'remove-target',

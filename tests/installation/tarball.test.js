@@ -53,7 +53,7 @@ test('packed artifact independently completes the distribution lifecycle', async
   assert.equal(packagedPaths.includes('package.json'), true);
   assert.equal(packagedPaths.includes('LICENSE'), true);
   assert.equal(packagedPaths.includes('bin/agent-init.js'), true);
-  assert.equal(packagedPaths.includes('skills/project-setup/SKILL.md'), true);
+  assert.equal(packagedPaths.includes('skills/agent-init/SKILL.md'), true);
   assert.equal(
     packagedPaths.every(
       (entry) =>
@@ -93,7 +93,7 @@ test('packed artifact independently completes the distribution lifecycle', async
   }
   const version = cli('--version');
   assert.equal(version.status, 0, version.stderr);
-  assert.equal(version.stdout, 'agent-init 0.1.3-rc.1\n');
+  assert.equal(version.stdout, 'agent-init 0.1.3-rc.2\n');
 
   const install = cli('install');
   assert.equal(install.status, 0, install.stderr);
@@ -112,7 +112,7 @@ test('packed artifact independently completes the distribution lifecycle', async
 
   assert.match(
     await readFile(path.join(manifest.canonical.skillPath, 'SKILL.md'), 'utf8'),
-    /name:\s*project-setup/,
+    /name:\s*agent-init/,
   );
 
   const uninstall = cli('uninstall');

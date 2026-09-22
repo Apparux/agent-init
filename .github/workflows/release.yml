@@ -1,4 +1,4 @@
-name: Publish npm v0.1.3-rc.1
+name: Publish npm v0.1.3-rc.2
 
 on:
   workflow_dispatch:
@@ -7,12 +7,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: publish-npm-v0.1.3-rc.1
+  group: publish-npm-v0.1.3-rc.2
   cancel-in-progress: false
 
 jobs:
   publish:
-    name: Publish @apparux/agent-init@0.1.3-rc.1
+    name: Publish @apparux/agent-init@0.1.3-rc.2
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -36,7 +36,7 @@ jobs:
           const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
           const expected = {
             name: '@apparux/agent-init',
-            version: '0.1.3-rc.1',
+            version: '0.1.3-rc.2',
             access: 'public',
             repository: 'git+https://github.com/Apparux/agent-init.git',
           };
@@ -59,7 +59,7 @@ jobs:
         run: |
           mkdir -p .release-artifact/unpacked
           npm pack --ignore-scripts --json --pack-destination .release-artifact > .release-artifact/pack.json
-          tar -xzf .release-artifact/apparux-agent-init-0.1.3-rc.1.tgz -C .release-artifact/unpacked
+          tar -xzf .release-artifact/apparux-agent-init-0.1.3-rc.2.tgz -C .release-artifact/unpacked
       - name: Verify release artifact
         id: artifact
         run: |
@@ -133,12 +133,12 @@ jobs:
           );
           const expected = {
             name: '@apparux/agent-init',
-            version: '0.1.3-rc.1',
-            filename: 'apparux-agent-init-0.1.3-rc.1.tgz',
+            version: '0.1.3-rc.2',
+            filename: 'apparux-agent-init-0.1.3-rc.2.tgz',
             repository: 'git+https://github.com/Apparux/agent-init.git',
             entryCount: 22,
             treeDigest:
-              'sha256:78a4b34763a7ded518f18d22afc19b6aa29703543383e96cdc1b018357c53e50',
+              'sha256:3946dae710f193814ab48e35f56ccd783e4a98ee97b69a8d7ae48244997f2d5e',
           };
           for (const field of ['name', 'version', 'filename', 'entryCount']) {
             if (artifact?.[field] !== expected[field]) {
@@ -153,15 +153,15 @@ jobs:
             ['README.md', 0o644],
             ['bin/agent-init.js', 0o755],
             ['package.json', 0o644],
-            ['skills/project-setup/SKILL.md', 0o644],
-            ['skills/project-setup/references/agents-guidelines.md', 0o644],
-            ['skills/project-setup/references/classification.md', 0o644],
-            ['skills/project-setup/references/detection-guidelines.md', 0o644],
-            ['skills/project-setup/references/evaluation-guidelines.md', 0o644],
-            ['skills/project-setup/references/proposal-guidelines.md', 0o644],
-            ['skills/project-setup/references/reconciliation-guidelines.md', 0o644],
-            ['skills/project-setup/references/skills-guidelines.md', 0o644],
-            ['skills/project-setup/scripts/detect-project.js', 0o644],
+            ['skills/agent-init/SKILL.md', 0o644],
+            ['skills/agent-init/references/agents-guidelines.md', 0o644],
+            ['skills/agent-init/references/classification.md', 0o644],
+            ['skills/agent-init/references/detection-guidelines.md', 0o644],
+            ['skills/agent-init/references/evaluation-guidelines.md', 0o644],
+            ['skills/agent-init/references/proposal-guidelines.md', 0o644],
+            ['skills/agent-init/references/reconciliation-guidelines.md', 0o644],
+            ['skills/agent-init/references/skills-guidelines.md', 0o644],
+            ['skills/agent-init/scripts/detect-project.js', 0o644],
             ['src/cli/output.js', 0o644],
             ['src/cli/run.js', 0o644],
             ['src/installation/filesystem.js', 0o644],
@@ -227,7 +227,7 @@ jobs:
           console.log(`Runner artifact integrity: ${artifact.integrity}`);
           NODE
       - name: Publish npm package
-        run: npm publish .release-artifact/apparux-agent-init-0.1.3-rc.1.tgz --access public --tag latest
+        run: npm publish .release-artifact/apparux-agent-init-0.1.3-rc.2.tgz --access public --tag latest
       - name: Verify published registry artifact
         env:
           EXPECTED_SHASUM: ${{ steps.artifact.outputs.shasum }}
@@ -238,7 +238,7 @@ jobs:
           import { setTimeout as delay } from 'node:timers/promises';
 
           const packageName = '@apparux/agent-init';
-          const version = '0.1.3-rc.1';
+          const version = '0.1.3-rc.2';
           const registryRoot = `https://registry.npmjs.org/${encodeURIComponent(packageName)}`;
           const getJson = async (url) => {
             const response = await fetch(url, {

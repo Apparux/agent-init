@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 const execFileAsync = promisify(execFile);
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(here, '../..');
-const scriptPath = path.join(repositoryRoot, 'skills', 'project-setup', 'scripts', 'detect-project.js');
+const scriptPath = path.join(repositoryRoot, 'skills', 'agent-init', 'scripts', 'detect-project.js');
 
 async function snapshotTree(root, relative = '.') {
   const absolute = path.resolve(root, relative);

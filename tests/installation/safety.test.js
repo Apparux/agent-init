@@ -14,7 +14,7 @@ test('invalid package payload causes zero HOME mutation', async (t) => {
   const { disposableRoot, homeDir, packageRoot, runtime, sentinels } =
     await createInstallationFixture(t);
   await writeFile(
-    path.join(packageRoot, 'skills', 'project-setup', 'SKILL.md'),
+    path.join(packageRoot, 'skills', 'agent-init', 'SKILL.md'),
     '---\nname: wrong-name\ndescription: Wrong.\n---\n',
   );
   const before = await snapshotTree(disposableRoot);
@@ -31,7 +31,7 @@ test('invalid package payload causes zero HOME mutation', async (t) => {
 test('foreign discovery target stops install before any control-set mutation', async (t) => {
   const { disposableRoot, homeDir, runtime, sentinels } =
     await createInstallationFixture(t);
-  const target = path.join(homeDir, '.agents', 'skills', 'project-setup');
+  const target = path.join(homeDir, '.agents', 'skills', 'agent-init');
   await mkdir(target);
   await writeFile(path.join(target, 'SKILL.md'), 'foreign skill\n', { mode: 0o600 });
   const before = await snapshotTree(disposableRoot);

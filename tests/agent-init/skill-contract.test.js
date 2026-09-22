@@ -5,7 +5,7 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const skillDirectory = path.resolve(here, '../../skills/project-setup');
+const skillDirectory = path.resolve(here, '../../skills/agent-init');
 
 async function read(relativePath) {
   return readFile(path.join(skillDirectory, relativePath), 'utf8');

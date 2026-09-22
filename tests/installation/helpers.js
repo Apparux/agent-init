@@ -12,7 +12,7 @@ export async function createInstallationFixture(t, options = {}) {
   const packageRoot = path.join(disposableRoot, 'package');
   await mkdir(path.join(homeDir, '.agents', 'skills'), { recursive: true });
   await mkdir(path.join(homeDir, '.claude', 'skills'), { recursive: true });
-  await mkdir(path.join(packageRoot, 'skills', 'project-setup', 'references'), {
+  await mkdir(path.join(packageRoot, 'skills', 'agent-init', 'references'), {
     recursive: true,
   });
 
@@ -22,11 +22,11 @@ export async function createInstallationFixture(t, options = {}) {
     `${JSON.stringify({ name: PACKAGE_NAME, version }, null, 2)}\n`,
   );
   await writeFile(
-    path.join(packageRoot, 'skills', 'project-setup', 'SKILL.md'),
-    options.skill ?? `---\nname: project-setup\ndescription: Set up agent assets for an existing repository.\n---\n\n# Project Setup\n`,
+    path.join(packageRoot, 'skills', 'agent-init', 'SKILL.md'),
+    options.skill ?? `---\nname: agent-init\ndescription: Set up agent assets for an existing repository.\n---\n\n# Project Setup\n`,
   );
   await writeFile(
-    path.join(packageRoot, 'skills', 'project-setup', 'references', 'guide.md'),
+    path.join(packageRoot, 'skills', 'agent-init', 'references', 'guide.md'),
     options.guide ?? '# Guide\n',
   );
 

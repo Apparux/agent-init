@@ -22,7 +22,7 @@ Store only named evidence references in fixture acceptance status. Exclude crede
 
 ## Fresh Claude Code
 
-Start a fresh Claude Code session in the disposable fixture. Verify `project-setup` appears in its discovery catalog, invoke `/project-setup`, and record evidence that the canonical Skill version/content was loaded. Filesystem target existence alone is insufficient.
+Start a fresh Claude Code session in the disposable fixture. Verify `agent-init` appears in its discovery catalog, invoke `/agent-init`, and record evidence that the canonical Skill version/content was loaded. Filesystem target existence alone is insufficient.
 
 First run the **no-approval** branch: allow Preflight through Proposal, then reject or withhold approval. Verify Proposal appears before any write and the before/after tree proves zero writes.
 
@@ -30,7 +30,7 @@ For an approved representative branch, restore the fixture, start another fresh 
 
 ## Fresh Codex
 
-Repeat the same procedure in a fresh Codex session using `$project-setup`: catalog discovery, actual invocation, loaded canonical version/content, no-approval Proposal with zero writes, then an approved representative branch where required. Do not infer Codex behavior from Claude results.
+Repeat the same procedure in a fresh Codex session using `$agent-init`: catalog discovery, actual invocation, loaded canonical version/content, no-approval Proposal with zero writes, then an approved representative branch where required. Do not infer Codex behavior from Claude results.
 
 After a generated project Skill is approved and applied, start fresh sessions in both Harnesses and independently prove the project Skill is discovered, invocable, and loads the same `.agents/skills/<skill>` canonical content (or the exact Proposal-visible managed-copy fallback).
 

@@ -76,8 +76,8 @@ async function prepareUpgradeFixture(t, options = {}) {
     `${JSON.stringify({ name: fixture.runtime.packageName, version: '0.2.0' }, null, 2)}\n`,
   );
   await writeFile(
-    path.join(fixture.packageRoot, 'skills', 'project-setup', 'SKILL.md'),
-    '---\nname: project-setup\ndescription: Crash recovery payload.\n---\n\n# Version 0.2\n',
+    path.join(fixture.packageRoot, 'skills', 'agent-init', 'SKILL.md'),
+    '---\nname: agent-init\ndescription: Crash recovery payload.\n---\n\n# Version 0.2\n',
   );
   return { ...fixture, nextRuntime: { ...fixture.runtime, packageVersion: '0.2.0' } };
 }

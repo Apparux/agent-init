@@ -34,7 +34,7 @@ export function renderSuccess(result, runtime) {
         );
       }
     }
-    lines.push('Ready.', '', 'Claude Code:', '  /project-setup', '', 'Codex:', '  $project-setup');
+    lines.push('Ready.', '', 'Claude Code:', '  /agent-init', '', 'Codex:', '  $agent-init');
   } else if (result.operation === 'update') {
     lines.push(
       result.outcome === 'already-up-to-date'

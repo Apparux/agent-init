@@ -2,7 +2,7 @@
 
 简体中文 | [English](./docs/README.en.md)
 
-Agent Init 为 Claude Code 和 Codex 安装一个共享的 `project-setup` Skill。该 Skill 会进入现有仓库，收集证据，提出最小化的 Agent 环境方案，并且仅在获得明确批准后写入文件。
+Agent Init 为 Claude Code 和 Codex 安装一个共享的 `agent-init` Skill。该 Skill 会进入现有仓库，收集证据，提出最小化的 Agent 环境方案，并且仅在获得明确批准后写入文件。
 
 > 状态：v0.1.2。
 >
@@ -22,7 +22,7 @@ npx @apparux/agent-project-setup@latest uninstall
 
 说明:
 
-- 第 2 步卸载旧包时,可能列出 `Preserved` 及 `~/.claude/skills/project-setup`、`~/.agents/skills/project-setup` 等条目并带 `!` 标记。这是旧包的安全设计:这些条目已由新包接管,所有权证据不匹配,旧包拒绝删除不属于自己的内容。**这是预期行为,不是残留问题**,无需处理。
+- 第 2 步卸载旧包时,可能列出 `Preserved` 及 `~/.claude/skills/project-setup`、`~/.agents/skills/project-setup` 等条目并带 `!` 标记。**这是预期行为,不是异常**:这些路径由旧包创建,旧包拒绝删除所有权证据不匹配的内容。两步完成后,若这些 `project-setup` 条目仍存在,请手动删除(新包安装的是 `agent-init` 路径,不会接管旧路径)。
 - 若卸载后确实留下了指向 `~/.agent-project-setup/` 的悬空符号链接(可用 `ls -la ~/.claude/skills` 确认),先删除它们再执行第 1 步。
 
 ## 环境要求
@@ -42,22 +42,22 @@ npx @apparux/agent-init@latest install
 安装器会将规范母 Skill 复制到以下稳定位置：
 
 ```text
-~/.agent-init/current/skills/project-setup
+~/.agent-init/current/skills/agent-init
 ```
 
 随后，它会向两个 Harness 暴露同一个规范 Skill：
 
 ```text
-~/.agents/skills/project-setup
-~/.claude/skills/project-setup
+~/.agents/skills/agent-init
+~/.claude/skills/agent-init
 ```
 
 安装器会优先使用符号链接。如果无法创建稳定且可验证所有权的符号链接，则可以改用托管副本，并在 `install.json` 中记录该模式。
 
 安装完成后：
 
-- Claude Code：`/project-setup`
-- Codex：`$project-setup`
+- Claude Code：`/agent-init`
+- Codex：`$agent-init`
 
 ## CLI
 
@@ -88,11 +88,11 @@ npx @apparux/agent-init@latest --help
 
 ### `uninstall`
 
-仅删除仍能证明由本安装器拥有的用户级资源。已被替换、发生漂移或存在歧义的目标会被保留并报告。通过 `project-setup` 创建的项目文件始终不会被卸载操作删除。
+仅删除仍能证明由本安装器拥有的用户级资源。已被替换、发生漂移或存在歧义的目标会被保留并报告。通过 `agent-init` 创建的项目文件始终不会被卸载操作删除。
 
 ## 项目设置工作流
 
-`/project-setup` 和 `$project-setup` 在当前仓库中运行，与 CLI 的 `update` 操作相互独立：
+`/agent-init` 和 `$agent-init` 在当前仓库中运行，与 CLI 的 `update` 操作相互独立：
 
 1. 预检和只读探索
 2. 项目画像和证据账本

@@ -33,9 +33,9 @@ test('fresh install materializes one canonical skill and two managed targets', a
     '.agent-init',
     'current',
     'skills',
-    'project-setup',
+    'agent-init',
   );
-  assert.match(await readFile(path.join(canonicalSkill, 'SKILL.md'), 'utf8'), /name: project-setup/);
+  assert.match(await readFile(path.join(canonicalSkill, 'SKILL.md'), 'utf8'), /name: agent-init/);
 
   const manifest = JSON.parse(
     await readFile(path.join(homeDir, '.agent-init', 'install.json'), 'utf8'),
@@ -69,7 +69,7 @@ test('absolute junction-style link text is accepted when it resolves to the cano
         '.agent-init',
         'current',
         'skills',
-        'project-setup',
+        'agent-init',
       ),
       targetPath,
       type,
@@ -100,7 +100,7 @@ test('rejects a lexically canonical link that physically resolves to a foreign t
     '.agent-init',
     'current',
     'skills',
-    'project-setup',
+    'agent-init',
   );
   await mkdir(foreignMount, { recursive: true });
   await mkdir(foreignSkill, { recursive: true });
@@ -117,7 +117,7 @@ test('rejects a lexically canonical link that physically resolves to a foreign t
     '.agent-init',
     'current',
     'skills',
-    'project-setup',
+    'agent-init',
   ].join(path.sep);
   runtime.createDirectorySymlink = async (_linkText, targetPath, type) => {
     await symlink(deceptiveLinkText, targetPath, type);
@@ -129,7 +129,7 @@ test('rejects a lexically canonical link that physically resolves to a foreign t
   assert.equal(result.error.code, 'OWNERSHIP_MISMATCH');
   assert.deepEqual(result.error.unresolved, []);
   await assert.rejects(
-    () => lstat(path.join(runtime.homeDir, '.agents', 'skills', 'project-setup')),
+    () => lstat(path.join(runtime.homeDir, '.agents', 'skills', 'agent-init')),
     { code: 'ENOENT' },
   );
   assert.equal(await readFile(foreignSentinel, 'utf8'), 'must survive\n');
@@ -143,7 +143,7 @@ test('rejects a mutable alias even when it currently resolves to the canonical s
     '.agent-init',
     'current',
     'skills',
-    'project-setup',
+    'agent-init',
   );
   const aliasPath = path.join(runtime.homeDir, 'mutable-canonical-alias');
   let aliasCreated = false;
@@ -160,7 +160,7 @@ test('rejects a mutable alias even when it currently resolves to the canonical s
   assert.equal(result.ok, false);
   assert.equal(result.error.code, 'OWNERSHIP_MISMATCH');
   await assert.rejects(
-    () => lstat(path.join(runtime.homeDir, '.agents', 'skills', 'project-setup')),
+    () => lstat(path.join(runtime.homeDir, '.agents', 'skills', 'agent-init')),
     { code: 'ENOENT' },
   );
   assert.equal((await lstat(aliasPath)).isSymbolicLink(), true);
@@ -170,7 +170,7 @@ test('rejects a mutable alias even when it currently resolves to the canonical s
 
 test('retains recovery evidence when a published target identity cannot be proven', async (t) => {
   const { homeDir, runtime, sentinels } = await createInstallationFixture(t);
-  const targetPath = path.join(homeDir, '.agents', 'skills', 'project-setup');
+  const targetPath = path.join(homeDir, '.agents', 'skills', 'agent-init');
   runtime.createDirectorySymlink = async (_linkText, targetPath) => {
     await writeFile(targetPath, 'foreign target\n');
   };
@@ -211,7 +211,7 @@ test('schema-1 manifests without linkText remain readable and safely removable',
   );
   for (const name of ['codex', 'claude']) {
     await assert.rejects(
-      () => lstat(path.join(homeDir, name === 'codex' ? '.agents' : '.claude', 'skills', 'project-setup')),
+      () => lstat(path.join(homeDir, name === 'codex' ? '.agents' : '.claude', 'skills', 'agent-init')),
       { code: 'ENOENT' },
     );
   }

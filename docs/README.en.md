@@ -2,7 +2,7 @@
 
 [简体中文](../README.md) | English
 
-Agent Init installs a shared `project-setup` Skill for Claude Code and Codex. The Skill enters an existing repository, gathers evidence, proposes a minimal Agent environment, and writes only after explicit approval.
+Agent Init installs a shared `agent-init` Skill for Claude Code and Codex. The Skill enters an existing repository, gathers evidence, proposes a minimal Agent environment, and writes only after explicit approval.
 
 > Status: v0.1.2.
 >
@@ -22,7 +22,7 @@ npx @apparux/agent-project-setup@latest uninstall
 
 Notes:
 
-- During step 2, the old uninstaller may list entries such as `~/.claude/skills/project-setup` and `~/.agents/skills/project-setup` under `Preserved` with a `!` marker. This is the old package's safety design: those entries are now owned by the new package, the ownership evidence does not match, and the old package refuses to delete what it does not own. **This is expected, not a leftover** — no action is needed.
+- During step 2, the old uninstaller may list entries such as `~/.claude/skills/project-setup` and `~/.agents/skills/project-setup` under `Preserved` with a `!` marker. This is expected, not a leftover: those paths were owned by the old package before the rename (or were created by it), so it refuses to delete what it no longer owns. Remove any leftover `~/.claude/skills/project-setup` / `~/.agents/skills/project-setup` entries manually after both steps complete if they still exist.
 - If the old uninstall does leave dangling symlinks into `~/.agent-project-setup/` (check with `ls -la ~/.claude/skills`), remove them before running step 1.
 
 ## Requirements
@@ -42,22 +42,22 @@ npx @apparux/agent-init@latest install
 The installer copies the canonical mother Skill into a stable location under:
 
 ```text
-~/.agent-init/current/skills/project-setup
+~/.agent-init/current/skills/agent-init
 ```
 
 It then exposes that same canonical Skill to both harnesses:
 
 ```text
-~/.agents/skills/project-setup
-~/.claude/skills/project-setup
+~/.agents/skills/agent-init
+~/.claude/skills/agent-init
 ```
 
 A symlink is preferred. Where a stable, ownership-verifiable symlink cannot be created, the installer may use a managed copy and records that mode in `install.json`.
 
 After installation:
 
-- Claude Code: `/project-setup`
-- Codex: `$project-setup`
+- Claude Code: `/agent-init`
+- Codex: `$agent-init`
 
 ## CLI
 
@@ -88,11 +88,11 @@ Performs a read-only health check of the manifest, canonical Skill, ownership ev
 
 ### `uninstall`
 
-Removes only user-level assets whose ownership can still be proven. Replaced, drifted or ambiguous targets are preserved and reported. Project files created through `project-setup` always survive uninstall.
+Removes only user-level assets whose ownership can still be proven. Replaced, drifted or ambiguous targets are preserved and reported. Project files created through `agent-init` always survive uninstall.
 
 ## Project setup workflow
 
-`/project-setup` and `$project-setup` operate on the current repository, independently of CLI `update`:
+`/agent-init` and `$agent-init` operate on the current repository, independently of CLI `update`:
 
 1. Preflight and read-only exploration
 2. Project Profile and evidence ledger

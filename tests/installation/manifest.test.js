@@ -8,14 +8,14 @@ test('manifest JSON serialization is deterministic across insertion order', () =
     version: '0.1.0',
     schemaVersion: 1,
     targets: {
-      codex: { mode: 'symlink', path: '/home/.agents/skills/project-setup' },
-      claude: { path: '/home/.claude/skills/project-setup', mode: 'copy' },
+      codex: { mode: 'symlink', path: '/home/.agents/skills/agent-init' },
+      claude: { path: '/home/.claude/skills/agent-init', mode: 'copy' },
     },
   };
   const second = {
     targets: {
-      claude: { mode: 'copy', path: '/home/.claude/skills/project-setup' },
-      codex: { path: '/home/.agents/skills/project-setup', mode: 'symlink' },
+      claude: { mode: 'copy', path: '/home/.claude/skills/agent-init' },
+      codex: { path: '/home/.agents/skills/agent-init', mode: 'symlink' },
     },
     schemaVersion: 1,
     version: '0.1.0',

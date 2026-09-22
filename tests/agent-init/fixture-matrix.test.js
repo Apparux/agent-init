@@ -13,7 +13,7 @@ const execFileAsync = promisify(execFile);
 const here = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(here, '../..');
 const fixturesRoot = path.join(projectRoot, 'tests', 'fixtures');
-const detectorPath = path.join(projectRoot, 'skills', 'project-setup', 'scripts', 'detect-project.js');
+const detectorPath = path.join(projectRoot, 'skills', 'agent-init', 'scripts', 'detect-project.js');
 const fixtureNames = [
   '01-java-maven-simple',
   '02-java-maven-monorepo',

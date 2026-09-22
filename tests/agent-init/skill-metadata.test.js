@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(here, '../..');
-const skillDirectory = path.join(repositoryRoot, 'skills', 'project-setup');
+const skillDirectory = path.join(repositoryRoot, 'skills', 'agent-init');
 const skillPath = path.join(skillDirectory, 'SKILL.md');
 
 function parseFrontmatter(markdown) {
@@ -30,7 +30,7 @@ test('mother Skill exposes the shared discovery metadata contract', async () => 
   const metadata = parseFrontmatter(markdown);
 
   assert.deepEqual(Object.keys(metadata).sort(), ['description', 'name']);
-  assert.equal(metadata.name, 'project-setup');
+  assert.equal(metadata.name, 'agent-init');
   assert.match(metadata.description, /repository/i);
   assert.match(metadata.description, /setup|configure|reconcile/i);
   assert.match(metadata.description, /agent/i);

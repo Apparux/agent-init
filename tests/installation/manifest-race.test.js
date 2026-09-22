@@ -41,8 +41,8 @@ test('update manifest CAS preserves a concurrent replacement and old rollback ev
     `${JSON.stringify({ name: runtime.packageName, version: '0.2.0' }, null, 2)}\n`,
   );
   await writeFile(
-    path.join(packageRoot, 'skills', 'project-setup', 'SKILL.md'),
-    '---\nname: project-setup\ndescription: Manifest CAS race payload.\n---\n\n# 0.2\n',
+    path.join(packageRoot, 'skills', 'agent-init', 'SKILL.md'),
+    '---\nname: agent-init\ndescription: Manifest CAS race payload.\n---\n\n# 0.2\n',
   );
   const manifestPath = path.join(homeDir, '.agent-init', 'install.json');
   let injected = false;

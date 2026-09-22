@@ -82,8 +82,8 @@ test(
     const installed = run('install');
     assert.equal(installed.status, 0, installed.stderr);
     const installRoot = path.join(homeDir, '.agent-init');
-    const codexTarget = path.join(homeDir, '.agents', 'skills', 'project-setup');
-    const claudeTarget = path.join(homeDir, '.claude', 'skills', 'project-setup');
+    const codexTarget = path.join(homeDir, '.agents', 'skills', 'agent-init');
+    const claudeTarget = path.join(homeDir, '.claude', 'skills', 'agent-init');
     assert.equal(await exists(installRoot), true);
     assert.equal(await exists(codexTarget), true);
     assert.equal(await exists(claudeTarget), true);
@@ -96,8 +96,8 @@ test(
     packageMetadata.version = '0.2.0';
     await writeFile(packageMetadataPath, `${JSON.stringify(packageMetadata, null, 2)}\n`);
     await writeFile(
-      path.join(packageCopy, 'skills', 'project-setup', 'SKILL.md'),
-      '---\nname: project-setup\ndescription: Windows update payload.\n---\n\n# Version 0.2\n',
+      path.join(packageCopy, 'skills', 'agent-init', 'SKILL.md'),
+      '---\nname: agent-init\ndescription: Windows update payload.\n---\n\n# Version 0.2\n',
     );
 
     const updated = run('update');
@@ -108,7 +108,7 @@ test(
     assert.equal(installedManifest.version, '0.2.0');
     assert.match(
       await readFile(
-        path.join(installRoot, 'current', 'skills', 'project-setup', 'SKILL.md'),
+        path.join(installRoot, 'current', 'skills', 'agent-init', 'SKILL.md'),
         'utf8',
       ),
       /Version 0\.2/,
@@ -155,8 +155,8 @@ test(
     packageMetadata.version = '0.2.0';
     await writeFile(packageMetadataPath, `${JSON.stringify(packageMetadata, null, 2)}\n`);
     await writeFile(
-      path.join(runtime.packageRoot, 'skills', 'project-setup', 'SKILL.md'),
-      '---\nname: project-setup\ndescription: Windows managed-copy update payload.\n---\n\n# Version 0.2\n',
+      path.join(runtime.packageRoot, 'skills', 'agent-init', 'SKILL.md'),
+      '---\nname: agent-init\ndescription: Windows managed-copy update payload.\n---\n\n# Version 0.2\n',
     );
     const nextRuntime = { ...runtime, packageVersion: '0.2.0' };
     const updated = await executeLifecycle({ operation: 'update' }, nextRuntime);

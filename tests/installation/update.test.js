@@ -37,8 +37,8 @@ test('same-version different payload is an integrity conflict with zero mutation
     await createInstallationFixture(t);
   assert.equal((await executeLifecycle({ operation: 'install' }, runtime)).ok, true);
   await writeFile(
-    path.join(packageRoot, 'skills', 'project-setup', 'SKILL.md'),
-    '---\nname: project-setup\ndescription: Changed bytes under the same version.\n---\n\n# Changed\n',
+    path.join(packageRoot, 'skills', 'agent-init', 'SKILL.md'),
+    '---\nname: agent-init\ndescription: Changed bytes under the same version.\n---\n\n# Changed\n',
   );
   const before = await snapshotTree(homeDir);
 
@@ -82,8 +82,8 @@ test('newer package upgrades canonical payload and managed targets atomically', 
     `${JSON.stringify({ name: runtime.packageName, version: '0.2.0' }, null, 2)}\n`,
   );
   await writeFile(
-    path.join(packageRoot, 'skills', 'project-setup', 'SKILL.md'),
-    '---\nname: project-setup\ndescription: Updated project setup workflow.\n---\n\n# Project Setup 0.2\n',
+    path.join(packageRoot, 'skills', 'agent-init', 'SKILL.md'),
+    '---\nname: agent-init\ndescription: Updated project setup workflow.\n---\n\n# Project Setup 0.2\n',
   );
   const nextRuntime = { ...runtime, packageVersion: '0.2.0', cwd: repository };
 
@@ -116,8 +116,8 @@ test('in-process update failure restores the previous healthy installation', asy
     `${JSON.stringify({ name: runtime.packageName, version: '0.2.0' }, null, 2)}\n`,
   );
   await writeFile(
-    path.join(packageRoot, 'skills', 'project-setup', 'SKILL.md'),
-    '---\nname: project-setup\ndescription: Payload that will fail during update.\n---\n\n# Failing update\n',
+    path.join(packageRoot, 'skills', 'agent-init', 'SKILL.md'),
+    '---\nname: agent-init\ndescription: Payload that will fail during update.\n---\n\n# Failing update\n',
   );
   const failingRuntime = {
     ...runtime,
@@ -172,8 +172,8 @@ test('validated staging failure cleans only operation-owned staging and keeps ol
     `${JSON.stringify({ name: runtime.packageName, version: '0.2.0' }, null, 2)}\n`,
   );
   await writeFile(
-    path.join(packageRoot, 'skills', 'project-setup', 'SKILL.md'),
-    '---\nname: project-setup\ndescription: Staging failure payload.\n---\n\n# Version 0.2\n',
+    path.join(packageRoot, 'skills', 'agent-init', 'SKILL.md'),
+    '---\nname: agent-init\ndescription: Staging failure payload.\n---\n\n# Version 0.2\n',
   );
   let injected = false;
   const failingRuntime = {
@@ -219,8 +219,8 @@ test('post-commit cleanup failure remains recoverable and reports committed chan
     `${JSON.stringify({ name: runtime.packageName, version: '0.2.0' }, null, 2)}\n`,
   );
   await writeFile(
-    path.join(packageRoot, 'skills', 'project-setup', 'SKILL.md'),
-    '---\nname: project-setup\ndescription: Post-commit cleanup payload.\n---\n\n# Version 0.2\n',
+    path.join(packageRoot, 'skills', 'agent-init', 'SKILL.md'),
+    '---\nname: agent-init\ndescription: Post-commit cleanup payload.\n---\n\n# Version 0.2\n',
   );
   let injected = false;
   const failingRuntime = {

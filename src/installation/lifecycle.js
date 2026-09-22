@@ -191,12 +191,12 @@ async function validateCanonicalLayout(root) {
     return { valid: false, reason: 'Canonical marker or skills entry has an unexpected type.' };
   }
   const skillEntries = (await readdir(skillsRoot)).sort();
-  if (skillEntries.length !== 1 || skillEntries[0] !== 'project-setup') {
+  if (skillEntries.length !== 1 || skillEntries[0] !== 'agent-init') {
     return { valid: false, reason: 'Canonical skills directory contains unknown entries.' };
   }
-  const skillFingerprint = await entryFingerprint(path.join(skillsRoot, 'project-setup'));
+  const skillFingerprint = await entryFingerprint(path.join(skillsRoot, 'agent-init'));
   if (skillFingerprint.type !== 'directory') {
-    return { valid: false, reason: 'Canonical project-setup payload is not a regular directory.' };
+    return { valid: false, reason: 'Canonical agent-init payload is not a regular directory.' };
   }
   return { valid: true };
 }
@@ -283,7 +283,7 @@ async function rollbackFreshInstall(created, paths, operation, installId, digest
     }
     const quarantine = path.join(
       path.dirname(target.path),
-      `.project-setup-rollback-${operation.operationId}-${target.name}`,
+      `.agent-init-rollback-${operation.operationId}-${target.name}`,
     );
     const removed = await detachAndDeleteOwnedDirectory({
       livePath: target.path,
@@ -335,7 +335,7 @@ async function rollbackFreshInstall(created, paths, operation, installId, digest
         }
         return (
           marker.installId === installId &&
-          (await digestTree(path.join(detachedPath, 'skills', 'project-setup'))) === digest
+          (await digestTree(path.join(detachedPath, 'skills', 'agent-init'))) === digest
         );
       },
     });
@@ -588,13 +588,13 @@ async function installFresh(payload, paths, runtime, operation) {
     });
     await mkdir(stagingRoot);
     await mkdir(path.join(stagingRoot, 'skills'));
-    await copyTree(payload.sourceSkill, path.join(stagingRoot, 'skills', 'project-setup'));
+    await copyTree(payload.sourceSkill, path.join(stagingRoot, 'skills', 'agent-init'));
     await writeFile(
       path.join(stagingRoot, OWNER_MARKER),
       serializeJson({ schemaVersion: 1, installId }),
       { flag: 'wx', mode: 0o600 },
     );
-    if ((await digestTree(path.join(stagingRoot, 'skills', 'project-setup'))) !== payload.digest) {
+    if ((await digestTree(path.join(stagingRoot, 'skills', 'agent-init'))) !== payload.digest) {
       throw new InstallationError(
         'INTEGRITY_CONFLICT',
         `Staged canonical payload digest changed: ${stagingRoot}`,
@@ -867,10 +867,10 @@ async function inspectLifecycleResidue(paths) {
       directory: paths.targetParents[name],
       patterns: [
         new RegExp(
-          `^\\.project-setup-staging-[a-f0-9]{32}-${name}(?:\\.failed)?$`,
+          `^\\.agent-init-staging-[a-f0-9]{32}-${name}(?:\\.failed)?$`,
         ),
-        new RegExp(`^\\.project-setup-staging-cleanup-[a-f0-9]{32}-${name}$`),
-        new RegExp(`^\\.project-setup-rollback-[a-f0-9]{32}-${name}$`),
+        new RegExp(`^\\.agent-init-staging-cleanup-[a-f0-9]{32}-${name}$`),
+        new RegExp(`^\\.agent-init-rollback-[a-f0-9]{32}-${name}$`),
       ],
     })),
   ];
@@ -1055,7 +1055,7 @@ async function validateCanonicalDirectory(root, installId, digest) {
   }
   let actualDigest;
   try {
-    actualDigest = await digestTree(path.join(root, 'skills', 'project-setup'));
+    actualDigest = await digestTree(path.join(root, 'skills', 'agent-init'));
   } catch {
     return { valid: false, fingerprint };
   }
@@ -1170,7 +1170,7 @@ async function removeCanonical(
       detached.type === 'directory' &&
       detached.identity === canonical.root.identity &&
       marker?.installId === manifest.installId &&
-      (await digestTree(path.join(quarantine, 'skills', 'project-setup'))) ===
+      (await digestTree(path.join(quarantine, 'skills', 'agent-init'))) ===
         manifest.canonical.digest;
     if (!detachedValid) {
       if ((await entryFingerprint(paths.canonicalRoot)).type === 'missing') {
@@ -1412,7 +1412,7 @@ async function stageUpdateAssets(paths, payload, manifest, operation, runtime) {
     });
     await mkdir(canonicalStaging);
     await mkdir(path.join(canonicalStaging, 'skills'));
-    await copyTree(payload.sourceSkill, path.join(canonicalStaging, 'skills', 'project-setup'));
+    await copyTree(payload.sourceSkill, path.join(canonicalStaging, 'skills', 'agent-init'));
     await writeFile(
       path.join(canonicalStaging, OWNER_MARKER),
       serializeJson({ schemaVersion: 1, installId: manifest.installId }),
@@ -1442,7 +1442,7 @@ async function stageUpdateAssets(paths, payload, manifest, operation, runtime) {
       if (record.mode !== 'copy') continue;
       const staging = path.join(
         path.dirname(record.path),
-        `.project-setup-staging-${operation.operationId}-${name}`,
+        `.agent-init-staging-${operation.operationId}-${name}`,
       );
       if ((await entryFingerprint(staging)).type !== 'missing') {
         throw new InstallationError(
@@ -1455,7 +1455,7 @@ async function stageUpdateAssets(paths, payload, manifest, operation, runtime) {
         path: staging,
         quarantine: path.join(
           path.dirname(record.path),
-          `.project-setup-staging-cleanup-${operation.operationId}-${name}`,
+          `.agent-init-staging-cleanup-${operation.operationId}-${name}`,
         ),
         identity: null,
         verifyDetached: (detachedPath) =>
@@ -1686,7 +1686,7 @@ async function upgradeOwned(paths, runtime, payload, operation, plannedManifest)
         staging: staged.copyStaging[name],
         rollback: path.join(
           path.dirname(record.path),
-          `.project-setup-rollback-${operation.operationId}-${name}`,
+          `.agent-init-rollback-${operation.operationId}-${name}`,
         ),
         detached: false,
         promoted: false,
@@ -2179,7 +2179,7 @@ function validateFreshInstallJournal(paths, descriptor, journal) {
       path.relative(path.dirname(paths.targets[name]), paths.canonicalSkill) || '.';
     const expectedStaging = path.join(
       path.dirname(paths.targets[name]),
-      `.project-setup-staging-${journal.operationId}-${name}`,
+      `.agent-init-staging-${journal.operationId}-${name}`,
     );
     if (
       (linkIntent &&
@@ -2450,7 +2450,7 @@ async function recoverInterruptedInstall(paths, runtime, control) {
     targetStates[name] = targetState;
     const staging = path.join(
       path.dirname(paths.targets[name]),
-      `.project-setup-staging-${journal.operationId}-${name}`,
+      `.agent-init-staging-${journal.operationId}-${name}`,
     );
     const stagingFingerprint = await entryFingerprint(staging);
     if (targetEvidence?.completion) {
@@ -2597,7 +2597,7 @@ async function recoverInterruptedInstall(paths, runtime, control) {
       } else {
         const quarantine = path.join(
           path.dirname(paths.targets[name]),
-          `.project-setup-rollback-${journal.operationId}-${name}`,
+          `.agent-init-rollback-${journal.operationId}-${name}`,
         );
         if ((await entryFingerprint(quarantine)).type !== 'missing') {
           throw ambiguousRecovery(
@@ -2634,7 +2634,7 @@ async function recoverInterruptedInstall(paths, runtime, control) {
     if (plan.stagingFingerprint.type !== 'missing') {
       const quarantine = path.join(
         path.dirname(plan.staging),
-        `.project-setup-staging-cleanup-${journal.operationId}-${name}`,
+        `.agent-init-staging-cleanup-${journal.operationId}-${name}`,
       );
       if ((await entryFingerprint(quarantine)).type !== 'missing') {
         throw ambiguousRecovery(
@@ -2816,7 +2816,7 @@ function validateInterruptedUninstallJournal(paths, runtime, descriptor, journal
     const record = manifest.targets[name];
     const expectedQuarantine = path.join(
       path.dirname(record.path),
-      `.project-setup-rollback-${journal.operationId}-${name}`,
+      `.agent-init-rollback-${journal.operationId}-${name}`,
     );
     if (
       (removed && !intent) ||
@@ -3464,11 +3464,11 @@ function requireManagedCopyUpdateIntent(journal, name, record, journalPath) {
   const intent = findLastIntent(journal, 'swap-target-update', name);
   const expectedStaging = path.join(
     path.dirname(record.path),
-    `.project-setup-staging-${journal.operationId}-${name}`,
+    `.agent-init-staging-${journal.operationId}-${name}`,
   );
   const expectedRollback = path.join(
     path.dirname(record.path),
-    `.project-setup-rollback-${journal.operationId}-${name}`,
+    `.agent-init-rollback-${journal.operationId}-${name}`,
   );
   if (
     !intent ||
