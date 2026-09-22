@@ -27,3 +27,10 @@ Follow PRD §4–5 and §42. Do not rewrite the design, expand documentation, or
 ## Verification
 
 Review the rendered/document text against package metadata, the existing implementation, and the historical roadmap. Check links and ticket numbering. Confirm PRD.md is unchanged, inspect the documentation-only diff, and run `npm test` to ensure the repository remains testable. This is a status correction, not evidence that v0.1.3 is released.
+
+## Comments
+
+### 2026-09-22 — Merged baseline: `bdf2999`
+
+- Baseline to reconcile: package metadata is `0.1.3-rc.2`; merged commit `bdf2999` adds registry-driven installation, custom targets/aliases, and the `harnesses` command. Check `package.json`, `src/installation/harnesses.js`, and `src/cli/run.js` when updating status text.
+- Remaining: `DESIGN.md` and `TASKS.md` still carry historical implementation/planning statuses. Distinguish merged capabilities from published payloads and release qualification; this commit does not establish a new publication or completion of the pending v0.1.3 requirements.

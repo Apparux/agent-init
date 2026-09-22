@@ -27,3 +27,10 @@ PRD.md remains the sole specification; §4–5 and §42 apply. Requirements are 
 ## Verification
 
 Test artifact generation plus validation and the requirement-to-evidence mapping. Check all PRD AC identifiers and mandatory gate entries against the traceability inventory. Run `npm test`. Inspect the rendered JSON as a consumer would and verify evidence resolution; do not mark the actual release Qualified from a synthetic test fixture.
+
+## Comments
+
+### 2026-09-22 — Merged baseline: `bdf2999`
+
+- Available distribution input: `scripts/release-manifest.js`, `.github/workflows/ci.yml`, and `.github/workflows/release.yml` expose artifact verification that can supply run-backed evidence to this consumer.
+- `release-manifest.json` describes the package artifact; it is not `release-qualification.json`. Remaining work includes all nine dimensions, complete requirement traceability, resolvable run/payload provenance, and truthful rejection of missing or stale platform/Harness evidence. File or test existence alone is not a passing run.

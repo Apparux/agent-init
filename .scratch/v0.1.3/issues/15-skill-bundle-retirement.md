@@ -29,3 +29,10 @@ PRD.md remains the sole specification; §4–5 and §42 apply. Deletion tests us
 ## Verification
 
 Test canonical tree contents, supported discovery representations, foreign additions, identity changes, dangling-reference prevention, and failures between approved steps in disposable repositories. Run focused retirement/filesystem tests and `npm test`. Review deletion ordering, no-follow behavior, and ownership assumptions. Do not introduce recursive deletion of a discovery parent.
+
+## Comments
+
+### 2026-09-22 — Merged baseline: `bdf2999`
+
+- Separate planes: `bdf2999` adds removal of manifest-owned HOME discovery targets after their harness configuration disappears; see `tests/installation/registry-compat.test.js`. That installer uninstall behavior does not satisfy project Skill bundle RETIRE acceptance.
+- Remaining: project-level obsolescence evidence, exact coordinated Proposal approval, incoming-reference checks, and identity/drift refusal. `tests/agent-init/evaluation-harness.js` and `skills/agent-init/references/reconciliation-guidelines.md` still use the CREATE/UPDATE write contract. Extend AI-048's project retirement path rather than borrowing installer manifest ownership.

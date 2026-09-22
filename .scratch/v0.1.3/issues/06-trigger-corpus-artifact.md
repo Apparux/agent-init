@@ -28,3 +28,10 @@ PRD.md remains the sole specification; §4–5 and §42 apply. Synthetic artifac
 ## Verification
 
 Test the complete case-to-artifact-to-result path with existing fixture builders and explicit synthetic test inputs. Run focused corpus/artifact tests and `npm test`. No live Harness claim is made here; AI-041 and AI-042 supply real observations, and AI-047 enforces comparison with the current payload.
+
+## Comments
+
+### 2026-09-22 — Merged baseline: `bdf2999`
+
+- Boundary: `src/installation/harnesses.js` now lists six install targets and supports custom configuration. Its static verification labels describe registry entries, not current-payload live routing evidence.
+- Keep this ticket's two concrete acceptance runners scoped to Claude and Codex (AI-041/042). Installation/discovery tests do not replace the corpus-to-observed-selection artifact contract or authorize expanding live qualification to every registry entry.

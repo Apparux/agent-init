@@ -27,3 +27,10 @@ PRD.md remains the sole specification; §4–5 and §42 apply. Historical eviden
 ## Verification
 
 Run digest/validator and trigger-gate tests, including unchanged positive controls and each independent mutation, then `npm test`. Use synthetic test evidence only for validator testing; retain the provenance of any actual external records. Confirm failure messages distinguish stale inputs from observed routing failures.
+
+## Comments
+
+### 2026-09-22 — Merged baseline: `bdf2999`
+
+- Reuse boundary: `scripts/release-manifest.js` checks the packed package tree against `release-manifest.json`. This distribution-integrity check does not implement the four acceptance bindings required here.
+- Remaining: independently bind mother Skill, generated Skill set, fixture, and trigger corpus; reject stale Claude or Codex acceptance. Preserve historical run provenance and retain all single-input mutation cases.

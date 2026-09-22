@@ -25,3 +25,10 @@ PRD.md remains the sole specification; §4–5 and §42 apply. Workflow edits re
 ## Verification
 
 Add focused regression coverage using temporary metadata/package copies and recorded registry-verification inputs or local test doubles. Run CLI/package tests, `npm test`, and `npm pack --dry-run`; inspect the workflow's dynamic value propagation. Any actual pack output used in testing must live in a disposable location. Record workflow validation performed and any remote checks not run.
+
+## Comments
+
+### 2026-09-22 — Merged baseline: `bdf2999`
+
+- Already present: `.github/workflows/release.yml` derives version from package metadata; `scripts/release-manifest.js` and `release-manifest.json` provide package shape/digest verification.
+- Remaining: the release workflow still constructs the tarball filename. Propagate the actual `npm pack --json` filename through extraction, verification, and publication. `tests/installation/tarball.test.js` still contains a fixed version; add isolated version-change coverage and retain negative metadata/file/digest checks. Existing code is a starting point, not full AC-S01/AC-S02 evidence.

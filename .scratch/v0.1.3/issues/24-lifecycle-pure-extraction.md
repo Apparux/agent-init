@@ -27,3 +27,10 @@ PRD.md remains the sole specification; §4–5 and §42 apply. Do not fix new be
 ## Verification
 
 Run characterization tests before extraction and preserve the results; run the same tests after, followed by `npm test` and relevant package/lifecycle checks. Inspect the diff for pure movement versus behavior changes and review the security/concurrency-sensitive boundaries. AI-059 reruns final cross-platform and exact-payload checks after this ticket.
+
+## Comments
+
+### 2026-09-22 — Merged baseline: `bdf2999`
+
+- Starting suites: `tests/installation/characterization.test.js` and `tests/installation/registry-compat.test.js` were added in `bdf2999`. That commit expands behavior; it is not evidence of completed mechanical extraction or pre-refactor two-target equivalence.
+- Before moving production code, establish the current baseline for registry/custom targets, aliases, legacy reconcile, unregistered owned targets, and interrupted reconcile recovery alongside existing lifecycle safety cases. Fill coverage gaps first; retain identical before/after cases and AI-036 parent-rollback evidence.

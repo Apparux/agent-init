@@ -27,3 +27,10 @@ PRD.md remains the sole specification; §4–5 and §42 apply. Tests use isolate
 ## Verification
 
 First reproduce the missing rollback with existing installation fault injection. Add foreign-content, identity-replacement, pre-existing-parent, and uninstall regressions. Run parent-race, installation, crash/recovery, and uninstall tests, then `npm test`. Review the final diff specifically for ownership, no-follow behavior, races, and suppressed errors. No real HOME mutation is part of verification.
+
+## Comments
+
+### 2026-09-22 — Merged baseline: `bdf2999`
+
+- Baseline: `bdf2999` adds registry/custom discovery paths, including nested parents. Reuse `src/installation/paths.js`, `src/installation/targets.js`, and `src/installation/transaction.js` when implementing creation ownership.
+- Remaining: operation-bound parent identity tracking and safe cleanup/reporting are still required. `tests/installation/registry-compat.test.js` covers created-target rollback, not parent reclamation. Cover registry/custom parent chains and assess the shared creation path used by reconcile without changing normal uninstall parent preservation.

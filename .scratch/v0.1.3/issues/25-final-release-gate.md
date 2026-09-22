@@ -39,3 +39,10 @@ PRD.md remains the sole specification; §4–5 and §42 apply. CI/configuration 
 ## Verification
 
 Run deterministic gate tests first and `npm test`; execute the existing final package/platform/fixture/mutation checks and actual live runners for the final payload with appropriate authorization. Generate and inspect the qualification artifact, validating every evidence link and digest. Separately authorize publish and then verify the registry artifact. Report pre-publish readiness and final qualification as distinct outcomes. Review workflow permission, credential, digest, freshness, and fail-closed behavior; do not claim completion when a required real check was skipped.
+
+## Comments
+
+### 2026-09-22 — Merged baseline: `bdf2999`
+
+- Existing artifact subgate: reuse `scripts/release-manifest.js`, `release-manifest.json`, `.github/workflows/ci.yml`, and `.github/workflows/release.yml` for package tree/file/mode checks and post-publication registry/artifact digest verification. Their presence does not establish complete release qualification.
+- Remaining: wire current nine-dimension qualification, traceability, Claude/Codex CURRENT + PASS, and matching-commit cross-platform CI evidence into the fail-closed release decision. Include registry/custom/alias, legacy reconcile, orphan uninstall, and recovery regressions in final lifecycle evidence; keep project pruning and real routing as separate obligations. Publication still requires separate authorization.
