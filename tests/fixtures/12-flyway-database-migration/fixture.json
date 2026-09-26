@@ -54,6 +54,11 @@
       {
         "name": "database-migration",
         "action": "CREATE",
+        "routing": {
+          "description": "Create append-only schema migrations and run the documented migrate and validate checks when adding or validating a database migration.",
+          "positiveIntents": ["adding or validating a database schema migration"],
+          "negativeIntents": ["changing application code without a schema migration"]
+        },
         "reason": "Published migrations and the project runbook establish a repeated, error-sensitive migration workflow with exact validation.",
         "evidenceIds": ["ev-flyway-build", "ev-migration-v1", "ev-migration-v2", "ev-migration-runbook"],
         "skillAssessment": {

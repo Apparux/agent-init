@@ -36,6 +36,11 @@
       {
         "name": "build-verify",
         "action": "CREATE",
+        "routing": {
+          "description": "Run this repository's ordered lint and test checks when validating code changes.",
+          "positiveIntents": ["validating a code change"],
+          "negativeIntents": ["read-only analysis that does not require repository validation"]
+        },
         "reason": "The exact project workflow is repeated, task-specific, and verifiable.",
         "evidenceIds": ["ev-verify"],
         "skillAssessment": {

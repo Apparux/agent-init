@@ -73,6 +73,11 @@ const fixture = {
       {
         name: 'build-verify',
         action: 'CREATE',
+        routing: {
+          description: 'Verify this repository with its declared lint and test workflow when validating code changes.',
+          positiveIntents: ['validating a code change'],
+          negativeIntents: ['read-only analysis'],
+        },
         evidenceIds: ['ev-workflow'],
         skillAssessment: {
           taskSpecificity: 'high',
@@ -209,6 +214,7 @@ Run \`pnpm lint && pnpm test\`.
           {
             name: 'build-verify',
             decision: 'CREATE',
+            routing: structuredClone(fixture.expected.skillDecisions[0].routing),
             evidenceIds: ['ev-workflow'],
             skillAssessment: {
               taskSpecificity: 'high',
@@ -413,6 +419,9 @@ Run \`pnpm lint && pnpm test\`.
     },
   };
   const proposal = run.events.find((event) => event.type === 'proposal');
+  proposal.actions.find((action) => action.id === 'create-skill').skillCandidate = structuredClone(
+    run.events.find((event) => event.type === 'skills').candidates[0],
+  );
   run.events.find((event) => event.type === 'approval').proposalDigest = digestProposal(proposal);
   run.fixtureBytes = {
     baseline: {
@@ -432,6 +441,42 @@ Run \`pnpm lint && pnpm test\`.
     },
   };
   return run;
+}
+
+async function routingCase(decision) {
+  const run = await goodRun();
+  const contract = structuredClone(fixture);
+  const proposal = run.events.find((event) => event.type === 'proposal');
+  const action = proposal.actions.find((item) => item.id === 'create-skill');
+  const candidate = run.events.find((event) => event.type === 'skills').candidates[0];
+  const approval = run.events.find((event) => event.type === 'approval');
+  if (decision === 'UPDATE') {
+    const before = action.proposedContent.replace(/^description:.*$/m, 'description: Validate repository changes.');
+    run.fixtureBytes.baseline[action.target] = before;
+    action.action = 'UPDATE';
+    action.proposedDiff = renderExactDiff(action.target, before, action.proposedContent);
+    delete action.proposedContent;
+    action.baselineFingerprint = `sha256:${createHash('sha256').update(before).digest('hex')}`;
+    run.events.find((event) => event.actionId === action.id).observedBeforeFingerprint = action.baselineFingerprint;
+    run.events.find((event) => event.type === 'preflight').existingAgentAssets.push(action.target);
+    candidate.decision = 'UPDATE';
+    contract.expected.skillDecisions[0].action = 'UPDATE';
+    contract.expected.allowedActions.find((item) => item.target === action.target).action = 'UPDATE';
+  }
+  action.skillCandidate = structuredClone(candidate);
+  approval.proposalDigest = digestProposal(proposal);
+  return {
+    run, contract, proposal, action, candidate, approval,
+    approveContent(content) {
+      if (decision === 'UPDATE') {
+        action.proposedDiff = renderExactDiff(action.target, run.fixtureBytes.baseline[action.target], content);
+      } else {
+        action.proposedContent = content;
+      }
+      run.fixtureBytes.final[action.target] = content;
+      approval.proposalDigest = digestProposal(proposal);
+    },
+  };
 }
 
 async function materializeRun(run) {
@@ -474,6 +519,132 @@ async function evaluateRecordedRun(run, fixtureContract = fixture) {
     await subject.cleanup();
   }
 }
+
+for (const decision of ['CREATE', 'UPDATE']) {
+  test(`${decision} generated Skill routing contract uses physical snapshots`, async (t) => {
+    await t.test('known-good approved Skill passes', async () => {
+      const { run, contract } = await routingCase(decision);
+      const result = await evaluateRecordedRun(run, contract);
+      assert.equal(result.ok, true, result.errors.join('\n'));
+    });
+
+    for (const [label, transform, code] of [
+      ['missing description', (content) => content.replace(/^description:.*\n/m, ''), 'SKILL_ROUTING'],
+      ['empty description', (content) => content.replace(/^description:.*$/m, 'description:'), 'SKILL_ROUTING'],
+      ['whitespace description', (content) => content.replace(/^description:.*$/m, 'description:   \t'), 'SKILL_ROUTING'],
+      ['quoted empty description', (content) => content.replace(/^description:.*$/m, 'description: ""'), 'SKILL_ROUTING'],
+      ['quoted whitespace description', (content) => content.replace(/^description:.*$/m, "description: '   '"), 'SKILL_ROUTING'],
+      ['directory/name mismatch', (content) => content.replace('name: build-verify', 'name: another-workflow'), 'PROJECT_SKILL'],
+      ['missing frontmatter terminator', (content) => content.replace('\n---\n', '\n'), 'SKILL_ROUTING'],
+      ['duplicate description', (content) => content.replace('\n---\n', '\ndescription: Another routing description.\n---\n'), 'SKILL_ROUTING'],
+      ['description continuation', (content) => content.replace(/^(description:.*)$/m, '$1\n  Also apply to unrelated tasks.'), 'SKILL_ROUTING'],
+      ['name continuation', (content) => content.replace('name: build-verify', 'name: build-verify\n  another-workflow'), 'PROJECT_SKILL'],
+      ['quoted duplicate description key', (content) => content.replace('\n---\n', '\n"description": ""\n---\n'), 'SKILL_ROUTING'],
+      ['quoted duplicate name key', (content) => content.replace('\n---\n', "\n'name': another-workflow\n---\n"), 'PROJECT_SKILL'],
+      ...['When to use', 'When not to use', 'Workflow', 'Project-specific rules', 'Verification'].map((heading) => [
+        `missing ${heading}`, (content) => content.replace(`## ${heading}\n`, ''), 'PROJECT_SKILL',
+      ]),
+    ]) {
+      await t.test(`approved payload with ${label} fails ${code}`, async () => {
+        const subject = await routingCase(decision);
+        subject.approveContent(transform(subject.run.fixtureBytes.final[subject.action.target]));
+        const result = await evaluateRecordedRun(subject.run, subject.contract);
+        assert.equal(result.ok, false);
+        assert.ok(result.errors.some((message) => message.startsWith(`${code}:`)), result.errors.join('\n'));
+        assert.ok(!result.errors.some((message) => /^(PAYLOAD_MISMATCH|APPROVAL_PAYLOAD):/.test(message)), result.errors.join('\n'));
+      });
+    }
+
+    await t.test('quoted approved description and reordered metadata pass', async () => {
+      const subject = await routingCase(decision);
+      const description = subject.candidate.routing.description;
+      subject.approveContent(subject.run.fixtureBytes.final[subject.action.target].replace(
+        `name: build-verify\ndescription: ${description}`,
+        `description: ${JSON.stringify(description)}\nname: build-verify`,
+      ));
+      const result = await evaluateRecordedRun(subject.run, subject.contract);
+      assert.equal(result.ok, true, result.errors.join('\n'));
+    });
+
+    for (const [label, mutate] of [
+      ['missing routing', (candidate) => { delete candidate.routing; }],
+      ['missing description', (candidate) => { delete candidate.routing.description; }],
+      ['blank description', (candidate) => { candidate.routing.description = ' \t '; }],
+      ['non-string description', (candidate) => { candidate.routing.description = 7; }],
+      ['missing positive intents', (candidate) => { delete candidate.routing.positiveIntents; }],
+      ['empty positive intents', (candidate) => { candidate.routing.positiveIntents = []; }],
+      ['blank positive intent', (candidate) => { candidate.routing.positiveIntents = [' ']; }],
+      ['missing negative intents', (candidate) => { delete candidate.routing.negativeIntents; }],
+      ['empty negative intents', (candidate) => { candidate.routing.negativeIntents = []; }],
+      ['non-string negative intent', (candidate) => { candidate.routing.negativeIntents = [false]; }],
+    ]) {
+      await t.test(`candidate with ${label} fails routing validation`, async () => {
+        const subject = await routingCase(decision);
+        mutate(subject.candidate);
+        subject.action.skillCandidate = structuredClone(subject.candidate);
+        subject.approval.proposalDigest = digestProposal(subject.proposal);
+        const result = await evaluateRecordedRun(subject.run, subject.contract);
+        assert.equal(result.ok, false);
+        assert.ok(result.errors.some((message) => message.startsWith('SKILL_ROUTING:')), result.errors.join('\n'));
+        assert.ok(!result.errors.some((message) => /^(SKILL_CANDIDATE|APPROVAL_PAYLOAD):/.test(message)), result.errors.join('\n'));
+      });
+    }
+
+    await t.test('changing only final description fails exact approved bytes', async () => {
+      const subject = await routingCase(decision);
+      subject.run.fixtureBytes.final[subject.action.target] = subject.run.fixtureBytes.final[subject.action.target]
+        .replace(/^description:.*$/m, 'description: Run project checks when preparing a release.');
+      const result = await evaluateRecordedRun(subject.run, subject.contract);
+      assert.equal(result.ok, false);
+      assert.ok(result.errors.some((message) => message.startsWith('PAYLOAD_MISMATCH:')), result.errors.join('\n'));
+    });
+
+    await t.test('changing candidate and Proposal description without renewed approval fails digest', async () => {
+      const subject = await routingCase(decision);
+      const oldDigest = subject.approval.proposalDigest;
+      subject.candidate.routing.description = 'Run project checks when preparing a release.';
+      subject.action.skillCandidate = structuredClone(subject.candidate);
+      subject.approveContent(subject.run.fixtureBytes.final[subject.action.target]
+        .replace(/^description:.*$/m, `description: ${subject.candidate.routing.description}`));
+      subject.approval.proposalDigest = oldDigest;
+      const result = await evaluateRecordedRun(subject.run, subject.contract);
+      assert.equal(result.ok, false);
+      assert.ok(result.errors.some((message) => message.startsWith('APPROVAL_PAYLOAD:')), result.errors.join('\n'));
+      assert.ok(!result.errors.some((message) => /^(PAYLOAD_MISMATCH|SKILL_ROUTING|SKILL_CANDIDATE):/.test(message)), result.errors.join('\n'));
+    });
+
+    await t.test('candidate-only routing mutation cannot diverge from the approved snapshot', async () => {
+      const subject = await routingCase(decision);
+      subject.candidate.routing.positiveIntents.push('preparing a release');
+      const result = await evaluateRecordedRun(subject.run, subject.contract);
+      assert.equal(result.ok, false);
+      assert.ok(result.errors.some((message) => message.startsWith('SKILL_CANDIDATE:')), result.errors.join('\n'));
+    });
+  });
+}
+
+test('generated description must equal the candidate bound into the Proposal', async () => {
+  const run = await goodRun();
+  const proposal = run.events.find((event) => event.type === 'proposal');
+  const action = proposal.actions.find((item) => item.id === 'create-skill');
+  action.proposedContent = action.proposedContent.replace(/^description:.*$/m,
+    'description: Run project checks when preparing a release.');
+  run.fixtureBytes.final[action.target] = action.proposedContent;
+  run.events.find((event) => event.type === 'approval').proposalDigest = digestProposal(proposal);
+  const result = await evaluateRecordedRun(run);
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.some((message) => message.startsWith('SKILL_ROUTING:')), result.errors.join('\n'));
+});
+
+test('Proposal must carry the exact Skill candidate, not a mutable external reference', async () => {
+  const run = await goodRun();
+  const proposal = run.events.find((event) => event.type === 'proposal');
+  delete proposal.actions.find((action) => action.id === 'create-skill').skillCandidate;
+  run.events.find((event) => event.type === 'approval').proposalDigest = digestProposal(proposal);
+  const result = await evaluateRecordedRun(run);
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.some((message) => message.startsWith('SKILL_CANDIDATE:')), result.errors.join('\n'));
+});
 
 test('fixture schema and a conforming recorded run pass local invariant evaluation', async () => {
   assert.deepEqual(validateFixtureManifest(fixture), []);
@@ -689,6 +860,9 @@ test('Skill candidates require evidence-backed qualitative assessment and search
     delete candidate.repeated;
     delete candidate.projectSpecific;
     delete candidate.proceduralValue;
+    const proposal = run.events.find((event) => event.type === 'proposal');
+    proposal.actions.find((action) => action.id === 'create-skill').skillCandidate = structuredClone(candidate);
+    run.events.find((event) => event.type === 'approval').proposalDigest = digestProposal(proposal);
 
     const result = await evaluateRecordedRun(run);
     assert.equal(result.ok, true, result.errors.join('\n'));
