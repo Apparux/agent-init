@@ -525,7 +525,21 @@ export async function materializeTarget(spec) {
     afterMutation,
     onPublished,
   } = spec;
-  await ensureSafeDirectoryChain(paths, paths.targetParents[name], { beforeMutation });
+  await ensureSafeDirectoryChain(paths, paths.targetParents[name], {
+    beforeMutation,
+    afterMutation,
+    onParentIntent: (parent) => recordIntent(operation, {
+      action: 'create-parent', path: parent, operationId: operation.operationId, expected: 'missing',
+    }),
+    async onParentCompletion(parent, entryIdentity) {
+      const record = {
+        action: 'create-parent', path: parent, operationId: operation.operationId,
+        created: entryIdentity !== null, ...(entryIdentity === null ? {} : { entryIdentity }),
+      };
+      if (record.created) operation.createdParents.push(record);
+      await recordCompletion(operation, record);
+    },
+  });
   await validateManagedAncestors(paths, paths.targetParents[name], { allowMissing: false });
   await assertStillMissing(paths, paths.targets[name]);
 

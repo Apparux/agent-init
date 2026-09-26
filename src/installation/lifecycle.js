@@ -32,6 +32,8 @@ import {
 import {
   InstallationError,
   resolveInstallationPaths,
+  rollbackCreatedParents,
+  validateCreatedParents,
   validateManagedAncestors,
   withManifestTargets,
 } from './paths.js';
@@ -545,6 +547,7 @@ async function repairMissingTargets(payload, paths, runtime, operation, oldManif
         },
       );
     }
+    if (operation.journal.committed !== true) await rollbackCreatedParents(paths, operation, runtime);
     throw error;
   }
 }
@@ -764,6 +767,21 @@ async function installFresh(payload, paths, runtime, operation) {
       installId,
       payload.digest,
     ).catch(() => [paths.installRoot]);
+    if (unresolved.length === 0) {
+      await checkpointParentRollback(paths, operation);
+    }
+    try {
+      await rollbackCreatedParents(paths, operation, runtime);
+    } catch (parentError) {
+      if (unresolved.length === 0) throw parentError;
+      throw new InstallationError('ROLLBACK_FAILED', 'Fresh-install assets and discovery parents could not all be safely rolled back.', {
+        path: paths.installRoot,
+        cause: error,
+        unresolved: [...new Set([...unresolved, ...(parentError.details?.unresolved ?? [])])],
+        preserved: [...new Set([...unresolved, ...(parentError.details?.preserved ?? [])])],
+        remediation: `Inspect the retained assets and operation journal. ${parentError.details?.remediation ?? parentError.message}`,
+      });
+    }
     if (unresolved.length > 0) {
       throw new InstallationError(
         'ROLLBACK_FAILED',
@@ -1838,7 +1856,7 @@ async function reconcileRegistryTargets(paths, runtime, operation, manifest) {
     // Roll back any targets this operation created; once the CAS swap has
     // replaced the manifest the new targets are owned by it, so post-commit
     // failures must not delete them — recovery owns the state instead.
-    if (createdNames.length > 0 && manifestReplaced !== true) {
+    if (manifestReplaced !== true) {
       const rollbackUnresolved = [];
       for (const name of [...createdNames].reverse()) {
         await removeOwnedTarget({
@@ -1861,6 +1879,8 @@ async function reconcileRegistryTargets(paths, runtime, operation, manifest) {
           },
           operation,
           afterMutation: runtime.afterMutation,
+        }).then((result) => {
+          if (result.action === 'preserved') rollbackUnresolved.push(paths.targets[name]);
         }).catch((rollbackError) => {
           rollbackUnresolved.push(paths.targets[name], rollbackError);
         });
@@ -1882,6 +1902,10 @@ async function reconcileRegistryTargets(paths, runtime, operation, manifest) {
           },
         );
       }
+    }
+    if (manifestReplaced !== true) {
+      await checkpointParentRollback(paths, operation);
+      await rollbackCreatedParents(paths, operation, runtime);
     }
     throw error;
   }
@@ -2380,7 +2404,9 @@ function validateFreshInstallJournal(paths, descriptor, journal) {
   if (!Array.isArray(journal.intents) || !Array.isArray(journal.completed)) {
     throw ambiguousRecovery('Fresh-install journal records are not arrays.', journalPath);
   }
+  validateCreatedParents(paths, { operationId: descriptor.operationId, journal });
   const allowedActions = new Set([
+    'create-parent',
     'create-install-root',
     'create-canonical',
     'create-target-link',
@@ -2702,6 +2728,20 @@ async function recoverInterruptedInstall(paths, runtime, control) {
         stagingPath,
       );
     }
+    await removeRecoveredOperation(control);
+    return;
+  }
+
+  if (journal.assetsRolledBack === true) {
+    for (const asset of [paths.installRoot, ...Object.values(paths.targets)]) {
+      if (path.dirname(asset) !== paths.logicalHome) {
+        await validateManagedAncestors(paths, path.dirname(asset));
+      }
+      if ((await entryFingerprint(asset)).type !== 'missing') {
+        throw ambiguousRecovery('Rolled-back fresh-install asset was replaced.', descriptor.journalPath, asset);
+      }
+    }
+    await rollbackCreatedParents(paths, { operationId: descriptor.operationId, journal }, runtime);
     await removeRecoveredOperation(control);
     return;
   }
@@ -3092,7 +3132,34 @@ async function recoverInterruptedInstall(paths, runtime, control) {
     }
     await rmdir(paths.installRoot);
   }
-  await removeRecoveredOperation(control);
+  await finishRecoveredParentRollback(paths, runtime, control);
+}
+
+async function checkpointParentRollback(paths, operation) {
+  try {
+    await updateOperation(operation, { phase: 'parent-rollback', assetsRolledBack: true });
+  } catch (cause) {
+    throw new InstallationError('ROLLBACK_FAILED', 'Parent rollback checkpoint could not be completed.', {
+      path: operation.journalPath,
+      cause,
+      unresolved: [operation.journalPath],
+      preserved: validateCreatedParents(paths, operation).map((record) => record.path),
+      remediation: `Preserve the operation journal and retry recovery after resolving the checkpoint failure: ${cause.message}`,
+    });
+  }
+}
+
+async function finishRecoveredParentRollback(paths, runtime, control) {
+  const operation = await resumeRecoveredOperation(control, {
+    afterJournalSnapshot: runtime.afterJournalSnapshot,
+  });
+  try {
+    await checkpointParentRollback(paths, operation);
+    await rollbackCreatedParents(paths, operation, runtime);
+    await releaseOperation(operation);
+  } finally {
+    markOperationInactive(operation);
+  }
 }
 
 // Reconcile journal actions are operation-bound to the previous manifest:
@@ -3116,11 +3183,14 @@ function validateInterruptedReconcileJournal(paths, runtime, descriptor, journal
     { packageName: runtime.packageName, paths },
     journalPath,
   );
+  validateCreatedParents(paths, { operationId: descriptor.operationId, journal });
   const allowedActions = new Set([
+    'create-parent',
     'reconcile-target',
     'create-target-link',
     'create-target-copy',
     'replace-manifest-reconcile',
+    ...(journal.assetsRolledBack === true ? ['remove-target'] : []),
   ]);
   if (
     journal.intents.some((record) => !record || !allowedActions.has(record.action)) ||
@@ -3145,6 +3215,20 @@ function validateInterruptedReconcileJournal(paths, runtime, descriptor, journal
       'Interrupted reconcile target evidence is not operation-bound.',
       journalPath,
     );
+  }
+  for (const record of [...journal.intents, ...journal.completed].filter((entry) => entry.action === 'remove-target')) {
+    if (!reconcileNames.includes(record.name) || record.path !== paths.targets[record.name]) {
+      throw ambiguousRecovery('Reconcile target rollback evidence is not operation-bound.', journalPath);
+    }
+    const removal = singleJournalRecord(journal.intents, 'remove-target', record.name, journalPath);
+    const removed = singleJournalRecord(journal.completed, 'remove-target', record.name, journalPath);
+    const created = singleJournalRecord(journal.completed, 'create-target-link', record.name, journalPath) ??
+      singleJournalRecord(journal.completed, 'create-target-copy', record.name, journalPath);
+    if (!removal || !removed || !created ||
+      removal.expectedIdentity !== created.entryIdentity ||
+      removal.quarantine !== path.join(paths.targetParents[record.name], `.agent-init-rollback-${journal.operationId}-${record.name}`)) {
+      throw ambiguousRecovery('Reconcile target rollback lacks completed ownership evidence.', journalPath);
+    }
   }
   const swapIntent = singleJournalRecord(
     journal.intents,
@@ -3238,6 +3322,24 @@ async function recoverInterruptedReconcile(paths, runtime, control) {
       descriptor.journalPath,
       paths.manifest,
     );
+  }
+  if (journal.assetsRolledBack === true) {
+    for (const name of evidence.reconcileNames) {
+      await validateManagedAncestors(paths, paths.targetParents[name]);
+      const parent = paths.targetParents[name];
+      for (const asset of [
+        paths.targets[name],
+        path.join(parent, `.agent-init-staging-${journal.operationId}-${name}`),
+        path.join(parent, `.agent-init-rollback-${journal.operationId}-${name}`),
+      ]) {
+        if ((await entryFingerprint(asset)).type !== 'missing') {
+          throw ambiguousRecovery('Rolled-back reconcile asset was replaced.', descriptor.journalPath, asset);
+        }
+      }
+    }
+    await rollbackCreatedParents(paths, { operationId: descriptor.operationId, journal }, runtime);
+    await removeRecoveredOperation(control);
+    return;
   }
   for (const name of [...evidence.reconcileNames].reverse()) {
     const intent = singleJournalRecord(
@@ -3373,7 +3475,7 @@ async function recoverInterruptedReconcile(paths, runtime, control) {
       }
     }
   }
-  await removeRecoveredOperation(control);
+  await finishRecoveredParentRollback(paths, runtime, control);
 }
 
 function validateInterruptedUninstallJournal(paths, runtime, descriptor, journal) {
@@ -4966,6 +5068,7 @@ async function executeInternal(request, runtime) {
       }).catch(() => {});
       await releaseOperation(operation).catch(() => {});
     }
+    markOperationInactive(operation);
     throw error;
   }
   await releaseOperation(operation);

@@ -438,7 +438,9 @@ export async function resumeRecoveredOperation(control, hooks = {}) {
     lockPath: control.lockPath,
     lockIdentity: details.lockIdentity,
     journal: latest.journal,
-    createdParents: [],
+    createdParents: latest.journal.completed.filter(
+      (record) => record.action === 'create-parent' && record.created === true,
+    ),
     afterJournalSnapshot: hooks.afterJournalSnapshot,
   };
   if (!(await validateOperationControl(operation))) {
