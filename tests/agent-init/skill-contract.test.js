@@ -79,6 +79,16 @@ test('Proposal presents a plain-language decision summary before audit details',
   assert.match(evaluation, /decision summary.*complete Proposal.*audit/is);
 });
 
+test('generated Skill instructions bind routing metadata to the approved candidate', async () => {
+  const skills = await read(references.skills);
+  for (const field of ['name:', 'routing:', 'description:', 'positiveIntents:', 'negativeIntents:', 'taskTriggers:', 'whenNotToUse:', 'workflowSteps:', 'verification:']) {
+    assert.ok(skills.includes(field), `candidate contract must include ${field}`);
+  }
+  assert.match(skills, /approved.*routing\.description/is);
+  assert.match(skills, /name.*exactly.*directory/is);
+  assert.match(skills, /description.*new Proposal revision.*approval/is);
+});
+
 test('progressive references each own one detailed operating contract', async () => {
   const [detection, classification, proposal, agents, skills, reconciliation, evaluation] = await Promise.all(
     Object.values(references).map(read),

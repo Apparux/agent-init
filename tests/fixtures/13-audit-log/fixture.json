@@ -72,6 +72,11 @@
       {
         "name": "audit-log",
         "action": "CREATE",
+        "routing": {
+          "description": "Preserve actor, action, and resource audit events and run the audit contract test when adding or changing auditable domain operations.",
+          "positiveIntents": ["adding or changing an auditable domain operation"],
+          "negativeIntents": ["changing an operation explicitly outside the audit event boundary"]
+        },
         "reason": "The project documents a repeated audit event procedure with multiple call sites and an exact contract test.",
         "evidenceIds": ["ev-audit-framework", "ev-audit-service", "ev-audit-call-sites", "ev-audit-account-call-site", "ev-audit-runbook", "ev-audit-contract-test"],
         "skillAssessment": {

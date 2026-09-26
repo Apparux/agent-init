@@ -46,6 +46,11 @@
       {
         "name": "build-verify",
         "action": "CREATE",
+        "routing": {
+          "description": "Verify the API module and its upstream dependencies when validating changes to that module or its dependencies.",
+          "positiveIntents": ["validating an API module change"],
+          "negativeIntents": ["validating an unrelated module with its own documented workflow"]
+        },
         "reason": "The repository declares a repeated module-aware verification workflow with an exact CI-backed command.",
         "evidenceIds": ["ev-maven-api-module", "ev-maven-module-artifact", "ev-maven-ci-verify"],
         "skillAssessment": {

@@ -327,6 +327,14 @@ function validateSkillCandidateRecord(record, actionField, evidenceById, errors,
   }
 
   if (WRITE_ACTIONS.has(action)) {
+    const routing = record.routing;
+    if (!isObject(routing)
+      || typeof routing.description !== 'string'
+      || !routing.description.trim()
+      || !hasNonEmptyStrings(routing.positiveIntents)
+      || !hasNonEmptyStrings(routing.negativeIntents)) {
+      error(errors, 'SKILL_ROUTING', `${label} requires description, positiveIntents, and negativeIntents`);
+    }
     const qualified = hasNonEmptyStrings(record.taskTriggers)
       && hasNonEmptyStrings(record.whenNotToUse)
       && hasNonEmptyStrings(record.workflowSteps)
@@ -742,7 +750,7 @@ function targetMatchesForbidden(target, forbidden) {
   return target === forbidden;
 }
 
-function validateProposalActions(fixture, proposal, ledgerIds, errors) {
+function validateProposalActions(fixture, proposal, ledgerIds, candidates, errors) {
   const actions = Array.isArray(proposal?.actions) ? proposal.actions : [];
   const actionIds = uniqueIds(actions, 'id', errors, 'Proposal action');
   if (!proposal?.projectSummary || !Array.isArray(proposal.unknowns) || !Array.isArray(proposal.warnings)) {
@@ -810,6 +818,17 @@ function validateProposalActions(fixture, proposal, ledgerIds, errors) {
       }
     }
 
+    if (WRITE_ACTIONS.has(action.action) && action.kind === 'project-skill'
+      && /^\.agents\/skills\/[^/]+\/SKILL\.md$/.test(action.target)) {
+      const directory = action.target.split('/')[2];
+      const candidate = candidates.find((item) => item.name === directory);
+      if (!candidate || candidate.decision !== action.action
+        || !isObject(action.skillCandidate)
+        || JSON.stringify(canonicalize(action.skillCandidate)) !== JSON.stringify(canonicalize(candidate))) {
+        error(errors, 'SKILL_CANDIDATE', `action ${action.id} must carry the exact ${action.action} candidate for ${directory}`);
+      }
+    }
+
     if (action.kind === 'guardrail') {
       if (action.action !== 'RECOMMEND') {
         error(errors, 'GUARDRAIL_WRITE', `guardrail ${action.id} must be RECOMMEND`);
@@ -839,7 +858,7 @@ function validateApprovalAndWrites(fixture, run, phase, ledgerIds, errors) {
   const proposalByVersion = new Map();
   for (const proposal of proposals) {
     proposalByVersion.set(`${proposal.id}:${proposal.revision}`, proposal);
-    validateProposalActions(fixture, proposal, ledgerIds, errors);
+    validateProposalActions(fixture, proposal, ledgerIds, phase.skills?.candidates ?? [], errors);
   }
 
   const approvalsByVersion = new Map();
@@ -946,6 +965,19 @@ function deriveChangedPaths(fileStates, errors) {
   return sorted(changed);
 }
 
+function matchesApprovedScalar(frontmatter, field, expected) {
+  if (typeof expected !== 'string' || !expected.trim()) return false;
+  if (!frontmatter.split(/\r?\n/).every((line) => /^(?:name|description):[ \t]+[^\r\n]*$/.test(line))) return false;
+  const fields = [...frontmatter.matchAll(new RegExp(`^${field}:[ \\t]*(.*)$`, 'gm'))];
+  if (fields.length !== 1) return false;
+  const value = fields[0][1].trim();
+  const quoted = [JSON.stringify(expected), `'${expected.replace(/'/g, "''")}'`];
+  if (quoted.includes(value)) return true;
+  // Canonical generated metadata uses single-line strings, not arbitrary YAML values.
+  return value === expected
+    && !/^[\s\-?:,\[\]{}#&*!|>'"%@`]|:\s|\s#|[\r\n]|^(?:null|true|false|~|[-+]?\d[\d.eE+-]*)$/i.test(value);
+}
+
 function validateGeneratedAssets(run, approvalState, errors) {
   const baseline = run.fileStates?.baseline ?? {};
   const final = run.fileStates?.final ?? {};
@@ -1015,17 +1047,23 @@ function validateGeneratedAssets(run, approvalState, errors) {
           error(errors, 'PROJECT_REFERENCE', `Skill reference or script ${action.target} must contain content`);
         }
       } else {
-        if (!new RegExp(`^---\\nname: ${directory}\\n`, 'm').test(content)) {
+        const metadata = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/.exec(content);
+        const frontmatter = metadata?.[1] ?? '';
+        const body = metadata ? content.slice(metadata[0].length) : '';
+        if (!matchesApprovedScalar(frontmatter, 'name', directory)) {
           error(errors, 'PROJECT_SKILL', `Skill metadata name must match directory ${directory}`);
         }
+        if (!matchesApprovedScalar(frontmatter, 'description', action.skillCandidate?.routing?.description)) {
+          error(errors, 'SKILL_ROUTING', `Skill ${directory} requires one nonblank description matching the approved candidate`);
+        }
         for (const heading of ['When to use', 'When not to use', 'Workflow', 'Project-specific rules', 'Verification']) {
-          if (!new RegExp(`^## ${heading}$`, 'm').test(content)) {
+          if (!new RegExp(`^## ${heading}\\r?$`, 'm').test(body)) {
             error(errors, 'PROJECT_SKILL', `Skill ${directory} lacks ${heading}`);
           }
         }
-        const verificationHeading = /^## Verification\s*$/m.exec(content);
+        const verificationHeading = /^## Verification\s*$/m.exec(body);
         const verificationBody = verificationHeading
-          ? content.slice(verificationHeading.index + verificationHeading[0].length)
+          ? body.slice(verificationHeading.index + verificationHeading[0].length)
             .split(/^##\s/m, 1)[0]
             .trim()
           : '';

@@ -54,6 +54,11 @@
       {
         "name": "deployment",
         "action": "CREATE",
+        "routing": {
+          "description": "Build, deploy, and smoke-test the application when deploying to the documented staging environment.",
+          "positiveIntents": ["deploying the application to staging"],
+          "negativeIntents": ["production release or infrastructure changes without an approved production procedure"]
+        },
         "reason": "Scripts, independent CI/runbook evidence, and a staging smoke check establish a repeated deployment workflow.",
         "evidenceIds": ["ev-deploy-script", "ev-deploy-runbook", "ev-deploy-ci", "ev-deploy-smoke"],
         "skillAssessment": {
