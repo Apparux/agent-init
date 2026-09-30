@@ -49,6 +49,9 @@ test('packed artifact independently completes the distribution lifecycle', async
   );
   assert.equal(packed.status, 0, packed.stderr);
   const packResult = JSON.parse(packed.stdout)[0];
+  const packageMetadata = JSON.parse(await readFile(path.join(projectRoot, 'package.json'), 'utf8'));
+  assert.equal(packResult.name, packageMetadata.name);
+  assert.equal(packResult.version, packageMetadata.version);
   const packagedPaths = packResult.files.map((entry) => entry.path).sort();
   assert.equal(packagedPaths.includes('package.json'), true);
   assert.equal(packagedPaths.includes('LICENSE'), true);
@@ -93,7 +96,7 @@ test('packed artifact independently completes the distribution lifecycle', async
   }
   const version = cli('--version');
   assert.equal(version.status, 0, version.stderr);
-  assert.equal(version.stdout, 'agent-init 0.1.3-rc.2\n');
+  assert.equal(version.stdout, `agent-init ${packageMetadata.version}\n`);
 
   const install = cli('install');
   assert.equal(install.status, 0, install.stderr);

@@ -35,10 +35,9 @@ jobs:
           node --input-type=module <<'NODE'
           import { appendFileSync, readFileSync } from 'node:fs';
           const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
-          const filename = `${pkg.name.replace(/^@/, '').replace('/', '-')}-${pkg.version}.tgz`;
           appendFileSync(
             process.env.GITHUB_OUTPUT,
-            `version=${pkg.version}\nfilename=${filename}\n`,
+            `name=${pkg.name}\nversion=${pkg.version}\n`,
           );
           NODE
       - name: Verify release metadata
@@ -69,12 +68,42 @@ jobs:
           NODE
       - run: npm test
       - name: Build release artifact
+        id: pack
         run: |
           mkdir -p .release-artifact/unpacked
           npm pack --ignore-scripts --json --pack-destination .release-artifact > .release-artifact/pack.json
-          tar -xzf .release-artifact/${{ steps.version.outputs.filename }} -C .release-artifact/unpacked
+          node --input-type=module <<'NODE'
+          import { spawnSync } from 'node:child_process';
+          import { appendFileSync, readFileSync } from 'node:fs';
+          import path from 'node:path';
+
+          const [artifact] = JSON.parse(
+            readFileSync('.release-artifact/pack.json', 'utf8'),
+          );
+          const filename = artifact?.filename;
+          if (
+            typeof filename !== 'string' ||
+            path.basename(filename) !== filename ||
+            /[\r\n]/.test(filename) ||
+            !filename.endsWith('.tgz')
+          ) {
+            throw new Error(`Invalid packed filename: ${JSON.stringify(filename)}`);
+          }
+          const extracted = spawnSync('tar', [
+            '-xzf', path.join('.release-artifact', filename),
+            '-C', '.release-artifact/unpacked',
+          ], { stdio: 'inherit' });
+          if (extracted.error || extracted.status !== 0) {
+            throw new Error(`Release artifact extraction failed: ${extracted.error?.message ?? extracted.status}`);
+          }
+          appendFileSync(process.env.GITHUB_OUTPUT, `filename=${filename}\n`);
+          NODE
       - name: Verify release artifact
         id: artifact
+        env:
+          EXPECTED_NAME: ${{ steps.version.outputs.name }}
+          EXPECTED_VERSION: ${{ steps.version.outputs.version }}
+          ARTIFACT_FILENAME: ${{ steps.pack.outputs.filename }}
         run: |
           node --input-type=module <<'NODE'
           import { createHash } from 'node:crypto';
@@ -147,12 +176,10 @@ jobs:
           const releaseManifest = JSON.parse(
             readFileSync('release-manifest.json', 'utf8'),
           );
-          const version = '${{ steps.version.outputs.version }}';
-          const filename = '${{ steps.version.outputs.filename }}';
           const expected = {
-            name: '@apparux/agent-init',
-            version,
-            filename,
+            name: process.env.EXPECTED_NAME,
+            version: process.env.EXPECTED_VERSION,
+            filename: process.env.ARTIFACT_FILENAME,
             repository: 'git+https://github.com/Apparux/agent-init.git',
             entryCount: releaseManifest.entryCount,
             treeDigest: releaseManifest.treeDigest,
@@ -221,9 +248,12 @@ jobs:
           console.log(`Runner artifact integrity: ${artifact.integrity}`);
           NODE
       - name: Publish npm package
-        run: npm publish .release-artifact/${{ steps.version.outputs.filename }} --access public --tag latest
+        env:
+          ARTIFACT_FILENAME: ${{ steps.pack.outputs.filename }}
+        run: npm publish ".release-artifact/$ARTIFACT_FILENAME" --access public --tag latest
       - name: Verify published registry artifact
         env:
+          EXPECTED_NAME: ${{ steps.version.outputs.name }}
           EXPECTED_SHASUM: ${{ steps.artifact.outputs.shasum }}
           EXPECTED_INTEGRITY: ${{ steps.artifact.outputs.integrity }}
           EXPECTED_VERSION: ${{ steps.version.outputs.version }}
@@ -232,7 +262,7 @@ jobs:
           import { createHash } from 'node:crypto';
           import { setTimeout as delay } from 'node:timers/promises';
 
-          const packageName = '@apparux/agent-init';
+          const packageName = process.env.EXPECTED_NAME;
           const version = process.env.EXPECTED_VERSION;
           const registryRoot = `https://registry.npmjs.org/${encodeURIComponent(packageName)}`;
           const getJson = async (url) => {
