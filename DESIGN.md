@@ -1,15 +1,17 @@
 # DESIGN — Agent Init
 
 **项目：** Agent Init  
-**版本：** v0.1  
-**状态：** Ready for Implementation  
-**依据：** [PRD.md](PRD.md)
+**版本：** v0.1（历史设计基线，非当前 package 发布版本）
+
+**状态：** Implemented / Maintained（历史基线；不代表 v0.1.3 完整资格通过）
+
+**依据：** 当前产品规格以 [PRD.md](PRD.md) 为唯一来源；本文保留历史技术设计
 
 ---
 
 ## 1. 文档目的
 
-本文把 PRD 转换为可实现、可测试的技术设计，重点回答：
+本文保留 v0.1 核心架构的历史技术设计，重点回答：
 
 - npm CLI 与 `agent-init` 母 Skill 如何分工；
 - 安装、更新、诊断、卸载如何保证安全和幂等；
@@ -18,6 +20,13 @@
 - 模块的 Interface、Seam、状态模型、错误模式和测试表面是什么。
 
 本文不改变 PRD 的产品范围。v0.1 仍然是 **Agent 工作环境初始化器**，不是业务项目生成器、代码重构器、CI 修改器或 Hook 自动安装器。
+
+**状态边界（核验基线：`fde0879d443c5bcf1fb1c6702260b1446222d0a7`）：**
+
+- **历史已实现基线：** CLI 的 install/update/doctor/uninstall、canonical mother Skill，以及母 Skill 的 evidence / Proposal / approval / project Skill generation / reconcile 契约已有实现。下文保留的 Claude/Codex 双目标图、示例 manifest、平台与验收门槛属于历史设计语境，不是当前全部目标清单，也不证明每项历史验收已通过。
+- **当前已合并能力：** [package.json](package.json) 的 metadata 为 `0.1.3-rc.2`；[harnesses.js](src/installation/harnesses.js) 和 [CLI](src/cli/run.js) 已包含六个内置 Harness（Codex、Claude Code、Cursor、OpenCode、Pi、Grok Build）、custom targets / aliases 与 `harnesses` 命令。票据 01～03 的 generated Skill routing metadata、operation-created parent rollback 和 release version SSOT 代码也已进入此基线。用户级安装目标支持不等于真实 Harness routing 验收。
+- **已发布 payload：** 仓库历史提交 `86667de` 将当时的 `0.1.3-rc.2` payload 记述为 shipped；这是历史发布叙述，不是当前同版本 metadata 对应全部字节的证明。[README.md](README.md) 明确当前多 Harness 扩展尚未随此次改动发布 npm 包。本次未独立核验 registry artifact；package 版本、[release-manifest.json](release-manifest.json)、已合并代码或本地测试通过均不能单独证明真实发布，不能据此将当前 `main` 的能力归入已发布 payload。
+- **尚待实现 / qualification 的 v0.1.3 工作：** 真实 Claude/Codex routing、扩展 evaluator / fixtures、项目级 RETIRE / workflow reconciliation、context 与完整 release qualification 仍需按 [PRD.md](PRD.md) §40–41、§39/43 和批准的 [AI-035～AI-059 票据集合](.scratch/v0.1.3/issues/) 逐项核验。已合并的 01～03 不代表全部票据完成；本文件不宣称 Released 或 100% Qualified，PRD 状态保持不变。
 
 ---
 
@@ -1294,4 +1303,4 @@ v0.1 发布前必须满足：
 | Preservation/reconcile | Existing Configuration Preservation、Reconciliation、Unknown Handling |
 | Testing/release gates | CLI Testing、Fixtures、Acceptance Criteria、Definition of Done |
 
-本文的实现顺序与可交付检查项见 [TASKS.md](TASKS.md)。
+历史实现顺序与可交付检查项保留在 [TASKS.md](TASKS.md)；当前 v0.1.3 工作以 PRD 和批准的 AI-035～AI-059 票据集合为准。
