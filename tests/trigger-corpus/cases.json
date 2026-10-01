@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "schemaVersion": 1,
+      "id": "node-build-verify-positive-01",
+      "fixture": "03-node-pnpm",
+      "category": "positive",
+      "skillFixtures": { "build-verify": "03-node-pnpm" },
+      "prompt": "Validate this code change using the repository's ordered lint and test workflow.",
+      "expected": { "mustLoad": ["build-verify"], "mustNotLoad": ["database-migration", "audit-log", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "node-build-verify-negative-01",
+      "fixture": "03-node-pnpm",
+      "category": "negative",
+      "skillFixtures": { "build-verify": "03-node-pnpm" },
+      "prompt": "Explain which package manager this repository uses. Read only; do not run validation.",
+      "expected": { "mustLoad": [], "mustNotLoad": ["build-verify", "database-migration", "audit-log", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "node-build-verify-near-miss-01",
+      "fixture": "03-node-pnpm",
+      "category": "near-miss",
+      "skillFixtures": { "build-verify": "03-node-pnpm" },
+      "prompt": "Which package.json script sequences lint before tests? Explain the declaration without running it.",
+      "expected": { "mustLoad": [], "mustNotLoad": ["build-verify", "database-migration", "audit-log", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "node-build-verify-deployment-collision-01",
+      "fixture": "03-node-pnpm",
+      "category": "collision",
+      "skillFixtures": { "build-verify": "03-node-pnpm", "deployment": "15-deployment" },
+      "prompt": "For 03-node-pnpm, validate the code change with the ordered lint and test checks. For 15-deployment, use its documented staging deployment and smoke-check workflow.",
+      "expected": { "mustLoad": ["build-verify", "deployment"], "mustNotLoad": ["database-migration", "audit-log"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "maven-build-verify-positive-01",
+      "fixture": "11-maven-multi-module-build-verify",
+      "category": "positive",
+      "skillFixtures": { "build-verify": "11-maven-multi-module-build-verify" },
+      "prompt": "Validate this change to services/api together with its required upstream modules using the documented Maven verification workflow.",
+      "expected": { "mustLoad": ["build-verify"], "mustNotLoad": ["database-migration", "audit-log", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "maven-build-verify-negative-01",
+      "fixture": "11-maven-multi-module-build-verify",
+      "category": "negative",
+      "skillFixtures": { "build-verify": "11-maven-multi-module-build-verify" },
+      "prompt": "Explain the Maven module layout without changing or validating the repository.",
+      "expected": { "mustLoad": [], "mustNotLoad": ["build-verify", "database-migration", "audit-log", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "maven-build-verify-near-miss-01",
+      "fixture": "11-maven-multi-module-build-verify",
+      "category": "near-miss",
+      "skillFixtures": { "build-verify": "11-maven-multi-module-build-verify" },
+      "prompt": "Which artifact does services/api declare in its Maven descriptor? Read the descriptor only; do not run verification.",
+      "expected": { "mustLoad": [], "mustNotLoad": ["build-verify", "database-migration", "audit-log", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "maven-build-verify-migration-collision-01",
+      "fixture": "11-maven-multi-module-build-verify",
+      "category": "collision",
+      "skillFixtures": { "build-verify": "11-maven-multi-module-build-verify", "database-migration": "12-flyway-database-migration" },
+      "prompt": "Verify the services/api change in 11-maven-multi-module-build-verify. Also add and validate the next append-only schema migration in 12-flyway-database-migration.",
+      "expected": { "mustLoad": ["build-verify", "database-migration"], "mustNotLoad": ["audit-log", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "database-migration-positive-01",
+      "fixture": "12-flyway-database-migration",
+      "category": "positive",
+      "skillFixtures": { "database-migration": "12-flyway-database-migration" },
+      "prompt": "Add the next append-only Flyway migration for the orders schema and run the documented migration validation checks.",
+      "expected": { "mustLoad": ["database-migration"], "mustNotLoad": ["build-verify", "audit-log", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "database-migration-negative-01",
+      "fixture": "12-flyway-database-migration",
+      "category": "negative",
+      "skillFixtures": { "database-migration": "12-flyway-database-migration" },
+      "prompt": "Explain what Flyway does in this project. Do not add or validate a migration.",
+      "expected": { "mustLoad": [], "mustNotLoad": ["database-migration", "build-verify", "audit-log", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "database-migration-near-miss-01",
+      "fixture": "12-flyway-database-migration",
+      "category": "near-miss",
+      "skillFixtures": { "database-migration": "12-flyway-database-migration" },
+      "prompt": "Tell me which existing migration defines the order status column. Inspect the SQL only; do not change or validate the schema.",
+      "expected": { "mustLoad": [], "mustNotLoad": ["database-migration", "build-verify", "audit-log", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "database-migration-audit-log-collision-01",
+      "fixture": "12-flyway-database-migration",
+      "category": "collision",
+      "skillFixtures": { "database-migration": "12-flyway-database-migration", "audit-log": "13-audit-log" },
+      "prompt": "Add and validate the next append-only orders schema migration in 12-flyway-database-migration. In 13-audit-log, change an auditable order operation while preserving its actor, action, and resource event fields.",
+      "expected": { "mustLoad": ["database-migration", "audit-log"], "mustNotLoad": ["build-verify", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "audit-log-positive-01",
+      "fixture": "13-audit-log",
+      "category": "positive",
+      "skillFixtures": { "audit-log": "13-audit-log" },
+      "prompt": "Change an auditable domain operation, preserving actor, action, and resource in its audit event, and verify the audit contract.",
+      "expected": { "mustLoad": ["audit-log"], "mustNotLoad": ["build-verify", "database-migration", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "audit-log-negative-01",
+      "fixture": "13-audit-log",
+      "category": "negative",
+      "skillFixtures": { "audit-log": "13-audit-log" },
+      "prompt": "Explain the role of AuditService in this repository without changing any domain operation or running its workflow.",
+      "expected": { "mustLoad": [], "mustNotLoad": ["audit-log", "build-verify", "database-migration", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "audit-log-near-miss-01",
+      "fixture": "13-audit-log",
+      "category": "near-miss",
+      "skillFixtures": { "audit-log": "13-audit-log" },
+      "prompt": "Locate the existing AuditService call sites and describe them. Do not add or change an auditable operation.",
+      "expected": { "mustLoad": [], "mustNotLoad": ["audit-log", "build-verify", "database-migration", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "audit-log-migration-collision-01",
+      "fixture": "13-audit-log",
+      "category": "collision",
+      "skillFixtures": { "audit-log": "13-audit-log", "database-migration": "12-flyway-database-migration" },
+      "prompt": "Update the audited operation and audit contract in 13-audit-log. Separately add and validate the next append-only orders migration in 12-flyway-database-migration.",
+      "expected": { "mustLoad": ["audit-log", "database-migration"], "mustNotLoad": ["build-verify", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "deployment-positive-01",
+      "fixture": "15-deployment",
+      "category": "positive",
+      "skillFixtures": { "deployment": "15-deployment" },
+      "prompt": "Use the documented staging deployment procedure, including its build step and staging smoke verification.",
+      "expected": { "mustLoad": ["deployment"], "mustNotLoad": ["build-verify", "database-migration", "audit-log"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "deployment-negative-01",
+      "fixture": "15-deployment",
+      "category": "negative",
+      "skillFixtures": { "deployment": "15-deployment" },
+      "prompt": "Explain the documented deployment stages. Do not build, deploy, or run a smoke check.",
+      "expected": { "mustLoad": [], "mustNotLoad": ["deployment", "build-verify", "database-migration", "audit-log"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "deployment-near-miss-01",
+      "fixture": "15-deployment",
+      "category": "near-miss",
+      "skillFixtures": { "deployment": "15-deployment" },
+      "prompt": "Which script performs the staging health check? Inspect package.json and explain only; do not run a deployment.",
+      "expected": { "mustLoad": [], "mustNotLoad": ["deployment", "build-verify", "database-migration", "audit-log"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "deployment-node-build-verify-collision-01",
+      "fixture": "15-deployment",
+      "category": "collision",
+      "skillFixtures": { "deployment": "15-deployment", "build-verify": "03-node-pnpm" },
+      "prompt": "Deploy 15-deployment to its documented staging environment and run its smoke check. Also validate the code change in 03-node-pnpm using its ordered lint and test workflow.",
+      "expected": { "mustLoad": ["deployment", "build-verify"], "mustNotLoad": ["database-migration", "audit-log"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "redis-no-skill-negative-01",
+      "fixture": "14-redis-no-skill",
+      "category": "negative",
+      "skillFixtures": {},
+      "prompt": "Explain the existing Redis cache dependency without inventing a cache-maintenance workflow or changing Agent assets.",
+      "expected": { "mustLoad": [], "mustNotLoad": ["build-verify", "database-migration", "audit-log", "deployment"] }
+    }
+  ]
+}
