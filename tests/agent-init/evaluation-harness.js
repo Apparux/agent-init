@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { lstat, readFile, readdir, readlink, realpath } from 'node:fs/promises';
 import path from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 
 const ACTIONS = new Set(['CREATE', 'UPDATE', 'KEEP', 'SKIP', 'RECOMMEND']);
 const PERSISTENCE_SCOPES = new Set(['GLOBAL', 'WORKFLOW', 'DISCOVERABLE', 'ARCHITECTURE', 'NONE']);
@@ -646,7 +647,7 @@ function validatePhaseEvents(fixture, run, errors) {
       error(errors, 'PROFILE', `expected fact ${id} is missing`);
       continue;
     }
-    if (actual.status !== expected.status || actual.value !== expected.value) {
+    if (actual.status !== expected.status || !isDeepStrictEqual(actual.value, expected.value)) {
       error(errors, 'PROFILE', `fact ${id} does not match the fixture contract`);
     }
     if (JSON.stringify(sorted(actual.evidenceIds ?? [])) !== JSON.stringify(sorted(expected.evidenceIds ?? []))) {

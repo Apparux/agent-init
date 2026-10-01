@@ -156,7 +156,7 @@ async function makeOracleRun(fixture) {
 
 test('each fixture has a conforming local decision oracle and an independent bad artifact', async (t) => {
   for (const name of fixtureNames) {
-    await t.test(name, async () => {
+    await t.test(name, async (t) => {
       const fixture = await loadFixture(name);
       const temporary = await mkdtemp(path.join(os.tmpdir(), `aps-oracle-${name}-`));
       try {
@@ -179,6 +179,40 @@ test('each fixture has a conforming local decision oracle and an independent bad
         assert.equal(result.claims.liveSkillBehaviorProven, false);
         assert.equal(result.claims.claudeCodeBehaviorProven, false);
         assert.equal(result.claims.codexBehaviorProven, false);
+
+        await t.test('synthetic recorded JSON preserves fixture facts without proving live behavior', async () => {
+          const recorded = JSON.parse(JSON.stringify(good));
+          const recordedResult = await evaluateRunRecord(fixture, recorded, roots);
+          assert.equal(recordedResult.ok, true, recordedResult.errors.join('\n'));
+          assert.deepEqual(recordedResult.errors, []);
+          assert.equal(recordedResult.claims.localContractValidated, true);
+          assert.equal(recordedResult.claims.liveSkillBehaviorProven, false);
+          assert.equal(recordedResult.claims.claudeCodeBehaviorProven, false);
+          assert.equal(recordedResult.claims.codexBehaviorProven, false);
+        });
+
+        if (name === '12-flyway-database-migration') {
+          for (const [label, mutation] of [
+            ['a changed migration', { value: ['V1__create_orders.sql', 'V3__create_users.sql'] }],
+            ['a changed migration order', { value: ['V2__add_order_status.sql', 'V1__create_orders.sql'] }],
+            ['a changed migration value type', { value: 'V1__create_orders.sql,V2__add_order_status.sql' }],
+            ['a changed fact status', { status: 'unknown' }],
+          ]) {
+            await t.test(`synthetic recorded JSON rejects ${label}`, async () => {
+              const changed = JSON.parse(JSON.stringify(good));
+              const fact = changed.events.find((event) => event.type === 'profile')
+                .facts.find((item) => item.id === 'fact-published-migrations');
+              Object.assign(fact, mutation);
+              const rejected = await evaluateRunRecord(fixture, changed, roots);
+              assert.equal(rejected.ok, false);
+              assert.deepEqual(rejected.errors, ['PROFILE: fact fact-published-migrations does not match the fixture contract']);
+              assert.equal(rejected.claims.localContractValidated, false);
+              assert.equal(rejected.claims.liveSkillBehaviorProven, false);
+              assert.equal(rejected.claims.claudeCodeBehaviorProven, false);
+              assert.equal(rejected.claims.codexBehaviorProven, false);
+            });
+          }
+        }
 
         const bad = structuredClone(good);
         let expectedCode;
