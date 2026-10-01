@@ -15,6 +15,11 @@ import {
 const projectRoot = fileURLToPath(new URL('../..', import.meta.url));
 const corpusPath = path.join(projectRoot, 'tests/trigger-corpus/cases.json');
 const recordedAt = '2026-09-30T12:00:00.000Z';
+const migrationInvocation = {
+  mode: 'explicit',
+  skill: 'database-migration',
+  prompt: '$database-migration\nAdd the next append-only Flyway migration for the orders schema and run the documented migration validation checks.',
+};
 
 function generatedSkill(decision) {
   return `---
@@ -41,7 +46,7 @@ ${decision.verification.join('\n')}
 
 async function makeCase(t, caseId) {
   const corpus = JSON.parse(await readFile(corpusPath, 'utf8'));
-  const triggerCase = corpus.cases.find((entry) => entry.id === caseId);
+  const triggerCase = [...corpus.cases, ...(corpus.explicitProbes ?? [])].find((entry) => entry.id === caseId);
   assert.ok(triggerCase, `Missing versioned case ${caseId}`);
   const sandbox = await mkdtemp(path.join(projectRoot, '.tmp-trigger-'));
   t.after(() => rm(sandbox, { recursive: true, force: true }));
@@ -79,7 +84,395 @@ function assertFailure(result, code) {
   assert.equal(result.ok, false, `Expected ${code}, received a passing result`);
   assert.ok(result.errors.some((message) => message.startsWith(`${code}:`)), result.errors.join('\n'));
   assert.equal(result.claims.liveSkillBehaviorProven, false);
+  assert.equal(result.claims.claudeCodeBehaviorProven, false);
+  assert.equal(result.claims.codexBehaviorProven, false);
 }
+
+function explicitObservation(invocation, loaded) {
+  return {
+    harness: 'codex', harnessVersion: 'synthetic-test-1', recordedAt,
+    invocation: structuredClone(invocation), selectionEvidence: { loaded },
+  };
+}
+
+test('Codex explicit probes are enumerated separately from the 21 implicit cases', async () => {
+  const corpus = await loadTriggerCorpus();
+  assert.equal(corpus.cases.length, 21);
+  assert.deepEqual(corpus.explicitProbes?.map((entry) => [entry.id, entry.fixture, entry.invocation.skill]), [
+    ['codex-node-build-verify-explicit-01', '03-node-pnpm', 'build-verify'],
+    ['codex-maven-build-verify-explicit-01', '11-maven-multi-module-build-verify', 'build-verify'],
+    ['codex-database-migration-explicit-01', '12-flyway-database-migration', 'database-migration'],
+    ['codex-audit-log-explicit-01', '13-audit-log', 'audit-log'],
+    ['codex-deployment-explicit-01', '15-deployment', 'deployment'],
+  ]);
+});
+
+test('a legacy corpus without explicitProbes still exposes an empty separate collection', async (t) => {
+  const { sandbox } = await makeCase(t, 'database-migration-positive-01');
+  const legacy = JSON.parse(await readFile(corpusPath, 'utf8'));
+  delete legacy.explicitProbes;
+  const legacyPath = path.join(sandbox, 'legacy.json');
+  await writeFile(legacyPath, JSON.stringify(legacy));
+  const corpus = await loadTriggerCorpus({ corpusPath: legacyPath });
+  assert.deepEqual(corpus.explicitProbes, []);
+  assert.equal(corpus.cases.length, 21);
+});
+
+test('a Codex explicit probe round-trips a synthetic request-bound v2 artifact', async (t) => {
+  const { sandbox, options } = await makeCase(t, 'codex-database-migration-explicit-01');
+  const prepared = await prepareTriggerCase(options.caseId, options);
+  const invocation = structuredClone(migrationInvocation);
+  const artifact = createTriggerArtifact(prepared, {
+    harness: 'codex', harnessVersion: 'synthetic-test-1',
+    invocation, selectionEvidence: { loaded: ['database-migration'] }, recordedAt,
+  });
+  assert.equal(artifact.schemaVersion, 2);
+  assert.equal(artifact.caseId, 'codex-database-migration-explicit-01');
+  assert.equal(artifact.fixtureId, '12-flyway-database-migration');
+  assert.deepEqual(artifact.invocation, migrationInvocation);
+  invocation.prompt = 'Changed caller-owned request after recording.';
+  assert.deepEqual(artifact.invocation, migrationInvocation);
+  const artifactPath = path.join(sandbox, 'synthetic-explicit.json');
+  await writeFile(artifactPath, JSON.stringify(artifact));
+  const recorded = JSON.parse(await readFile(artifactPath, 'utf8'));
+  assert.deepEqual(recorded, artifact);
+  const result = await evaluateTriggerArtifact(recorded, options);
+  assert.equal(result.ok, true, result.errors.join('\n'));
+  assert.equal(result.result, 'pass');
+  assert.deepEqual(result.claims, {
+    localContractValidated: true,
+    liveSkillBehaviorProven: false,
+    claudeCodeBehaviorProven: false,
+    codexBehaviorProven: false,
+  });
+});
+
+test('an explicitProbes declaration must be an array when present', async (t) => {
+  const { sandbox } = await makeCase(t, 'database-migration-positive-01');
+  const source = JSON.parse(await readFile(corpusPath, 'utf8'));
+  source.explicitProbes = null;
+  const mutatedPath = path.join(sandbox, 'invalid-probes.json');
+  await writeFile(mutatedPath, JSON.stringify(source));
+  await assert.rejects(loadTriggerCorpus({ corpusPath: mutatedPath }), { code: 'CORPUS_SCHEMA' });
+});
+
+test('case IDs are unique across implicit cases and explicit probes', async (t) => {
+  const { sandbox } = await makeCase(t, 'database-migration-positive-01');
+  const source = JSON.parse(await readFile(corpusPath, 'utf8'));
+  source.explicitProbes[0].id = source.cases[0].id;
+  const mutatedPath = path.join(sandbox, 'duplicate-probe.json');
+  await writeFile(mutatedPath, JSON.stringify(source));
+  await assert.rejects(loadTriggerCorpus({ corpusPath: mutatedPath }), { code: 'CORPUS_IDENTITY' });
+});
+
+test('explicit probes require authoritative Codex invocation metadata', async (t) => {
+  const { sandbox } = await makeCase(t, 'database-migration-positive-01');
+  const source = JSON.parse(await readFile(corpusPath, 'utf8'));
+  source.explicitProbes[0].invocation.mode = 'implicit';
+  const mutatedPath = path.join(sandbox, 'invalid-invocation.json');
+  await writeFile(mutatedPath, JSON.stringify(source));
+  await assert.rejects(loadTriggerCorpus({ corpusPath: mutatedPath }), { code: 'CORPUS_INVOCATION' });
+});
+
+test('explicit request mutations fail in both the writer and independent consumer', async (t) => {
+  const { options } = await makeCase(t, 'codex-database-migration-explicit-01');
+  const prepared = await prepareTriggerCase(options.caseId, options);
+  const observation = explicitObservation(migrationInvocation, ['database-migration']);
+  const artifact = createTriggerArtifact(prepared, observation);
+  const mutations = [
+    ['missing invocation', (data) => { delete data.invocation; }],
+    ['null invocation', (data) => { data.invocation = null; }],
+    ['array invocation', (data) => { data.invocation = []; }],
+    ['missing mode', (data) => { delete data.invocation.mode; }],
+    ['wrong mode', (data) => { data.invocation.mode = 'implicit'; }],
+    ['missing target', (data) => { delete data.invocation.skill; }],
+    ['wrong target', (data) => { data.invocation.skill = 'audit-log'; }],
+    ['missing prompt', (data) => { delete data.invocation.prompt; }],
+    ['unrelated prompt', (data) => { data.invocation.prompt = 'Synthetic unrelated conversation: do not record.'; }],
+    ['token without full request', (data) => { data.invocation.prompt = '$database-migration'; }],
+    ['extra conversation', (data) => { data.invocation.unrelatedConversation = 'Synthetic unrelated conversation: do not record.'; }],
+    ['wrong harness', (data) => { data.harness = 'claude-code'; }],
+  ];
+  for (const [name, mutate] of mutations) {
+    await t.test(name, async () => {
+      const changedObservation = structuredClone(observation);
+      mutate(changedObservation);
+      assert.throws(() => createTriggerArtifact(prepared, changedObservation), {
+        code: 'INVOCATION_EVIDENCE',
+        message: 'INVOCATION_EVIDENCE: codex-database-migration-explicit-01: invocation must match the authoritative case and harness',
+      });
+      const changedArtifact = structuredClone(artifact);
+      mutate(changedArtifact);
+      const result = await evaluateTriggerArtifact(changedArtifact, options);
+      assert.deepEqual(result.errors, ['INVOCATION_EVIDENCE: invocation must match the authoritative case and harness']);
+      assertFailure(result, 'INVOCATION_EVIDENCE');
+    });
+  }
+  await t.test('explicit v1 downgrade', async () => {
+    const result = await evaluateTriggerArtifact({ ...artifact, schemaVersion: 1 }, options);
+    assert.deepEqual(result.errors, ['ARTIFACT_SCHEMA: schemaVersion must be 2']);
+    assertFailure(result, 'ARTIFACT_SCHEMA');
+  });
+});
+
+test('explicit requests reject inherited fields paired with extra conversation', async (t) => {
+  const { options } = await makeCase(t, 'codex-database-migration-explicit-01');
+  const prepared = await prepareTriggerCase(options.caseId, options);
+  const inherited = () => Object.assign(Object.create({ mode: 'explicit' }), {
+    skill: migrationInvocation.skill, prompt: migrationInvocation.prompt,
+    unrelatedConversation: 'Synthetic unrelated conversation: do not record.',
+  });
+  await t.test('writer rejects instead of recording extra conversation', () => {
+    assert.throws(() => createTriggerArtifact(prepared, {
+      ...explicitObservation(migrationInvocation, ['database-migration']), invocation: inherited(),
+    }), { code: 'INVOCATION_EVIDENCE' });
+  });
+  await t.test('consumer independently rejects inherited fields', async () => {
+    const artifact = createTriggerArtifact(prepared, explicitObservation(migrationInvocation, ['database-migration']));
+    assertFailure(await evaluateTriggerArtifact({ ...artifact, invocation: inherited() }, options), 'INVOCATION_EVIDENCE');
+  });
+});
+
+test('explicit requests reject hidden or symbol fields rather than normalizing an invalid field set', async (t) => {
+  const { options } = await makeCase(t, 'codex-database-migration-explicit-01');
+  const prepared = await prepareTriggerCase(options.caseId, options);
+  const artifact = createTriggerArtifact(prepared, explicitObservation(migrationInvocation, ['database-migration']));
+  const variants = [
+    ['hidden required field with extra conversation', () => Object.defineProperty({
+      skill: migrationInvocation.skill, prompt: migrationInvocation.prompt,
+      unrelatedConversation: 'Synthetic unrelated conversation: do not record.',
+    }, 'mode', { value: 'explicit' })],
+    ['hidden extra field', () => Object.defineProperty(structuredClone(migrationInvocation),
+      'unrelatedConversation', { value: 'Synthetic unrelated conversation: do not record.' })],
+    ['symbol extra field', () => ({ ...migrationInvocation, [Symbol('unrelatedConversation')]: 'Synthetic unrelated conversation: do not record.' })],
+  ];
+  for (const [name, invocation] of variants) {
+    await t.test(`${name}: writer`, () => {
+      assert.throws(() => createTriggerArtifact(prepared, {
+        ...explicitObservation(migrationInvocation, ['database-migration']), invocation: invocation(),
+      }), { code: 'INVOCATION_EVIDENCE' });
+    });
+    await t.test(`${name}: consumer`, async () => {
+      assertFailure(await evaluateTriggerArtifact({ ...artifact, invocation: invocation() }, options), 'INVOCATION_EVIDENCE');
+    });
+  }
+});
+
+test('the writer validates and stores the same explicit request snapshot', async (t) => {
+  const { options } = await makeCase(t, 'codex-database-migration-explicit-01');
+  const prepared = await prepareTriggerCase(options.caseId, options);
+  let reads = 0;
+  const invocation = {
+    mode: 'explicit', skill: 'database-migration',
+    get prompt() {
+      reads += 1;
+      return reads === 1 ? migrationInvocation.prompt : 'Synthetic unrelated conversation: do not record.';
+    },
+  };
+  const artifact = createTriggerArtifact(prepared, {
+    ...explicitObservation(migrationInvocation, ['database-migration']), invocation,
+  });
+  assert.deepEqual(artifact.invocation, migrationInvocation);
+  assert.equal(reads, 1);
+  const result = await evaluateTriggerArtifact(artifact, options);
+  assert.equal(result.ok, true, result.errors.join('\n'));
+  assert.equal(result.claims.codexBehaviorProven, false);
+});
+
+test('implicit cases cannot receive explicit request descriptors', async (t) => {
+  const { options } = await makeCase(t, 'database-migration-positive-01');
+  const prepared = await prepareTriggerCase(options.caseId, options);
+  assert.throws(() => createTriggerArtifact(prepared, explicitObservation(migrationInvocation, ['database-migration'])), {
+    code: 'INVOCATION_EVIDENCE',
+  });
+  const artifact = record(prepared, ['database-migration'], 'codex');
+  assert.equal(Object.hasOwn(artifact, 'invocation'), false);
+  for (const invocation of [migrationInvocation, undefined, null]) {
+    assertFailure(await evaluateTriggerArtifact({ ...artifact, invocation }, options), 'INVOCATION_EVIDENCE');
+  }
+});
+
+test('explicit declarations retain shared identity and expectation guards without supplying implicit coverage', async (t) => {
+  const { sandbox } = await makeCase(t, 'database-migration-positive-01');
+  const source = JSON.parse(await readFile(corpusPath, 'utf8'));
+  const mutations = [
+    ['non-array collection', 'CORPUS_SCHEMA', (data) => { data.explicitProbes = {}; }],
+    ['null entry', 'CORPUS_SCHEMA', (data) => { data.explicitProbes[0] = null; }],
+    ['probe version', 'CORPUS_SCHEMA', (data) => { data.explicitProbes[0].schemaVersion = 2; }],
+    ['blank prompt', 'CORPUS_SCHEMA', (data) => { data.explicitProbes[0].prompt = ' '; }],
+    ['duplicate probes', 'CORPUS_IDENTITY', (data) => { data.explicitProbes.push(structuredClone(data.explicitProbes[0])); }],
+    ['unknown fixture', 'CORPUS_IDENTITY', (data) => { data.explicitProbes[0].fixture = '99-invented'; }],
+    ['different primary source', 'CORPUS_IDENTITY', (data) => { data.explicitProbes[0].fixture = '13-audit-log'; }],
+    ['wrong Skill source', 'CORPUS_SKILL_IDENTITY', (data) => { data.explicitProbes[0].skillFixtures['build-verify'] = '12-flyway-database-migration'; }],
+    ['unknown expected Skill', 'CORPUS_EXPECTATION', (data) => { data.explicitProbes[0].expected.mustLoad = ['redis']; }],
+    ['empty positive expectation', 'CORPUS_CATEGORY', (data) => { data.explicitProbes[0].expected.mustLoad = []; data.explicitProbes[0].expected.mustNotLoad.push('build-verify'); }],
+    ['missing invocation', 'CORPUS_INVOCATION', (data) => { delete data.explicitProbes[0].invocation; }],
+    ['extra invocation field', 'CORPUS_INVOCATION', (data) => { data.explicitProbes[0].invocation.allowAny = true; }],
+    ['missing mode', 'CORPUS_INVOCATION', (data) => { delete data.explicitProbes[0].invocation.mode; }],
+    ['wrong harness', 'CORPUS_INVOCATION', (data) => { data.explicitProbes[0].invocation.harness = 'claude-code'; }],
+    ['missing harness', 'CORPUS_INVOCATION', (data) => { delete data.explicitProbes[0].invocation.harness; }],
+    ['missing target', 'CORPUS_INVOCATION', (data) => { delete data.explicitProbes[0].invocation.skill; }],
+    ['undeclared target', 'CORPUS_INVOCATION', (data) => { data.explicitProbes[0].invocation.skill = 'audit-log'; }],
+    ['unknown target', 'CORPUS_INVOCATION', (data) => { data.explicitProbes[0].invocation.skill = 'redis'; }],
+    ['implicit prompt', 'CORPUS_INVOCATION', (data) => { data.explicitProbes[0].prompt = data.cases[0].prompt; }],
+    ['wrong token', 'CORPUS_INVOCATION', (data) => { data.explicitProbes[0].prompt = '$audit-log\nValidate the code change.'; }],
+    ['hyphenated prefix impostor', 'CORPUS_INVOCATION', (data) => { data.explicitProbes[0].prompt = '$build-verify-extra\nValidate the code change.'; }],
+    ['unseparated token', 'CORPUS_INVOCATION', (data) => { data.explicitProbes[0].prompt = '$build-verify_extra\nValidate the code change.'; }],
+    ['multiple mustLoad targets', 'CORPUS_INVOCATION', (data) => {
+      const probe = data.explicitProbes[0];
+      probe.skillFixtures['audit-log'] = '13-audit-log';
+      probe.expected.mustLoad.push('audit-log');
+      probe.expected.mustNotLoad = probe.expected.mustNotLoad.filter((name) => name !== 'audit-log');
+    }],
+    ['non-positive probe', 'CORPUS_INVOCATION', (data) => {
+      const probe = data.explicitProbes[0];
+      probe.category = 'collision';
+      probe.skillFixtures['audit-log'] = '13-audit-log';
+    }],
+    ['explicit probe in cases', 'CORPUS_INVOCATION', (data) => { data.cases.push(data.explicitProbes.pop()); }],
+    ['explicit token disguised as implicit', 'CORPUS_INVOCATION', (data) => {
+      const probe = data.explicitProbes.pop();
+      delete probe.invocation;
+      data.cases.push(probe);
+    }],
+    ['implicit invocation descriptor', 'CORPUS_INVOCATION', (data) => { data.cases[0].invocation = null; }],
+    ['explicit does not replace implicit positive', 'CORPUS_COVERAGE', (data) => {
+      data.cases = data.cases.filter((entry) => entry.id !== 'node-build-verify-positive-01');
+    }],
+  ];
+  for (const [name, code, mutate] of mutations) {
+    await t.test(name, async () => {
+      const changed = structuredClone(source);
+      mutate(changed);
+      const mutatedPath = path.join(sandbox, 'mutated-explicit-corpus.json');
+      await writeFile(mutatedPath, JSON.stringify(changed));
+      await assert.rejects(loadTriggerCorpus({ corpusPath: mutatedPath }), { code });
+    });
+  }
+});
+
+test('all five Codex variants round-trip independent synthetic requests without merging build-verify identities', async (t) => {
+  const samples = [
+    ['codex-node-build-verify-explicit-01', '03-node-pnpm', 'build-verify',
+      '$build-verify\nValidate this code change using the repository\'s ordered lint and test workflow.'],
+    ['codex-maven-build-verify-explicit-01', '11-maven-multi-module-build-verify', 'build-verify',
+      '$build-verify\nValidate this change to services/api together with its required upstream modules using the documented Maven verification workflow.'],
+    ['codex-database-migration-explicit-01', '12-flyway-database-migration', 'database-migration', migrationInvocation.prompt],
+    ['codex-audit-log-explicit-01', '13-audit-log', 'audit-log',
+      '$audit-log\nChange an auditable domain operation, preserving actor, action, and resource in its audit event, and verify the audit contract.'],
+    ['codex-deployment-explicit-01', '15-deployment', 'deployment',
+      '$deployment\nUse the documented staging deployment procedure, including its build step and staging smoke verification.'],
+  ];
+  const artifacts = new Map();
+  for (const [caseId, fixtureId, skill, prompt] of samples) {
+    await t.test(caseId, async (t) => {
+      const { sandbox, options } = await makeCase(t, caseId);
+      const prepared = await prepareTriggerCase(caseId, options);
+      assert.deepEqual(prepared.fixtureIds, [fixtureId]);
+      const artifact = createTriggerArtifact(prepared, explicitObservation({ mode: 'explicit', skill, prompt }, [skill]));
+      assert.equal(artifact.schemaVersion, 2);
+      assert.equal(artifact.harness, 'codex');
+      assert.equal(artifact.fixtureId, fixtureId);
+      assert.deepEqual(artifact.invocation, { mode: 'explicit', skill, prompt });
+      const artifactPath = path.join(sandbox, 'synthetic-explicit.json');
+      await writeFile(artifactPath, JSON.stringify(artifact));
+      const recorded = JSON.parse(await readFile(artifactPath, 'utf8'));
+      assert.deepEqual(recorded, artifact);
+      const result = await evaluateTriggerArtifact(recorded, options);
+      assert.equal(result.ok, true, result.errors.join('\n'));
+      assert.deepEqual(result.claims, {
+        localContractValidated: true,
+        liveSkillBehaviorProven: false,
+        claudeCodeBehaviorProven: false,
+        codexBehaviorProven: false,
+      });
+      artifacts.set(caseId, artifact);
+    });
+  }
+  const node = artifacts.get('codex-node-build-verify-explicit-01');
+  const maven = artifacts.get('codex-maven-build-verify-explicit-01');
+  assert.notEqual(node.generatedSkillDigest, maven.generatedSkillDigest);
+  assert.notEqual(node.fixtureDigest, maven.fixtureDigest);
+  const { options } = await makeCase(t, 'codex-maven-build-verify-explicit-01');
+  assertFailure(await evaluateTriggerArtifact(node, options), 'ARTIFACT_IDENTITY');
+  const renamed = { ...node, caseId: maven.caseId, fixtureId: maven.fixtureId, invocation: maven.invocation };
+  assertFailure(await evaluateTriggerArtifact(renamed, options), 'ARTIFACT_DIGEST');
+});
+
+test('explicit artifacts bind all four digests and detect corpus changes before request mismatch', async (t) => {
+  const { sandbox, options } = await makeCase(t, 'codex-database-migration-explicit-01');
+  options.corpusPath = path.join(sandbox, 'explicit-corpus.json');
+  const bytes = await readFile(corpusPath);
+  await writeFile(options.corpusPath, bytes);
+  const prepared = await prepareTriggerCase(options.caseId, options);
+  const artifact = createTriggerArtifact(prepared, explicitObservation(migrationInvocation, ['database-migration']));
+  for (const field of ['motherSkillDigest', 'generatedSkillDigest', 'fixtureDigest', 'triggerCorpusDigest']) {
+    await t.test(`forged ${field}`, async () => {
+      const result = await evaluateTriggerArtifact({ ...artifact, [field]: 'sha256:' + 'a'.repeat(64) }, options);
+      assert.deepEqual(result.errors, [`ARTIFACT_DIGEST: ${field} does not match the current case inputs`]);
+      assertFailure(result, 'ARTIFACT_DIGEST');
+    });
+  }
+  for (const [name, changedBytes] of [
+    ['raw bytes only', Buffer.concat([bytes, Buffer.from('\n')])],
+    ['authoritative prompt', (() => {
+      const corpus = JSON.parse(bytes);
+      corpus.explicitProbes.find((entry) => entry.id === options.caseId).prompt += '\nKeep the append-only history intact.';
+      return Buffer.from(JSON.stringify(corpus));
+    })()],
+  ]) {
+    await t.test(name, async () => {
+      await writeFile(options.corpusPath, changedBytes);
+      const result = await evaluateTriggerArtifact(artifact, options);
+      assert.deepEqual(result.errors, ['ARTIFACT_DIGEST: triggerCorpusDigest does not match the current case inputs']);
+      assertFailure(result, 'ARTIFACT_DIGEST');
+    });
+  }
+});
+
+test('explicit preparation still requires every declared generated contributor', async (t) => {
+  const { sandbox, options } = await makeCase(t, 'database-migration-audit-log-collision-01');
+  const source = JSON.parse(await readFile(corpusPath, 'utf8'));
+  source.explicitProbes.find((entry) => entry.id === 'codex-database-migration-explicit-01')
+    .skillFixtures['audit-log'] = '13-audit-log';
+  options.corpusPath = path.join(sandbox, 'multi-source-explicit.json');
+  await writeFile(options.corpusPath, JSON.stringify(source));
+  options.caseId = 'codex-database-migration-explicit-01';
+  await assert.rejects(prepareTriggerCase(options.caseId, {
+    ...options, generatedSkills: { 'database-migration': options.generatedSkills['database-migration'] },
+  }), { code: 'SKILL_IDENTITY' });
+  const prepared = await prepareTriggerCase(options.caseId, options);
+  assert.deepEqual(prepared.fixtureIds, ['12-flyway-database-migration', '13-audit-log']);
+  const artifact = createTriggerArtifact(prepared, explicitObservation(migrationInvocation, ['database-migration']));
+  const result = await evaluateTriggerArtifact(artifact, options);
+  assert.equal(result.ok, true, result.errors.join('\n'));
+  assert.equal(result.claims.codexBehaviorProven, false);
+});
+
+test('explicit request success never substitutes for actual selection or hides a mismatch', async (t) => {
+  const { options } = await makeCase(t, 'codex-database-migration-explicit-01');
+  const prepared = await prepareTriggerCase(options.caseId, options);
+  for (const [name, loaded, code] of [
+    ['no Skill loaded', [], 'MISSING_SKILL'],
+    ['unexpected Skill also loaded', ['database-migration', 'deployment'], 'FORBIDDEN_SKILL'],
+  ]) {
+    await t.test(name, async () => {
+      const artifact = createTriggerArtifact(prepared, explicitObservation(migrationInvocation, loaded));
+      assert.deepEqual(artifact.observed.loaded, loaded);
+      assert.equal(artifact.result, 'fail');
+      const result = await evaluateTriggerArtifact(artifact, options);
+      assertFailure(result, code);
+      assert.equal(result.result, 'fail');
+      assert.equal(result.errors.some((error) => error.startsWith('ARTIFACT_RESULT:')), false);
+      assertFailure(await evaluateTriggerArtifact({ ...artifact, result: 'pass' }, options), 'ARTIFACT_RESULT');
+    });
+  }
+  for (const selectionEvidence of [undefined, '{"loaded":', {}, { loaded: ['redis'] }, { loaded: ['database-migration', 'database-migration'] }]) {
+    assert.throws(() => createTriggerArtifact(prepared, {
+      ...explicitObservation(migrationInvocation, ['database-migration']), selectionEvidence,
+    }), { code: 'SELECTION_EVIDENCE' });
+  }
+});
 
 test('a versioned case produces a conforming synthetic artifact and a reproducible result', async (t) => {
   const { options } = await makeCase(t, 'database-migration-positive-01');

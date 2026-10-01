@@ -190,5 +190,57 @@
       "prompt": "Explain the existing Redis cache dependency without inventing a cache-maintenance workflow or changing Agent assets.",
       "expected": { "mustLoad": [], "mustNotLoad": ["build-verify", "database-migration", "audit-log", "deployment"] }
     }
+  ],
+  "explicitProbes": [
+    {
+      "schemaVersion": 1,
+      "id": "codex-node-build-verify-explicit-01",
+      "fixture": "03-node-pnpm",
+      "category": "positive",
+      "skillFixtures": { "build-verify": "03-node-pnpm" },
+      "invocation": { "mode": "explicit", "harness": "codex", "skill": "build-verify" },
+      "prompt": "$build-verify\nValidate this code change using the repository's ordered lint and test workflow.",
+      "expected": { "mustLoad": ["build-verify"], "mustNotLoad": ["database-migration", "audit-log", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "codex-maven-build-verify-explicit-01",
+      "fixture": "11-maven-multi-module-build-verify",
+      "category": "positive",
+      "skillFixtures": { "build-verify": "11-maven-multi-module-build-verify" },
+      "invocation": { "mode": "explicit", "harness": "codex", "skill": "build-verify" },
+      "prompt": "$build-verify\nValidate this change to services/api together with its required upstream modules using the documented Maven verification workflow.",
+      "expected": { "mustLoad": ["build-verify"], "mustNotLoad": ["database-migration", "audit-log", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "codex-database-migration-explicit-01",
+      "fixture": "12-flyway-database-migration",
+      "category": "positive",
+      "skillFixtures": { "database-migration": "12-flyway-database-migration" },
+      "invocation": { "mode": "explicit", "harness": "codex", "skill": "database-migration" },
+      "prompt": "$database-migration\nAdd the next append-only Flyway migration for the orders schema and run the documented migration validation checks.",
+      "expected": { "mustLoad": ["database-migration"], "mustNotLoad": ["build-verify", "audit-log", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "codex-audit-log-explicit-01",
+      "fixture": "13-audit-log",
+      "category": "positive",
+      "skillFixtures": { "audit-log": "13-audit-log" },
+      "invocation": { "mode": "explicit", "harness": "codex", "skill": "audit-log" },
+      "prompt": "$audit-log\nChange an auditable domain operation, preserving actor, action, and resource in its audit event, and verify the audit contract.",
+      "expected": { "mustLoad": ["audit-log"], "mustNotLoad": ["build-verify", "database-migration", "deployment"] }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "codex-deployment-explicit-01",
+      "fixture": "15-deployment",
+      "category": "positive",
+      "skillFixtures": { "deployment": "15-deployment" },
+      "invocation": { "mode": "explicit", "harness": "codex", "skill": "deployment" },
+      "prompt": "$deployment\nUse the documented staging deployment procedure, including its build step and staging smoke verification.",
+      "expected": { "mustLoad": ["deployment"], "mustNotLoad": ["build-verify", "database-migration", "audit-log"] }
+    }
   ]
 }

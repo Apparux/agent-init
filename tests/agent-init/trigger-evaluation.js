@@ -18,6 +18,11 @@ function isObject(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
+function hasExactKeys(value, keys) {
+  return isObject(value) && Reflect.ownKeys(value).length === keys.length
+    && keys.every((key) => Object.prototype.propertyIsEnumerable.call(value, key));
+}
+
 function nonEmptyText(value) {
   return typeof value === 'string' && value.trim().length > 0;
 }
@@ -39,10 +44,10 @@ function validTimestamp(value) {
   return local.toISOString().startsWith(`${match[1]}T${match[2]}.`);
 }
 
-function validateArtifactSchema(artifact, knownSkills) {
+function validateArtifactSchema(artifact, knownSkills, schemaVersion) {
   if (!isObject(artifact)) return ['ARTIFACT_SCHEMA: artifact must be an object'];
   const errors = [];
-  if (artifact.schemaVersion !== 1) errors.push('ARTIFACT_SCHEMA: schemaVersion must be 1');
+  if (artifact.schemaVersion !== schemaVersion) errors.push(`ARTIFACT_SCHEMA: schemaVersion must be ${schemaVersion}`);
   if (!supportedHarnesses.has(artifact.harness)) errors.push('ARTIFACT_SCHEMA: harness must be claude-code or codex');
   for (const field of ['harnessVersion', 'fixtureId', 'caseId']) {
     if (!nonEmptyText(artifact[field])) errors.push(`ARTIFACT_SCHEMA: ${field} requires non-empty text`);
@@ -85,9 +90,14 @@ function validateCorpus(corpus, fixtures, knownSkills) {
   if (!isObject(corpus) || corpus.schemaVersion !== 1 || !Array.isArray(corpus.cases) || !corpus.cases.length) {
     throw failure('CORPUS_SCHEMA', 'corpus requires schemaVersion 1 and non-empty cases');
   }
+  if (Object.hasOwn(corpus, 'explicitProbes') && !Array.isArray(corpus.explicitProbes)) {
+    throw failure('CORPUS_SCHEMA', 'explicitProbes must be an array when present');
+  }
   const ids = new Set();
   const coverage = new Map();
-  for (const entry of corpus.cases) {
+  const explicitProbes = corpus.explicitProbes ?? [];
+  for (const entry of [...corpus.cases, ...explicitProbes]) {
+    const explicit = explicitProbes.includes(entry);
     if (!isObject(entry) || entry.schemaVersion !== 1 || !nonEmptyText(entry.prompt)) {
       throw failure('CORPUS_SCHEMA', 'each case requires schemaVersion 1 and a prompt');
     }
@@ -117,6 +127,21 @@ function validateCorpus(corpus, fixtures, knownSkills) {
       || (['negative', 'near-miss'].includes(entry.category) && expected.mustLoad.length)
       || (entry.category === 'collision' && names.length < 2)) {
       throw failure('CORPUS_CATEGORY', `${entry.id}: expectations or Skill sources do not match ${entry.category}`);
+    }
+    const invocation = entry.invocation;
+    const promptSkill = /^\$([a-z0-9]+(?:-[a-z0-9]+)*)(?:\s|$)/.exec(entry.prompt)?.[1];
+    if (explicit) {
+      if (!hasExactKeys(invocation, ['mode', 'harness', 'skill'])
+        || invocation.mode !== 'explicit' || invocation.harness !== 'codex'
+        || !names.includes(invocation.skill) || promptSkill !== invocation.skill
+        || entry.category !== 'positive' || expected.mustLoad.length !== 1
+        || expected.mustLoad[0] !== invocation.skill) {
+        throw failure('CORPUS_INVOCATION', `${entry.id} requires a Codex explicit target, matching prompt token and single-target expectation`);
+      }
+      continue;
+    }
+    if (Object.hasOwn(entry, 'invocation') || promptSkill) {
+      throw failure('CORPUS_INVOCATION', `${entry.id}: explicit invocations belong in explicitProbes, not cases`);
     }
     for (const [name, fixtureId] of Object.entries(entry.skillFixtures)) {
       const key = `${fixtureId}:${name}`;
@@ -167,6 +192,7 @@ export async function loadTriggerCorpus(options = {}) {
   validateCorpus(corpus, fixtures, knownSkills);
   return {
     cases: corpus.cases,
+    explicitProbes: corpus.explicitProbes ?? [],
     fixtures,
     knownSkills,
     digest: `sha256:${createHash('sha256').update(bytes).digest('hex')}`,
@@ -175,7 +201,7 @@ export async function loadTriggerCorpus(options = {}) {
 
 export async function prepareTriggerCase(caseId, options = {}) {
   const corpus = await loadTriggerCorpus(options);
-  const triggerCase = corpus.cases.find((entry) => entry.id === caseId);
+  const triggerCase = [...corpus.cases, ...corpus.explicitProbes].find((entry) => entry.id === caseId);
   if (!triggerCase) throw failure('CASE_IDENTITY', `unknown trigger case ${caseId}`);
   const generatedSkills = options.generatedSkills ?? {};
   const names = Object.keys(triggerCase.skillFixtures).sort();
@@ -232,6 +258,16 @@ function compareSelection(expected, loaded) {
   };
 }
 
+function matchesInvocation(triggerCase, observation) {
+  if (!triggerCase.invocation) return !Object.hasOwn(observation, 'invocation');
+  const invocation = observation.invocation;
+  return hasExactKeys(invocation, ['mode', 'skill', 'prompt'])
+    && invocation.mode === triggerCase.invocation.mode
+    && invocation.skill === triggerCase.invocation.skill
+    && invocation.prompt === triggerCase.prompt
+    && observation.harness === triggerCase.invocation.harness;
+}
+
 export function createTriggerArtifact(prepared, observation) {
   let evidence = observation?.selectionEvidence;
   if (typeof evidence === 'string') {
@@ -245,10 +281,21 @@ export function createTriggerArtifact(prepared, observation) {
   if (!validSelectionEvidence(evidence, prepared.knownSkills)) {
     throw failure('SELECTION_EVIDENCE', `${prepared.case.id}: selection evidence requires an explicit unique loaded list of known Skill names`);
   }
+  const request = { harness: observation.harness };
+  if (Object.hasOwn(observation, 'invocation')) {
+    const invocation = observation.invocation;
+    request.invocation = hasExactKeys(invocation, ['mode', 'skill', 'prompt'])
+      ? { mode: invocation.mode, skill: invocation.skill, prompt: invocation.prompt }
+      : null;
+  }
+  if (!matchesInvocation(prepared.case, request)) {
+    throw failure('INVOCATION_EVIDENCE', `${prepared.case.id}: invocation must match the authoritative case and harness`);
+  }
   const observed = { loaded: [...evidence.loaded] };
   return {
-    schemaVersion: 1,
-    harness: observation.harness,
+    schemaVersion: prepared.case.invocation ? 2 : 1,
+    ...(prepared.case.invocation ? { invocation: request.invocation } : {}),
+    harness: request.harness,
     harnessVersion: observation.harnessVersion,
     fixtureId: prepared.case.fixture,
     caseId: prepared.case.id,
@@ -262,7 +309,7 @@ export function createTriggerArtifact(prepared, observation) {
 
 export async function evaluateTriggerArtifact(artifact, options) {
   const prepared = await prepareTriggerCase(options.caseId, options);
-  const errors = validateArtifactSchema(artifact, prepared.knownSkills);
+  const errors = validateArtifactSchema(artifact, prepared.knownSkills, prepared.case.invocation ? 2 : 1);
   if (errors.length) return evaluationResult(errors);
   if (artifact.caseId !== prepared.case.id || artifact.fixtureId !== prepared.case.fixture) {
     return evaluationResult(['ARTIFACT_IDENTITY: caseId and fixtureId must match the requested corpus case']);
@@ -275,6 +322,9 @@ export async function evaluateTriggerArtifact(artifact, options) {
   const mismatches = digestFields.filter((field) => artifact[field] !== prepared.digests[field]);
   if (mismatches.length) {
     return evaluationResult(mismatches.map((field) => `ARTIFACT_DIGEST: ${field} does not match the current case inputs`));
+  }
+  if (!matchesInvocation(prepared.case, artifact)) {
+    return evaluationResult(['INVOCATION_EVIDENCE: invocation must match the authoritative case and harness']);
   }
   const comparison = compareSelection(prepared.case.expected, artifact.observed.loaded);
   if (artifact.result !== comparison.result) {
