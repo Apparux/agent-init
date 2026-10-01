@@ -9,7 +9,7 @@ const projectRoot = fileURLToPath(new URL('../..', import.meta.url));
 function assertPinnedActions(workflow, source = 'fixture.yml') {
   let scalarIndent;
   let flowDepth = 0;
-  for (const [index, line] of workflow.split('\n').entries()) {
+  for (const [index, line] of workflow.split(/\r?\n/).entries()) {
     const indent = line.match(/^ */)[0].length;
     if (scalarIndent !== undefined && (!line.trim() || indent > scalarIndent)) continue;
     scalarIndent = undefined;
@@ -38,15 +38,18 @@ function assertPinnedActions(workflow, source = 'fixture.yml') {
   }
 }
 
-test('repository workflows pin every external Action to a full commit SHA', async () => {
-  const directory = path.join(projectRoot, '.github/workflows');
-  const workflows = (await readdir(directory)).filter((name) => /\.ya?ml$/.test(name)).sort();
-  assert.ok(workflows.length > 0, 'No repository workflows found');
-  for (const name of workflows) {
-    const source = path.join('.github/workflows', name);
-    assertPinnedActions(await readFile(path.join(directory, name), 'utf8'), source);
-  }
-});
+for (const crlf of [false, true]) {
+  test(`repository workflows pin every external Action to a full commit SHA${crlf ? ' with CRLF line endings' : ''}`, async () => {
+    const directory = path.join(projectRoot, '.github/workflows');
+    const workflows = (await readdir(directory)).filter((name) => /\.ya?ml$/.test(name)).sort();
+    assert.ok(workflows.length > 0, 'No repository workflows found');
+    for (const name of workflows) {
+      const source = path.join('.github/workflows', name);
+      const workflow = await readFile(path.join(directory, name), 'utf8');
+      assertPinnedActions(crlf ? workflow.replace(/\r?\n/g, '\r\n') : workflow, source);
+    }
+  });
+}
 
 const verifiedPin = '3d3c42e5aac5ba805825da76410c181273ba90b1';
 
@@ -85,6 +88,29 @@ for (const reference of [
 `, 'mutable.yml'), /mutable\.yml:4: external Action must use a full immutable commit SHA/);
   });
 }
+
+for (const reference of ['actions/checkout@v7', 'actions/checkout@main']) {
+  test(`pinning check rejects CRLF ${reference} with an inline version comment`, () => {
+    const workflow = [
+      'jobs:',
+      '  build:',
+      '    steps:',
+      `      - uses: ${reference} # version comment`,
+      '',
+    ].join('\r\n');
+    assert.throws(() => assertPinnedActions(workflow, 'mutable-crlf.yml'), {
+      message: `mutable-crlf.yml:4: external Action must use a full immutable commit SHA: ${reference}`,
+    });
+  });
+}
+
+test('CRLF inline comments cannot hide a mutable Action as block-scalar content', () => {
+  assert.throws(() => assertPinnedActions(`jobs:
+  build:
+    steps: # example: |
+      - uses: actions/checkout@main
+`.replace(/\n/g, '\r\n')), /fixture\.yml:4: external Action must use a full immutable commit SHA/);
+});
 
 test('pinning check rejects mutable references in flow mappings', () => {
   assert.throws(() => assertPinnedActions(`jobs:
