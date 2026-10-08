@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
-import { lstat, readFile, readdir, readlink, realpath } from 'node:fs/promises';
+import { constants } from 'node:fs';
+import { lstat, open, readFile, readdir, readlink, realpath } from 'node:fs/promises';
 import path from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 
@@ -551,7 +552,145 @@ export async function validateWriteTargetPhysicalScope(repositoryRoot, target) {
   return validatePhysicalScope(repositoryRoot, target, true);
 }
 
-function validateEvidenceLedger(fixture, run, errors) {
+async function inspectEvidenceSource(repositoryRoot, target, readContents) {
+  if (typeof target !== 'string' || target.includes('\\') || !isLexicallySafeRelativePath(target)) throw new Error(`unsafe evidence path: ${target}`);
+  const rootStat = await lstat(repositoryRoot);
+  if (!rootStat.isDirectory() || rootStat.isSymbolicLink()) throw new Error('evidence root must be a directory, not a link');
+  const root = await realpath(repositoryRoot);
+  const scopeErrors = await validatePhysicalScope(root, target, true);
+  if (scopeErrors.length) throw new Error(scopeErrors.join('; '));
+  const absolute = path.join(root, target);
+  let stat;
+  try { stat = await lstat(absolute); }
+  catch (cause) {
+    if (cause.code === 'ENOENT') return { type: 'missing' };
+    throw cause;
+  }
+  const type = stat.isFile() ? 'file' : stat.isDirectory() ? 'directory' : null;
+  if (!type) throw new Error(`unsupported evidence entry: ${target}`);
+  const result = { type, dev: stat.dev, ino: stat.ino, mode: stat.mode & 0o7777 };
+  if (!readContents) return result;
+  if (type !== 'file' || stat.nlink !== 1 || stat.size > 1024 * 1024) {
+    throw new Error(`byte evidence must be a bounded, unlinked regular file: ${target}`);
+  }
+  const handle = await open(absolute, constants.O_RDONLY | constants.O_NOFOLLOW | (constants.O_NONBLOCK ?? 0));
+  try {
+    const opened = await handle.stat();
+    if (opened.dev !== stat.dev || opened.ino !== stat.ino || opened.nlink !== 1
+      || !opened.isFile() || opened.size > 1024 * 1024) throw new Error(`evidence identity or bounded size changed: ${target}`);
+    const buffer = Buffer.allocUnsafe(1024 * 1024 + 1);
+    let offset = 0;
+    while (offset < buffer.length) {
+      const { bytesRead } = await handle.read(buffer, offset, buffer.length - offset, null);
+      if (bytesRead === 0) break;
+      offset += bytesRead;
+    }
+    if (offset > 1024 * 1024) throw new Error(`evidence exceeds the actual read budget: ${target}`);
+    const bytes = buffer.subarray(0, offset);
+    const after = await handle.stat();
+    const final = await lstat(absolute);
+    if (after.size !== stat.size || after.mtimeMs !== stat.mtimeMs || after.ctimeMs !== stat.ctimeMs
+      || final.dev !== stat.dev || final.ino !== stat.ino || bytes.length !== stat.size
+      || (await validatePhysicalScope(root, target, true)).length) {
+      throw new Error(`evidence changed during read: ${target}`);
+    }
+    return { ...result, bytes, fingerprint: `sha256:${sha256(bytes)}` };
+  } finally {
+    await handle.close();
+  }
+}
+
+async function validateSourceBoundEvidence(fixture, ledger, options, errors) {
+  const grounding = new Map();
+  const audit = [];
+  const binding = options.sourceBinding;
+  try {
+    if (!isObject(binding) || typeof binding.repositoryRoot !== 'string'
+      || binding.fixtureDigest !== digestProposal(fixture) || !isObject(binding.identity)
+      || !Array.isArray(binding.sources)
+      || ['initialRoot', 'proposalRoot'].some((field) => typeof options[field] !== 'string')) {
+      throw new Error('source-bound mode requires a controller-bound original fixture, identity, sources and initial/proposal roots');
+    }
+    const original = await lstat(binding.repositoryRoot);
+    if (!original.isDirectory() || original.isSymbolicLink()
+      || original.dev !== binding.identity.dev || original.ino !== binding.identity.ino) {
+      throw new Error('original fixture repository identity changed');
+    }
+    const declared = new Map(fixture.evidence.map((entry) => [entry.id, entry]));
+    const ids = uniqueIds(binding.sources, 'id', errors, 'source binding');
+    if (ids.size !== declared.size || [...ids].some((id) => !declared.has(id))) throw new Error('source binding must cover exactly the declared evidence');
+    const sources = new Map(binding.sources.map((entry) => [entry.id, entry]));
+    for (const record of ledger) {
+      const expected = declared.get(record.id);
+      if (!expected) continue;
+      try {
+        const source = sources.get(record.id);
+        const citation = record.sourceCitation;
+        const presenceOnly = expected.sourceLocation === 'presence'
+          || expected.sourcePath.split('/').some((part) => part.toLowerCase().startsWith('.env'));
+        if (!isObject(source) || !isObject(citation)) throw new Error('missing original source binding or actor citation');
+        const readContents = source.type === 'file' && !presenceOnly;
+        const physical = await inspectEvidenceSource(binding.repositoryRoot, expected.sourcePath, readContents);
+        if (source.type !== physical.type || (physical.type !== 'missing'
+          && ['dev', 'ino', 'mode'].some((field) => source[field] !== physical[field]))) {
+          throw new Error('original evidence entry identity/type/mode changed');
+        }
+        if (readContents && (!/^sha256:[a-f0-9]{64}$/.test(source.fingerprint ?? '') || source.fingerprint !== physical.fingerprint)) {
+          throw new Error('original evidence bytes changed after controller binding');
+        }
+        for (const root of [options.initialRoot, options.proposalRoot]) {
+          const copy = await inspectEvidenceSource(root, expected.sourcePath, readContents);
+          if (copy.type !== physical.type || copy.mode !== physical.mode || (readContents && copy.fingerprint !== physical.fingerprint)) {
+            throw new Error('initial/proposal evidence does not match the original source');
+          }
+        }
+        if (!readContents) {
+          if (citation.kind !== 'presence' || citation.type !== physical.type
+            || Object.keys(citation).sort().join(',') !== 'kind,type'
+            || Object.hasOwn(source, 'fingerprint')) throw new Error('metadata-only evidence must use a presence citation without content');
+          grounding.set(record.id, '');
+          audit.push({ id: record.id, sourcePath: expected.sourcePath, sourceLocation: expected.sourceLocation, type: physical.type, presenceOnly: true });
+          continue;
+        }
+        if (citation.kind !== 'bytes' || Object.keys(citation).sort().join(',') !== 'end,kind,quote,start'
+          || !Number.isSafeInteger(citation.start) || !Number.isSafeInteger(citation.end)
+          || citation.start < 0 || citation.end <= citation.start || citation.end > physical.bytes.length
+          || citation.end - citation.start > 64 * 1024 || typeof citation.quote !== 'string'
+          || !physical.bytes.subarray(citation.start, citation.end).equals(Buffer.from(citation.quote, 'utf8'))
+          || new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(physical.bytes.subarray(citation.start, citation.end)) !== citation.quote) {
+          throw new Error('citation must quote an exact bounded UTF-8 byte range from the original evidence');
+        }
+        let groundedText = citation.quote;
+        if (path.posix.basename(expected.sourcePath) === 'package.json' && expected.sourceLocation.startsWith('scripts.')) {
+          const manifest = JSON.parse(physical.bytes.toString('utf8'));
+          const name = expected.sourceLocation.slice('scripts.'.length);
+          const command = manifest.scripts?.[name];
+          const manager = typeof manifest.packageManager === 'string' ? manifest.packageManager.split('@')[0] : 'npm';
+          if (/^[a-zA-Z0-9][a-zA-Z0-9:_-]{0,127}$/.test(name) && typeof command === 'string'
+            && ['npm', 'pnpm', 'yarn'].includes(manager)) {
+            const tokens = [...citation.quote.matchAll(/"(?:[^"\\]|\\(?:["\\/bfnrt]|u[a-fA-F0-9]{4}))*"/g)]
+              .map((match) => JSON.parse(match[0]));
+            if (tokens.some((token, index) => token === name && tokens[index + 1] === command)) {
+              groundedText += `\n${command}\n${manager} run ${name}`;
+            }
+          }
+        }
+        grounding.set(record.id, groundedText);
+        audit.push({ id: record.id, sourcePath: expected.sourcePath, sourceLocation: expected.sourceLocation, type: 'file',
+          fingerprint: physical.fingerprint, start: citation.start, end: citation.end });
+      } catch (cause) {
+        error(errors, 'SOURCE_BINDING', `${record.id}: ${cause.message}`);
+      }
+    }
+    const final = await lstat(binding.repositoryRoot);
+    if (final.dev !== original.dev || final.ino !== original.ino) throw new Error('original source root changed during validation');
+  } catch (cause) {
+    error(errors, 'SOURCE_BINDING', cause.message);
+  }
+  return { grounding, audit };
+}
+
+function validateEvidenceLedger(fixture, run, errors, sourceBound = false) {
   const fixtureEvidenceById = new Map(fixture.evidence.map((record) => [record.id, record]));
   const ledger = Array.isArray(run.evidenceLedger) ? run.evidenceLedger : [];
   const ledgerIds = uniqueIds(ledger, 'id', errors, 'evidence ledger');
@@ -562,7 +701,9 @@ function validateEvidenceLedger(fixture, run, errors) {
       continue;
     }
     for (const field of ['fact', 'sourcePath', 'sourceLocation', 'observation', 'whyItMatters']) {
-      if (record[field] !== fixtureEvidenceById.get(record.id)[field]) {
+      if (sourceBound && ['fact', 'observation', 'whyItMatters'].includes(field)) {
+        if (typeof record[field] !== 'string' || !record[field].trim()) error(errors, 'EVIDENCE', `ledger record ${record.id} lacks independent ${field}`);
+      } else if (record[field] !== fixtureEvidenceById.get(record.id)[field]) {
         error(errors, 'EVIDENCE', `ledger record ${record.id} changed fixture ${field}`);
       }
     }
@@ -580,7 +721,7 @@ function validateEvidenceLedger(fixture, run, errors) {
   return { fixtureEvidenceById, ledgerIds, ledger };
 }
 
-function validatePhaseEvents(fixture, run, errors) {
+function validatePhaseEvents(fixture, run, errors, groundingLedger = run.evidenceLedger) {
   const events = Array.isArray(run.events) ? run.events : [];
   if (events.length === 0) {
     error(errors, 'PHASE_ORDER', 'run must contain ordered phase events');
@@ -693,7 +834,7 @@ function validatePhaseEvents(fixture, run, errors) {
       .map((item) => [item.name, item]),
   );
   const candidates = skills?.candidates ?? [];
-  const ledgerById = new Map((run.evidenceLedger ?? []).map((record) => [record.id, record]));
+  const ledgerById = new Map((groundingLedger ?? []).map((record) => [record.id, record]));
   const seenCandidateNames = new Set();
   for (const candidate of candidates) {
     const label = `Skill ${candidate?.name ?? '<unknown>'}`;
@@ -1242,9 +1383,17 @@ export async function evaluateRunRecord(fixture, run, options = {}) {
     error(errors, 'CLAIM_BOUNDARY', 'local evaluator accepts only recorded-contract artifacts');
   }
 
-  const evidenceState = validateEvidenceLedger(fixture, run, errors);
-  const phase = validatePhaseEvents(fixture, run, errors);
-  validateFactsAgainstEvidence(phase.profile, evidenceState.ledger, errors);
+  const sourceBound = options.evidenceMode === 'source-bound';
+  if (options.evidenceMode !== undefined && !['fixture-exact', 'source-bound'].includes(options.evidenceMode)) {
+    error(errors, 'SOURCE_BINDING', `unsupported evidence mode: ${options.evidenceMode}`);
+  }
+  const evidenceState = validateEvidenceLedger(fixture, run, errors, sourceBound);
+  const sourceEvidence = sourceBound ? await validateSourceBoundEvidence(fixture, evidenceState.ledger, options, errors) : null;
+  const groundingLedger = sourceBound
+    ? evidenceState.ledger.map((record) => ({ ...record, observation: sourceEvidence.grounding.get(record.id) ?? '' }))
+    : evidenceState.ledger;
+  const phase = validatePhaseEvents(fixture, run, errors, groundingLedger);
+  validateFactsAgainstEvidence(phase.profile, groundingLedger, errors);
   const approvalState = validateApprovalAndWrites(fixture, run, phase, evidenceState.ledgerIds, errors);
 
   let physicalFileStates = null;
@@ -1306,6 +1455,7 @@ export async function evaluateRunRecord(fixture, run, options = {}) {
   return {
     ok: errors.length === 0,
     errors,
+    ...(sourceBound ? { sourceEvidenceAudit: sourceEvidence.audit } : {}),
     claims: {
       localContractValidated: errors.length === 0,
       recordedArtifactValidated: errors.length === 0,

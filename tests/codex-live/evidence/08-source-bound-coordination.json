@@ -1,0 +1,621 @@
+{
+  "schemaVersion": 1,
+  "kind": "ticket08-serial-source-bound-coordination",
+  "synthetic": true,
+  "sessionDate": "2026-10-03",
+  "baseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+  "scopeException": "Explicit approved plan: only evaluation-harness.js and fixture-oracles.test.js as an independent serial coordination repair; no other shared interface/corpus/fixture change",
+  "claims": {
+    "defaultExactContractRetained": true,
+    "sourceBoundPhysicalCitationsVerified": true,
+    "arbitraryNarrationSemanticsProven": false,
+    "nativeExecution": false,
+    "liveEndToEnd": false,
+    "ticket08Complete": false,
+    "qualification": false
+  },
+  "sourceHashes": {
+    "tests/agent-init/evaluation-harness.js": "d3cb83cb82ef672cd3c719558b5479a9cb2ac160931d5b7d88a8624abb8077af",
+    "tests/agent-init/fixture-oracles.test.js": "961d9d146f121656744eded84dff29af4fee95c2d12f718abb261e5834f7d318"
+  },
+  "tests": {
+    "records": [
+      {
+        "label": "source-backslash-green",
+        "exitCode": 0,
+        "ownedChildPid": 22046,
+        "elapsedSeconds": 0.224532,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 235,
+        "stdoutSha256": "sha256:de0497eb948a41a181dbee83f77fb7be232c8451408789963ec7b83148ade190",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-backslash-red",
+        "exitCode": 1,
+        "ownedChildPid": 21643,
+        "elapsedSeconds": 0.233428,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 1347,
+        "stdoutSha256": "sha256:4dc160df3b86dff29c00c647071074feb16b558a7dd353fee5a430799bf9661f",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 1,
+          "pass": 0,
+          "fail": 1,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-bom-green",
+        "exitCode": 0,
+        "ownedChildPid": 37111,
+        "elapsedSeconds": 0.248001,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 315,
+        "stdoutSha256": "sha256:ca63ca7ff2beaa0f2218316027b1674bc44bd60f044c62b23a0f156869cfbc71",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 2,
+          "pass": 2,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-bom-red",
+        "exitCode": 1,
+        "ownedChildPid": 36277,
+        "elapsedSeconds": 0.261952,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 1355,
+        "stdoutSha256": "sha256:0764bb413c11d49728a7786d9e485697c0724f7e57338e7ff3ff1d56bb6dd096",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 1,
+          "pass": 0,
+          "fail": 1,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-escaped-command-green",
+        "exitCode": 0,
+        "ownedChildPid": 22527,
+        "elapsedSeconds": 0.276277,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 404,
+        "stdoutSha256": "sha256:9c62c5f5dc6de5b755a2cf5797985384e0047de992c7adfd5c8c088d6fd58c09",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 3,
+          "pass": 3,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-escaped-command-red",
+        "exitCode": 1,
+        "ownedChildPid": 22464,
+        "elapsedSeconds": 0.230844,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 1455,
+        "stdoutSha256": "sha256:e10e9498de719336e58175df2334e9f3c6a4d39d5c8d3cb527d66a0a89417a42",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 1,
+          "pass": 0,
+          "fail": 1,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-fixtures-green",
+        "exitCode": 0,
+        "ownedChildPid": 17716,
+        "elapsedSeconds": 1.187933,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 4901,
+        "stdoutSha256": "sha256:c751ada8ee88cac48adb205fa431ff0b08ec0ae78e0d014211abe10173f2434a",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 73,
+          "pass": 73,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-fixtures-regression",
+        "exitCode": 1,
+        "ownedChildPid": 17393,
+        "elapsedSeconds": 1.218787,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 6028,
+        "stdoutSha256": "sha256:50c914aeca1f15f809b2f7b55c136a76ef30fa1a5044c746169e15554e748b9c",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 73,
+          "pass": 71,
+          "fail": 2,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-guards-regression",
+        "exitCode": 1,
+        "ownedChildPid": 17302,
+        "elapsedSeconds": 0.458701,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 2278,
+        "stdoutSha256": "sha256:c2e213e6e2da9729064899e6beb9214ab14b01dc7e463b44bfc272f7531b1fa2",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 22,
+          "pass": 20,
+          "fail": 2,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-json-spelling-green",
+        "exitCode": 0,
+        "ownedChildPid": 37311,
+        "elapsedSeconds": 0.315371,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 686,
+        "stdoutSha256": "sha256:71d7be02beb7bea83161a88e74633d1f1444b6b88830db0c9136a9904316bc9b",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 7,
+          "pass": 7,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-json-spelling-red",
+        "exitCode": 1,
+        "ownedChildPid": 37264,
+        "elapsedSeconds": 0.264944,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 4071,
+        "stdoutSha256": "sha256:b72587dab3b269cfddf8f953f5e8afd1099b0ffd66419fa95a07aa81ae8e4739",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 4,
+          "pass": 0,
+          "fail": 4,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-ledger-green",
+        "exitCode": 0,
+        "ownedChildPid": 17148,
+        "elapsedSeconds": 0.227987,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 219,
+        "stdoutSha256": "sha256:d0d5b46475b2f527e4ad2225450c1fbb14036e14c2f1c7b71394d5c09deec302",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-ledger-red-reaped",
+        "exitCode": 1,
+        "ownedChildPid": 16948,
+        "elapsedSeconds": 0.225717,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 1483,
+        "stdoutSha256": "sha256:9f709741b0d58da0baba8f2cbeb06c8673245832ddb7f62321460d42a947cb9c",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 1,
+          "pass": 0,
+          "fail": 1,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-physical-regression",
+        "exitCode": 0,
+        "ownedChildPid": 17828,
+        "elapsedSeconds": 1.282609,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 5456,
+        "stdoutSha256": "sha256:f92bf7928ee1f39eae2ec4e1bd088bedbfc3c971f6243fa0c4fc793faa144862",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 82,
+          "pass": 82,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-review-fixes-regression",
+        "exitCode": 0,
+        "ownedChildPid": 22758,
+        "elapsedSeconds": 1.408808,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 6007,
+        "stdoutSha256": "sha256:879b722a4f406654a0bdfcf569347f15d8339673b4bf5f234761c821ccafcfc6",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 89,
+          "pass": 89,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-shared-final-suite",
+        "exitCode": 0,
+        "ownedChildPid": 23948,
+        "elapsedSeconds": 88.150972,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 49990,
+        "stdoutSha256": "sha256:68b95fd8434319152d95d6d58a80126136e5881e71c6d18e1b9fc8dd8530defb",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 663,
+          "pass": 661,
+          "fail": 0,
+          "skipped": 2
+        }
+      },
+      {
+        "label": "source-shared-full-suite",
+        "exitCode": 0,
+        "ownedChildPid": 17927,
+        "elapsedSeconds": 89.16533,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 49277,
+        "stdoutSha256": "sha256:c57c1140b81e5af5b646cbd9e673f7981c52d90a39e54857b975ed7721a1def6",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 655,
+          "pass": 653,
+          "fail": 0,
+          "skipped": 2
+        }
+      },
+      {
+        "label": "source-shared-review-final-suite",
+        "exitCode": 0,
+        "ownedChildPid": 37385,
+        "elapsedSeconds": 88.763019,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 50376,
+        "stdoutSha256": "sha256:aefd3b3558f6e38eddafd75c0e7e76697e94ba735d5eb217690e20e6b75357c0",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 668,
+          "pass": 666,
+          "fail": 0,
+          "skipped": 2
+        }
+      },
+      {
+        "label": "source-size-existing-regression",
+        "exitCode": 0,
+        "ownedChildPid": 22262,
+        "elapsedSeconds": 0.240339,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 188,
+        "stdoutSha256": "sha256:21f55ee8bca1e67049232b774f51f556364b0d9ff7e2d78ce6c77527f745460e",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-surrogate-green",
+        "exitCode": 0,
+        "ownedChildPid": 23114,
+        "elapsedSeconds": 0.250996,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 330,
+        "stdoutSha256": "sha256:3e0b300c35847ee144c44b46dba4fd293d1f40b4fe40fbfbfeb2ccde03f0e814",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 2,
+          "pass": 2,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "source-surrogate-red",
+        "exitCode": 1,
+        "ownedChildPid": 23071,
+        "elapsedSeconds": 0.228447,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 1345,
+        "stdoutSha256": "sha256:cf19d79382bcb2fa4919509a9c37795b4f815feb0fb17c5bfc17585a976d73f9",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "counts": {
+          "tests": 1,
+          "pass": 0,
+          "fail": 1,
+          "skipped": 0
+        }
+      }
+    ],
+    "verifiedStreamDigests": 42,
+    "finalSuite": {
+      "label": "source-shared-review-final-suite",
+      "exitCode": 0,
+      "ownedChildPid": 37385,
+      "elapsedSeconds": 88.763019,
+      "timedOut": false,
+      "truncated": false,
+      "processGroupConfirmedAbsent": true,
+      "supervisionErrors": [],
+      "stdoutBytes": 50376,
+      "stdoutSha256": "sha256:aefd3b3558f6e38eddafd75c0e7e76697e94ba735d5eb217690e20e6b75357c0",
+      "stderrBytes": 0,
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "counts": {
+        "tests": 668,
+        "pass": 666,
+        "fail": 0,
+        "skipped": 2
+      }
+    },
+    "redGreen": [
+      "source-ledger-red-reaped/source-ledger-green",
+      "source-backslash-red/source-backslash-green",
+      "source-escaped-command-red/source-escaped-command-green",
+      "source-surrogate-red/source-surrogate-green",
+      "source-bom-red/source-bom-green",
+      "source-json-spelling-red/source-json-spelling-green"
+    ],
+    "limits": [
+      "Oversized-file rejection is an already-green regression; concurrent growth actual-read budget is statically checked, not forced dynamically.",
+      "First test wrapper exited before receipt due to an unreaped-child killpg EPERM; subsequent wrapper polls/reaps before probe. The first capture/PID was not recovered, so no verified receipt or cleanup claim is made for that wrapper.",
+      "One mutation test first asserted EVIDENCE rather than the actual unchanged EVIDENCE_RELEVANCE code; only its expected code was corrected.",
+      "Source-fixture first sweep exposed physically implied npm script invocation; deterministic script grounding was added from actual package.json, not oracle prose."
+    ]
+  },
+  "review": {
+    "standardsRemainingFindings": 0,
+    "specRemainingFindings": 0,
+    "method": "two-axis static source review plus narrow fixes rechecked at exact final hashes",
+    "reviewersExecutedTests": false,
+    "reviewApiRetry": "Final Standards recheck initially lost API stream; resumed same bounded check and received actual completed report."
+  },
+  "preservedCodexAndHistoricalFiles": [
+    {
+      "path": ".scratch/v0.1.3/issues/08-codex-live-acceptance.md",
+      "bytes": 55425,
+      "sha256": "5bf6c577f77340125ad7514b18570db4f4202cb6268dca257984eb6e6805b847",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/app-server.js",
+      "bytes": 13682,
+      "sha256": "a2de07fb77df49fa0b23fe0e932ff699f177024dc5164e0c9a0590f228003665",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/evidence/08-blocked-preflight.json",
+      "bytes": 7464,
+      "sha256": "b64133e67510dd4355b4a384fafd34480e7932ca76ab2d8decc8b7e3db048e2c",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/evidence/08-native-preparation-regression.json",
+      "bytes": 25044,
+      "sha256": "3b8b975257a6c6032fad34b1ee07e8c8dba5f634f5450fce8e6cb85cf4af5828",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/evidence/08-offline-native-wire-diagnostic.json",
+      "bytes": 15242,
+      "sha256": "7a42f0a4513dae086d84e1a4f9010aca4e122b4a44cdc189b40867a4b5559b9d",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/evidence/08-owned-sandbox-abort-diagnostic.json",
+      "bytes": 32991,
+      "sha256": "dc3ee805643800cd0964fd606f93423e9e41be80778481b88e5af53c5ff22452",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/evidence/08-synthetic-implementation-regression.json",
+      "bytes": 232275,
+      "sha256": "09ebbedce922c3cd36a431e7130a28416bd83fa883dfd803545c1d5ad33a7678",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/machine-record.js",
+      "bytes": 5983,
+      "sha256": "2f6e820024af8d14e80e316fb3ef7f8b4fbdf2558cd22dd368a73196a9003784",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/owned-runtime.js",
+      "bytes": 16958,
+      "sha256": "720d6c7c20eaf266f18ff86363ddfc32c337f309ca78166739677dddc8e30380",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/owned-runtime.test.js",
+      "bytes": 12691,
+      "sha256": "dfaa179465531da3c564b8366e436e9a898734ffebf054eb673a00d1fb2035e4",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/parser.js",
+      "bytes": 6760,
+      "sha256": "1e08f8a215faebd480d7943b018a5ace1c7bb6aca8507853a3b7390bae651b38",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/parser.test.js",
+      "bytes": 6049,
+      "sha256": "382060ab7fad730e4a6fe5a447ae97e7f9ca653b6a02fc979025bcc7eb3dcac2",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/process-ownership.js",
+      "bytes": 687,
+      "sha256": "f57bbdea2f675c5128807757b3c7335599083f654a870f96354b59b506ea90ee",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/protocol.test.js",
+      "bytes": 8405,
+      "sha256": "b5336b9cab373965c617ca0141d05845d363b0aaa740338e58b3d9197251a1dc",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/runner.js",
+      "bytes": 27980,
+      "sha256": "92c214142738125e753dd37495cdd772bbc21577801ba04b53715d4d287e8cef",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/runner.test.js",
+      "bytes": 29379,
+      "sha256": "77aa7da1084e9881164a8518d7e2a638ea08a59f027ea0bbb662f393bb697595",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/support/synthetic-app-server.mjs",
+      "bytes": 9047,
+      "sha256": "d9e81a419c48740aa96ce39e1ca134ba30dcaeeb1bf93a7abc03ac9470c4c09b",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/support/synthetic-scenarios.js",
+      "bytes": 8607,
+      "sha256": "2d3002a60f49cc209dab1838557a4fa0fcf07e277daf84f994b79e4daa936c9f",
+      "mode": 420
+    }
+  ],
+  "authorization": {
+    "nativeOrModelCalls": 0,
+    "sandboxAttempts": 0,
+    "accountAuthCalls": 0,
+    "userHomeCopied": false,
+    "nextTicketStarted": false
+  },
+  "cleanup": {
+    "status": "shared-owned-root-retained-for-approved-ticket08-integration",
+    "removed": false,
+    "firstWrapperAbsenceNotAttested": true
+  },
+  "publication": {
+    "staged": false,
+    "committed": false,
+    "pushed": false,
+    "merged": false,
+    "ciOperation": false
+  },
+  "semanticLimits": [
+    "Free narration entailment/relevance, workflow and KEEP/SKIP judgement require independent review of original citations and complete Proposal before actual human approval.",
+    "Symbolic source locations remain declared labels, not generic natural-language/XML interpretation.",
+    "Source-bound mode remains recorded-contract and all local consumer live-proof flags remain false."
+  ]
+}

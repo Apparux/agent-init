@@ -1,0 +1,498 @@
+{
+  "schemaVersion": 1,
+  "kind": "codex-ticket-08-owned-sandbox-abort-diagnostic",
+  "recordedAt": "2026-10-02T09:18:57.490317Z",
+  "baseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+  "harness": "codex",
+  "harnessVersion": null,
+  "scope": {
+    "diagnosticOnly": true,
+    "runnerImplemented": false,
+    "nativeCodexExecutions": 0,
+    "nativeTurns": 0,
+    "realCodexModelRequests": 0,
+    "loginCalls": 0,
+    "accountCalls": 0,
+    "applyCalls": 0,
+    "diagnosticNetworkClientRequests": 0,
+    "listenerInstances": 0,
+    "gitPublicationExecuted": false
+  },
+  "existingOwnedContentsPreservedBeforeAppend": [
+    {
+      "path": ".scratch/v0.1.3/issues/08-codex-live-acceptance.md",
+      "sha256": "0aabd6a7f11876eb3af7cb60d01d0b7d37f9a08fd282525004008858fe7942ee",
+      "bytes": 26161
+    },
+    {
+      "path": "tests/codex-live/evidence/08-blocked-preflight.json",
+      "sha256": "b64133e67510dd4355b4a384fafd34480e7932ca76ab2d8decc8b7e3db048e2c",
+      "bytes": 7464
+    },
+    {
+      "path": "tests/codex-live/evidence/08-offline-native-wire-diagnostic.json",
+      "sha256": "7a42f0a4513dae086d84e1a4f9010aca4e122b4a44cdc189b40867a4b5559b9d",
+      "bytes": 15242
+    }
+  ],
+  "budget": {
+    "previousSameProblemSandboxAttempts": 1,
+    "thisPhaseSandboxAttemptLimit": 2,
+    "thisPhaseSandboxAttempts": 2,
+    "cumulativeSameProblemSandboxAttempts": 3,
+    "cumulativeSameProblemLimit": 3,
+    "childCommands": 3,
+    "childCommandLimit": 4,
+    "secondsPerCommandLimit": 10,
+    "experimentAndCleanupSecondsLimit": 240,
+    "bytesPerStreamLimit": 65536,
+    "captureBytesLimit": 262144,
+    "capturedBytes": 137
+  },
+  "programDigests": {
+    "sandbox-exec": "sha256:58839ef01b4eef8aac0d2aa8f9d1c074ae45aafe3533965b030672450064acc8",
+    "printf": "sha256:e58a03fdaa8f8016ed4ab361ae24aa41067bf729085b231cb22412e31a7bd846",
+    "python": "sha256:6e7ae61f68a3838094fc56590f84c52069a97d7816f6bb79e0e85995b340e464"
+  },
+  "controllerSha256": "sha256:ec1efbf41b5bb94cc29f23be9d2403e20d44b3abeaea846b74b752de8f0ba4f5",
+  "normalizedRoleAliases": {
+    "$ANCESTOR_METADATA_27": {
+      "role": "system-zoneinfo",
+      "uses": [
+        { "operation": "file-read*", "match": "subpath" },
+        { "operation": "file-read-metadata", "match": "literal" }
+      ],
+      "appliesTo": ["S1 profile and argv", "S2 profile and argv"],
+      "note": "The same canonical runtime target also received an ancestor metadata label. Its recorded label and normalized hashes are preserved; each rule's operation and match determine scope, not the label. This mapping adds no permission or runtime observation."
+    }
+  },
+  "profiles": [
+    {
+      "role": "S1",
+      "kind": "valid-derived-intent",
+      "rawSha256": "sha256:2a57de22c62b4dedb4d2928c37612f7fb9c2709af752682fd25e146f5b5e9bc5",
+      "normalizedSha256": "sha256:c2a3ac82d032eaa233ebbbe3853ff826eb933caec52d7e9279f75bf0b124b86c",
+      "normalizedText": "(version 1)\n(deny default)\n(allow process-exec)\n(allow process-fork)\n(allow signal (target same-sandbox))\n(allow process-info* (target same-sandbox))\n(allow file-read* (subpath \"$CASE_S1_INPUT\"))\n(allow file-read* file-write* (subpath \"$CASE_S1_STATE\"))\n(deny system-fcntl (fcntl-command 80 110))\n(allow file-read* (subpath \"$RUNTIME_BIN\"))\n(allow file-read* (subpath \"$RUNTIME_USR_BIN\"))\n(allow file-read* (subpath \"$RUNTIME_USR_LIB\"))\n(allow file-read* (subpath \"$RUNTIME_SYSTEM_FRAMEWORKS\"))\n(allow file-read* (subpath \"$RUNTIME_SYSTEM_PRIVATE_FRAMEWORKS\"))\n(allow file-read* (subpath \"$RUNTIME_CLT_PYTHON_FRAMEWORK\"))\n(allow file-read* (subpath \"$RUNTIME_SYSTEM_LOCALE\"))\n(allow file-read* (subpath \"$ANCESTOR_METADATA_27\"))\n(allow file-read* (literal \"$FIXED_SYSTEM_VERSION\"))\n(allow file-read* (literal \"$FIXED_LOCALTIME\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_00\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_01\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_02\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_03\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_04\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_05\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_06\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_07\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_08\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_09\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_10\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_11\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_12\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_13\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_14\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_15\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_16\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_17\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_18\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_19\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_20\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_21\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_22\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_23\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_24\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_25\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_26\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_27\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_28\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_29\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_30\"))\n(allow file-read* (literal \"$DEVICE_NULL\"))\n(allow file-read* (literal \"$DEVICE_URANDOM\"))\n(allow file-read* (literal \"$DEVICE_RANDOM\"))\n(allow file-write-data (require-all (path \"$DEVICE_NULL\") (vnode-type CHARACTER-DEVICE)))\n(allow sysctl-read (sysctl-name \"hw.ncpu\"))\n(allow sysctl-read (sysctl-name \"hw.activecpu\"))\n(allow sysctl-read (sysctl-name \"hw.pagesize\"))\n(allow sysctl-read (sysctl-name \"hw.logicalcpu\"))\n(allow sysctl-read (sysctl-name \"hw.logicalcpu_max\"))\n(allow sysctl-read (sysctl-name \"hw.physicalcpu\"))\n(allow sysctl-read (sysctl-name \"hw.physicalcpu_max\"))\n(allow sysctl-read (sysctl-name \"hw.memsize\"))\n(allow sysctl-read (sysctl-name \"kern.osrelease\"))\n(allow sysctl-read (sysctl-name \"kern.ostype\"))\n(allow sysctl-read (sysctl-name \"kern.osversion\"))\n(allow sysctl-read (sysctl-name \"kern.osproductversion\"))\n",
+      "ruleLedger": [
+        {
+          "operation": "default",
+          "effect": "deny"
+        },
+        {
+          "operation": "process-exec/process-fork",
+          "basis": "same recorded processRules"
+        },
+        {
+          "operation": "signal/process-info*",
+          "scope": "same-sandbox",
+          "basis": "same recorded processRules"
+        },
+        {
+          "operation": "file-read*",
+          "match": "subpath",
+          "role": "fresh-owned-input",
+          "basis": "new owned path explicitly approved"
+        },
+        {
+          "operation": "file-read*/file-write*",
+          "match": "subpath",
+          "role": "fresh-owned-state",
+          "basis": "new owned path explicitly approved"
+        },
+        {
+          "operation": "system-fcntl",
+          "effect": "deny",
+          "commands": [
+            80,
+            110
+          ],
+          "basis": "same recorded fcntl deny"
+        },
+        {
+          "operation": "file-read*",
+          "match": "subpath",
+          "role": "bin",
+          "basis": "previous recorded recursiveReadRootRoles; canonical fixed local runtime target"
+        },
+        {
+          "operation": "file-read*",
+          "match": "subpath",
+          "role": "usr-bin",
+          "basis": "previous recorded recursiveReadRootRoles; canonical fixed local runtime target"
+        },
+        {
+          "operation": "file-read*",
+          "match": "subpath",
+          "role": "usr-lib",
+          "basis": "previous recorded recursiveReadRootRoles; canonical fixed local runtime target"
+        },
+        {
+          "operation": "file-read*",
+          "match": "subpath",
+          "role": "system-frameworks",
+          "basis": "previous recorded recursiveReadRootRoles; canonical fixed local runtime target"
+        },
+        {
+          "operation": "file-read*",
+          "match": "subpath",
+          "role": "system-private-frameworks",
+          "basis": "previous recorded recursiveReadRootRoles; canonical fixed local runtime target"
+        },
+        {
+          "operation": "file-read*",
+          "match": "subpath",
+          "role": "clt-python-framework",
+          "basis": "previous recorded recursiveReadRootRoles; canonical fixed local runtime target"
+        },
+        {
+          "operation": "file-read*",
+          "match": "subpath",
+          "role": "system-locale",
+          "basis": "previous recorded recursiveReadRootRoles; canonical fixed local runtime target"
+        },
+        {
+          "operation": "file-read*",
+          "match": "subpath",
+          "role": "system-zoneinfo",
+          "basis": "previous recorded recursiveReadRootRoles; canonical fixed local runtime target"
+        },
+        {
+          "operation": "file-read*",
+          "match": "literal",
+          "role": "system-version",
+          "basis": "previous recorded fixedReadFileRoles"
+        },
+        {
+          "operation": "file-read*",
+          "match": "literal",
+          "role": "localtime",
+          "basis": "previous recorded fixedReadFileRoles"
+        },
+        {
+          "operation": "file-read-metadata",
+          "match": "literal only",
+          "scope": "ancestors of approved owned/runtime targets",
+          "count": 31,
+          "basis": "same narrow ancestor metadata intent, not recursive data access"
+        },
+        {
+          "operation": "fixed-device read / null-character-device write-data",
+          "basis": "same devices and null CHARACTER-DEVICE guard in previously captured policy"
+        },
+        {
+          "operation": "sysctl-read",
+          "fields": [
+            "hw.ncpu",
+            "hw.activecpu",
+            "hw.pagesize",
+            "hw.logicalcpu",
+            "hw.logicalcpu_max",
+            "hw.physicalcpu",
+            "hw.physicalcpu_max",
+            "hw.memsize",
+            "kern.osrelease",
+            "kern.ostype",
+            "kern.osversion",
+            "kern.osproductversion"
+          ],
+          "basis": "exact previously recorded field list"
+        }
+      ],
+      "oldRawByteEquivalenceClaimed": false
+    },
+    {
+      "role": "S2",
+      "kind": "deliberately-unbalanced-mutant",
+      "rawSha256": "sha256:4c2c97dc9077eaebebe9d07f10d9ac9ef575cd46e464047ddcb14301b0a27e34",
+      "normalizedSha256": "sha256:5a797b80d1580742cf32ad32f1c4acd8db9aec0556f0fe99dd8e3a6982cfb6b9",
+      "normalizedText": "(version 1)\n(deny default)\n(allow process-exec)\n(allow process-fork)\n(allow signal (target same-sandbox))\n(allow process-info* (target same-sandbox))\n(allow file-read* (subpath \"$CASE_S1_INPUT\"))\n(allow file-read* file-write* (subpath \"$CASE_S1_STATE\"))\n(deny system-fcntl (fcntl-command 80 110))\n(allow file-read* (subpath \"$RUNTIME_BIN\"))\n(allow file-read* (subpath \"$RUNTIME_USR_BIN\"))\n(allow file-read* (subpath \"$RUNTIME_USR_LIB\"))\n(allow file-read* (subpath \"$RUNTIME_SYSTEM_FRAMEWORKS\"))\n(allow file-read* (subpath \"$RUNTIME_SYSTEM_PRIVATE_FRAMEWORKS\"))\n(allow file-read* (subpath \"$RUNTIME_CLT_PYTHON_FRAMEWORK\"))\n(allow file-read* (subpath \"$RUNTIME_SYSTEM_LOCALE\"))\n(allow file-read* (subpath \"$ANCESTOR_METADATA_27\"))\n(allow file-read* (literal \"$FIXED_SYSTEM_VERSION\"))\n(allow file-read* (literal \"$FIXED_LOCALTIME\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_00\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_01\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_02\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_03\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_04\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_05\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_06\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_07\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_08\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_09\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_10\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_11\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_12\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_13\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_14\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_15\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_16\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_17\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_18\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_19\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_20\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_21\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_22\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_23\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_24\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_25\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_26\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_27\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_28\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_29\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_30\"))\n(allow file-read* (literal \"$DEVICE_NULL\"))\n(allow file-read* (literal \"$DEVICE_URANDOM\"))\n(allow file-read* (literal \"$DEVICE_RANDOM\"))\n(allow file-write-data (require-all (path \"$DEVICE_NULL\") (vnode-type CHARACTER-DEVICE)))\n(allow sysctl-read (sysctl-name \"hw.ncpu\"))\n(allow sysctl-read (sysctl-name \"hw.activecpu\"))\n(allow sysctl-read (sysctl-name \"hw.pagesize\"))\n(allow sysctl-read (sysctl-name \"hw.logicalcpu\"))\n(allow sysctl-read (sysctl-name \"hw.logicalcpu_max\"))\n(allow sysctl-read (sysctl-name \"hw.physicalcpu\"))\n(allow sysctl-read (sysctl-name \"hw.physicalcpu_max\"))\n(allow sysctl-read (sysctl-name \"hw.memsize\"))\n(allow sysctl-read (sysctl-name \"kern.osrelease\"))\n(allow sysctl-read (sysctl-name \"kern.ostype\"))\n(allow sysctl-read (sysctl-name \"kern.osversion\"))\n(allow sysctl-read (sysctl-name \"kern.osproductversion\"))\n(",
+      "sameS1PrefixPlusOneOpenParenthesis": true,
+      "notAValidPolicy": true
+    }
+  ],
+  "samples": [
+    {
+      "id": "C0",
+      "extraSandboxWrapper": false,
+      "argvNormalized": [
+        "$PROGRAM_PRINTF",
+        "%s\n",
+        "PUBLIC_PRINTF_ENTRY"
+      ],
+      "environmentKeys": [
+        "CODEX_HOME",
+        "HOME",
+        "LANG",
+        "LC_ALL",
+        "PATH",
+        "SHELL",
+        "TMPDIR",
+        "USERPROFILE",
+        "XDG_CACHE_HOME",
+        "XDG_CONFIG_HOME",
+        "XDG_DATA_HOME"
+      ],
+      "freshOwnedEnvironment": true,
+      "elapsedSeconds": 0.005168,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "truncated": false,
+      "streams": {
+        "stdout": {
+          "bytes": 20,
+          "rawSha256": "sha256:77c03c0230b7ded0e450f959497e2677b06c77033a5def61703f437c7accacee",
+          "normalizedText": "PUBLIC_PRINTF_ENTRY\n",
+          "normalizedSha256": "sha256:77c03c0230b7ded0e450f959497e2677b06c77033a5def61703f437c7accacee"
+        },
+        "stderr": {
+          "bytes": 0,
+          "rawSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "normalizedText": "",
+          "normalizedSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "expectedPublicMarker": "PUBLIC_PRINTF_ENTRY\n",
+      "markerObserved": true,
+      "processGroupOwned": true,
+      "processGroupConfirmedAbsent": true,
+      "childCoreLimitZero": true
+    },
+    {
+      "id": "S1",
+      "extraSandboxWrapper": true,
+      "argvNormalized": [
+        "$PROGRAM_SANDBOX_EXEC",
+        "-p",
+        "(version 1)\n(deny default)\n(allow process-exec)\n(allow process-fork)\n(allow signal (target same-sandbox))\n(allow process-info* (target same-sandbox))\n(allow file-read* (subpath \"$CASE_S1_INPUT\"))\n(allow file-read* file-write* (subpath \"$CASE_S1_STATE\"))\n(deny system-fcntl (fcntl-command 80 110))\n(allow file-read* (subpath \"$RUNTIME_BIN\"))\n(allow file-read* (subpath \"$RUNTIME_USR_BIN\"))\n(allow file-read* (subpath \"$RUNTIME_USR_LIB\"))\n(allow file-read* (subpath \"$RUNTIME_SYSTEM_FRAMEWORKS\"))\n(allow file-read* (subpath \"$RUNTIME_SYSTEM_PRIVATE_FRAMEWORKS\"))\n(allow file-read* (subpath \"$RUNTIME_CLT_PYTHON_FRAMEWORK\"))\n(allow file-read* (subpath \"$RUNTIME_SYSTEM_LOCALE\"))\n(allow file-read* (subpath \"$ANCESTOR_METADATA_27\"))\n(allow file-read* (literal \"$FIXED_SYSTEM_VERSION\"))\n(allow file-read* (literal \"$FIXED_LOCALTIME\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_00\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_01\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_02\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_03\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_04\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_05\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_06\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_07\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_08\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_09\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_10\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_11\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_12\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_13\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_14\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_15\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_16\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_17\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_18\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_19\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_20\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_21\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_22\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_23\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_24\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_25\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_26\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_27\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_28\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_29\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_30\"))\n(allow file-read* (literal \"$DEVICE_NULL\"))\n(allow file-read* (literal \"$DEVICE_URANDOM\"))\n(allow file-read* (literal \"$DEVICE_RANDOM\"))\n(allow file-write-data (require-all (path \"$DEVICE_NULL\") (vnode-type CHARACTER-DEVICE)))\n(allow sysctl-read (sysctl-name \"hw.ncpu\"))\n(allow sysctl-read (sysctl-name \"hw.activecpu\"))\n(allow sysctl-read (sysctl-name \"hw.pagesize\"))\n(allow sysctl-read (sysctl-name \"hw.logicalcpu\"))\n(allow sysctl-read (sysctl-name \"hw.logicalcpu_max\"))\n(allow sysctl-read (sysctl-name \"hw.physicalcpu\"))\n(allow sysctl-read (sysctl-name \"hw.physicalcpu_max\"))\n(allow sysctl-read (sysctl-name \"hw.memsize\"))\n(allow sysctl-read (sysctl-name \"kern.osrelease\"))\n(allow sysctl-read (sysctl-name \"kern.ostype\"))\n(allow sysctl-read (sysctl-name \"kern.osversion\"))\n(allow sysctl-read (sysctl-name \"kern.osproductversion\"))\n",
+        "$PROGRAM_PRINTF",
+        "%s\n",
+        "PUBLIC_PRINTF_ENTRY"
+      ],
+      "environmentKeys": [
+        "CODEX_HOME",
+        "HOME",
+        "LANG",
+        "LC_ALL",
+        "PATH",
+        "SHELL",
+        "TMPDIR",
+        "USERPROFILE",
+        "XDG_CACHE_HOME",
+        "XDG_CONFIG_HOME",
+        "XDG_DATA_HOME"
+      ],
+      "freshOwnedEnvironment": true,
+      "elapsedSeconds": 0.012761,
+      "exitCode": -6,
+      "signal": "SIGABRT",
+      "timedOut": false,
+      "truncated": false,
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "rawSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "normalizedText": "",
+          "normalizedSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "rawSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "normalizedText": "",
+          "normalizedSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "expectedPublicMarker": "PUBLIC_PRINTF_ENTRY\n",
+      "markerObserved": false,
+      "processGroupOwned": true,
+      "processGroupConfirmedAbsent": true,
+      "childCoreLimitZero": true
+    },
+    {
+      "id": "S2",
+      "extraSandboxWrapper": true,
+      "argvNormalized": [
+        "$PROGRAM_SANDBOX_EXEC",
+        "-p",
+        "(version 1)\n(deny default)\n(allow process-exec)\n(allow process-fork)\n(allow signal (target same-sandbox))\n(allow process-info* (target same-sandbox))\n(allow file-read* (subpath \"$CASE_S1_INPUT\"))\n(allow file-read* file-write* (subpath \"$CASE_S1_STATE\"))\n(deny system-fcntl (fcntl-command 80 110))\n(allow file-read* (subpath \"$RUNTIME_BIN\"))\n(allow file-read* (subpath \"$RUNTIME_USR_BIN\"))\n(allow file-read* (subpath \"$RUNTIME_USR_LIB\"))\n(allow file-read* (subpath \"$RUNTIME_SYSTEM_FRAMEWORKS\"))\n(allow file-read* (subpath \"$RUNTIME_SYSTEM_PRIVATE_FRAMEWORKS\"))\n(allow file-read* (subpath \"$RUNTIME_CLT_PYTHON_FRAMEWORK\"))\n(allow file-read* (subpath \"$RUNTIME_SYSTEM_LOCALE\"))\n(allow file-read* (subpath \"$ANCESTOR_METADATA_27\"))\n(allow file-read* (literal \"$FIXED_SYSTEM_VERSION\"))\n(allow file-read* (literal \"$FIXED_LOCALTIME\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_00\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_01\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_02\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_03\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_04\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_05\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_06\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_07\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_08\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_09\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_10\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_11\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_12\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_13\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_14\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_15\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_16\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_17\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_18\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_19\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_20\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_21\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_22\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_23\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_24\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_25\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_26\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_27\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_28\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_29\"))\n(allow file-read-metadata (literal \"$ANCESTOR_METADATA_30\"))\n(allow file-read* (literal \"$DEVICE_NULL\"))\n(allow file-read* (literal \"$DEVICE_URANDOM\"))\n(allow file-read* (literal \"$DEVICE_RANDOM\"))\n(allow file-write-data (require-all (path \"$DEVICE_NULL\") (vnode-type CHARACTER-DEVICE)))\n(allow sysctl-read (sysctl-name \"hw.ncpu\"))\n(allow sysctl-read (sysctl-name \"hw.activecpu\"))\n(allow sysctl-read (sysctl-name \"hw.pagesize\"))\n(allow sysctl-read (sysctl-name \"hw.logicalcpu\"))\n(allow sysctl-read (sysctl-name \"hw.logicalcpu_max\"))\n(allow sysctl-read (sysctl-name \"hw.physicalcpu\"))\n(allow sysctl-read (sysctl-name \"hw.physicalcpu_max\"))\n(allow sysctl-read (sysctl-name \"hw.memsize\"))\n(allow sysctl-read (sysctl-name \"kern.osrelease\"))\n(allow sysctl-read (sysctl-name \"kern.ostype\"))\n(allow sysctl-read (sysctl-name \"kern.osversion\"))\n(allow sysctl-read (sysctl-name \"kern.osproductversion\"))\n(",
+        "$PROGRAM_PRINTF",
+        "%s\n",
+        "PUBLIC_PRINTF_ENTRY"
+      ],
+      "environmentKeys": [
+        "CODEX_HOME",
+        "HOME",
+        "LANG",
+        "LC_ALL",
+        "PATH",
+        "SHELL",
+        "TMPDIR",
+        "USERPROFILE",
+        "XDG_CACHE_HOME",
+        "XDG_CONFIG_HOME",
+        "XDG_DATA_HOME"
+      ],
+      "freshOwnedEnvironment": true,
+      "elapsedSeconds": 0.008204,
+      "exitCode": 65,
+      "signal": null,
+      "timedOut": false,
+      "truncated": false,
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "rawSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "normalizedText": "",
+          "normalizedSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 117,
+          "rawSha256": "sha256:af1da93fe88263ce7e7170a035072744f2a810b00027d9ff1690befd67f6e4e4",
+          "normalizedText": "sandbox-exec: syntax error: expecting ')'\n\nBacktrace: \n<input string>:66:21:\n\t(sysctl-name \"kern.osproductversion\")\n\n",
+          "normalizedSha256": "sha256:af1da93fe88263ce7e7170a035072744f2a810b00027d9ff1690befd67f6e4e4"
+        }
+      },
+      "expectedPublicMarker": "PUBLIC_PRINTF_ENTRY\n",
+      "markerObserved": false,
+      "processGroupOwned": true,
+      "processGroupConfirmedAbsent": true,
+      "childCoreLimitZero": true
+    }
+  ],
+  "selectedBranch": "deliberate-profile-parser-stimulus",
+  "stopReason": "second-new-wrapper-completed; cumulative-attempt-limit-reached",
+  "interpretation": {
+    "plainMarkerCaptureConfirmed": true,
+    "validWrappedPrintfEmptySigabrtObserved": true,
+    "thisReproducedAbortDoesNotRequirePythonTarget": true,
+    "originalPythonCauseRuledOut": false,
+    "malformedInputParseErrorObserved": true,
+    "malformedInputExitCode": 65,
+    "pythonStartupBranchExecuted": false,
+    "markerDoesNotProveFileOrNetworkContainment": true,
+    "invalidProfileErrorsOnlyDescribeThatInput": true,
+    "originalSigabrtRootCauseProven": false,
+    "failureStageBeyondActualMarkers": "unknown unless explicit native error reports a stage; no preparse/compile/apply inference from empty capture",
+    "oldRawProfileByteEquivalenceClaimed": false,
+    "staticRuntimeAuthorizationBroadened": false,
+    "newOwnedInputStateScopesWereExplicitlyApproved": true,
+    "machOrIpcPtyKeychainGrantAdded": false,
+    "networkGrantAdded": false,
+    "opaqueUnsandboxedFallback": false
+  },
+  "sources": {
+    "externalSearchPerformedThisPhase": false,
+    "basis": "local previous diagnostic, Apple sandbox-exec man, CLT SDK sandbox.h, installed Mach-O metadata; previously loaded research/code-review method",
+    "sandboxExecDeprecated": true,
+    "privateApiOrDryRunFlagUsed": false
+  },
+  "claims": {
+    "fullContainmentProven": false,
+    "nativeSkillSelectionObserved": false,
+    "authoritativeEmptySetProven": false,
+    "liveSkillBehaviorProven": false,
+    "codexBehaviorProven": false,
+    "claudeCodeBehaviorProven": false,
+    "realEndToEndExecuted": false,
+    "ticketAcceptanceComplete": false,
+    "thresholdQualificationProven": false
+  },
+  "verification": {
+    "state": "local-regression-verified; sandbox-diagnostic-blocked",
+    "reviews": {
+      "fixedBaseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+      "fullWorkingDiffCommitsStagedAndUntrackedReviewed": true,
+      "standardsHardFindings": 0,
+      "standardsInitialJudgmentSmells": 1,
+      "standardsRemainingJudgmentSmells": 0,
+      "repair": "Added an explicit system-zoneinfo alias for the preserved ancestor metadata label; actual profile texts, hashes, samples and permissions were not changed. Read-only follow-up confirmed the ambiguity was resolved.",
+      "specIntroducedFindings": 0,
+      "supplementalPathPrivacyPermissionsProcessProvenanceReviewed": true
+    },
+    "retainedEvidenceChecks": {
+      "sampleExitCodes": [0, -6, 65],
+      "normalizedProfileHashesMatched": 2,
+      "normalizedStreamLengthsAndHashesMatched": 6,
+      "streamRawAndNormalizedDigestsIdenticalForThesePublicOutputs": true,
+      "malformedNormalizedProfileIsS1PlusOneOpenParenthesis": true,
+      "captureBytes": 137,
+      "previousOwnedTicketPrefixBytes": 26161,
+      "previousOwnedTicketPrefixDigestMatched": true,
+      "originalTrackedTicketBytesRemainExactPrefix": true,
+      "frozenHistoricalJsonDigestsMatched": 2,
+      "currentSourceInputDigestsMatched": 8,
+      "uncheckedAcceptanceBoxes": 8,
+      "diagnosticTemporaryRootConfirmedAbsent": true,
+      "deletedRawSourcesWereNotReconstructedOrReexecuted": true
+    },
+    "postReviewNpmTest": {
+      "command": "npm test",
+      "postReview": true,
+      "exitCode": 0,
+      "tests": 544,
+      "passed": 542,
+      "failed": 0,
+      "skipped": 2,
+      "nodeVersion": "v25.9.0",
+      "elapsedSeconds": 41.828056,
+      "stdoutBytes": 41079,
+      "stderrBytes": 0,
+      "stdoutSha256": "sha256:71b42dcfe5053e910ffc9f2cbf0e90f89bd30b99945644168507229382853d70",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timedOut": false,
+      "truncated": false,
+      "environment": "explicit empty-map environment with owned HOME/USERPROFILE/CODEX_HOME/XDG/npm configs/cache/tmp; npm offline; owned Git discovery ceiling; no inherited auth or proxy settings",
+      "localTarballLifecycleTestObservedPassing": true,
+      "notANewExternalDependencyOrGlobalInstall": true,
+      "skippedNames": [
+        "Windows Native CLI completes install, real update, doctor, and uninstall",
+        "Windows Native symlink EPERM falls back to managed copies"
+      ]
+    },
+    "trackedJsSyntax": {
+      "files": 51,
+      "passed": 51,
+      "commandKind": "node --check"
+    },
+    "isolatedPack": {
+      "commandKind": "npm pack --json --ignore-scripts --offline --pack-destination <owned-pack>",
+      "exitCode": 0,
+      "entryCount": 23,
+      "treeDigest": "sha256:cc11f062f3aa557d1f03441014c8fd966cc17e99c891d817f6597ba9f8f1b031",
+      "allBytesMatchedImmutableBaseSha": true,
+      "fullFileModesMatchedManifestAndGitBaseline": true,
+      "packShasumAndIntegrityMatchedTarballBytes": true,
+      "packedOnlyDeclaredFiles": true,
+      "manifestRegenerated": false,
+      "published": false,
+      "stdoutSha256": "sha256:c6d6d2938844520ef6519d78d38b07300c98320a45f90c58541529e9fd757f9a",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "all55VerificationProcessGroupsConfirmedAbsent": true,
+    "deterministicChecksAreNotLiveOrContainmentProof": true,
+    "independentRegressionRootCleanup": {
+      "state": "verified-removed",
+      "regularFilesRemoved": 708,
+      "childDirectoriesRemoved": 67,
+      "symlinksPresent": 0,
+      "rootIdentityAndSessionChecked": true,
+      "exactOwnedRootConfirmedAbsent": true,
+      "ownedHomeAndCodexHomeWereEmpty": true,
+      "logResultBackupAndInventoryChecksPassedBeforeRemoval": true,
+      "allVerificationProcessGroupsConfirmedAbsent": true,
+      "otherWorktreesOrUserAssetsRemoved": false
+    }
+  },
+  "temporaryCleanup": {
+    "regularFiles": 13,
+    "childDirectories": 29,
+    "symlinks": 0,
+    "state": "verified-removed",
+    "rootIdentityAndSessionChecked": true,
+    "exactOwnedRootConfirmedAbsent": true,
+    "elapsedExperimentThroughRemovalSeconds": 0.037694,
+    "withinApproved240SecondLimit": true,
+    "allOwnedProcessGroupsConfirmedAbsent": true,
+    "otherWorktreesOrUserAssetsRemoved": false
+  }
+}

@@ -1,0 +1,301 @@
+{
+  "schemaVersion": 1,
+  "kind": "ticket08-native-input-binding-and-source-audit",
+  "recordedAt": "2026-10-07",
+  "baseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+  "branch": "implement/v0.1.3-ticket-08",
+  "localDiagnosticOnly": true,
+  "notNativeCodexAcceptance": true,
+  "evidenceKinds": [
+    "actual-offline-package-and-filesystem-regression",
+    "synthetic-protocol-regression",
+    "source-only-compatibility-research"
+  ],
+  "authorizationBoundary": {
+    "additionalVMVerificationDeclined": true,
+    "originalBootstrapAttempt": 1,
+    "originalMaximumAuthorizedAttempts": 1,
+    "additionalBootstrapExecuted": false,
+    "candidateTransportInstalled": false,
+    "nativeCodexExecutedThisStage": false,
+    "modelOrAccountExecutedThisStage": false,
+    "modelOrAccountExecutionAuthorizedByThisStage": false,
+    "actualProposalAvailableForApproval": false,
+    "ordinaryImplementationApprovalIsNotActualProposalApproval": true,
+    "hostAuthOrRealHomeCopied": false
+  },
+  "nativeInputs": {
+    "publicSeam": "createCodexRuntime",
+    "interfaces": ["prepareNativeInputs(fixtureId)", "verifyNativeInputs(inputs)"],
+    "actualOfflineCurrentPackagePackAndInstallUsed": true,
+    "currentPackedFileCount": 23,
+    "fixtureSource": "versioned repository and its controller-prepared initial snapshot",
+    "transferRootEntries": ["manifest.json", "package.tgz", "repository"],
+    "manifestHasRelativePathsOnly": true,
+    "controllerOracleApprovalAndSnapshotsIncludedInTransfer": false,
+    "receiptAuthority": "actual controller-created object identity in a private WeakMap",
+    "serializedReceiptFields": ["kind", "manifestDigest", "nativeExecuted", "containmentProven"],
+    "receiptLocationPropertiesNonEnumerable": true,
+    "receiptControllerPropertyPresent": false,
+    "spreadOrStructuredCloneGrantsAuthority": false,
+    "sourceBindings": [
+      "actual npm pack file list and original current package source bytes and identities",
+      "actual tarball SHA-256 and SHA-512 integrity",
+      "installed packed file bytes equal bound current source bytes",
+      "original versioned fixture repository and oracle bytes and identities",
+      "private owned oracle, original repository, work repository and initial snapshot",
+      "exact manifest bytes, tarball bytes, repository inventory and transfer entry allowlist"
+    ],
+    "bounds": {
+      "repositoryFileBytes": 1048576,
+      "repositoryAggregateBytes": 16777216,
+      "repositoryEntries": 4096,
+      "manifestBytes": 1048576,
+      "tarballBytes": 16777216,
+      "packageSourceFileBytes": 1048576,
+      "packageSourceAggregateBytes": 16777216,
+      "packageSourceEntries": 4096
+    },
+    "physicalInputChecks": {
+      "regularFilesWithOnePhysicalLink": true,
+      "boundedDescriptorReadsNotUnboundedReopens": true,
+      "noFollowAndNonBlockingOpen": true,
+      "originalDirectoryAndFileIdentitiesAndPermissionsRechecked": true,
+      "initialSnapshotAuthorityNotReboundAfterConstruction": true,
+      "relativeSymlinksMustResolveLexicallyAndPhysicallyInsideRepository": true,
+      "specialEntriesHardlinksAndOversizedFilesRejected": true,
+      "unexpectedTransferEntriesRejected": true
+    },
+    "privacy": {
+      "envPrefixCasefoldedAcrossAllPathComponents": true,
+      "envManifestFields": ["path", "type", "mode"],
+      "envBodyOrIndependentContentDigestInManifest": false,
+      "fixtureOnlyRepositoryCopyMayRetainItsOriginalBytes": true,
+      "payloadSeparationIsNotPhysicalIsolationProof": true
+    },
+    "lifecycle": {
+      "pendingReservationBlocksOverlappingConstruction": true,
+      "fixtureIdConsumedOnlyAfterSuccessfulConstruction": true,
+      "failedConstructionAutomaticallyRetried": false,
+      "failedPartialRootAutomaticallyDeleted": false,
+      "constructionAndVerificationTrackedUntilSettled": true,
+      "cleanupRejectsAndRetainsRootWhileNativeInputOperationPending": true,
+      "cleaningGatePublishedBeforeFirstCleanupAwait": true,
+      "constructionAndVerificationRejectedDuringOrAfterCleanup": true
+    },
+    "nativeConsumerIntegrated": false,
+    "guestTransferOrInstallExecuted": false,
+    "containmentProven": false,
+    "nativeExecuted": false
+  },
+  "sources": [
+    {"file":"tests/codex-live/owned-runtime.js","bytes":39091,"sha256":"cc3b6af6cf1cc032b21aeb5375a9b597dc50ac3515a6b64da467e23c375287f4"},
+    {"file":"tests/codex-live/owned-runtime.test.js","bytes":23690,"sha256":"25c61ce10a8189c4424408cf3541707e27d7e839be30cbb81f81f4d4c04843c5"}
+  ],
+  "tests": {
+    "genuineVerticalRedGreen": [
+      {"seam":"createCodexRuntime native input preparation","red":"native-inputs-contract-red","green":"native-inputs-contract-green"},
+      {"seam":"createCodexRuntime private oracle binding","red":"native-inputs-private-oracle-red","green":"native-inputs-private-oracle-green"},
+      {"seam":"createCodexRuntime input permission binding","red":"native-inputs-permission-red","green":"native-inputs-permission-green"},
+      {"seam":"createCodexRuntime opaque receipt serialization","red":"native-inputs-receipt-privacy-red","green":"native-inputs-receipt-privacy-green"},
+      {"seam":"createCodexRuntime original versioned source binding","red":"native-inputs-original-source-red","green":"native-inputs-original-source-green"},
+      {"seam":"createCodexRuntime current package source binding","red":"native-inputs-package-source-red","green":"native-inputs-package-source-green"},
+      {"seam":"createCodexRuntime failed construction and reservation","red":"native-inputs-reservation-red","green":"native-inputs-reservation-green"},
+      {"seam":"createCodexRuntime pending construction and verification cleanup","red":"native-inputs-pending-cleanup-contract-red","green":"native-inputs-pending-cleanup-green"}
+    ],
+    "independentLifecycleExperiment": {
+      "label": "native-inputs-pending-cleanup-red",
+      "exitCode": 1,
+      "isSeparateTapRegression": false,
+      "originalFailure": "cleanup returned success while native input construction was unsettled"
+    },
+    "fifoSwitchHasDeterministicOriginalRaceRed": false,
+    "initialIdentityRebindHasDeterministicOriginalRaceRed": false,
+    "directoryOrderingFixClaimsWindowsExecution": false,
+    "newRetainedPublicSeamTests": 7,
+    "finalFullIncludesAll13RuntimeTests": true,
+    "separateFinal13RuntimeCommandClaimed": false,
+    "intermediate9And12RuntimeRunsAreNotFinalSourceProof": true,
+    "finalFull": {
+      "commandKind": "npm test via existing fixed Node and npm-cli in owned offline environment",
+      "label": "native-inputs-final-full",
+      "nodeVersion": "v25.9.0",
+      "platform": "darwin-arm64",
+      "exitCode": 0,
+      "elapsedSeconds": 137.952128,
+      "tests": 722,
+      "pass": 720,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 2,
+      "todo": 0,
+      "skipBoundary": "existing Windows Native lifecycle and EPERM fallback skips on macOS; not Windows qualification",
+      "stdoutBytes": 56126,
+      "stdoutSha256": "sha256:b88216a1326c06dcab6dc2e31c0035eaa1edd05115d2e325661a44a41c162285",
+      "stderrBytes": 0,
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timedOut": false,
+      "truncated": false,
+      "verifierProcessGroupConfirmedAbsent": true,
+      "supervisionErrors": []
+    },
+    "finalSyntax": {
+      "commandKind": "node --check for all 16 Codex JS/MJS sources",
+      "label": "native-inputs-final-syntax",
+      "checkedFiles": 16,
+      "exitCode": 0,
+      "elapsedSeconds": 1.273129,
+      "stdoutBytes": 812,
+      "stdoutSha256": "sha256:c4190586f1a8e727a996a3871cbc20334f5b4f92709734af9bf48850ec75eb77",
+      "stderrBytes": 0,
+      "timedOut": false,
+      "truncated": false,
+      "verifierProcessGroupConfirmedAbsent": true,
+      "supervisionErrors": []
+    },
+    "mainIndependentlyVerified": {
+      "commandReports": 22,
+      "rawStreams": 44,
+      "pinnedPrimarySourceFiles": 18,
+      "rawBytesLengthsAndDigestsMatched": true,
+      "finalSourceBytesAndDigestsMatched": true,
+      "actualFinalTapSummaryMatched": true
+    },
+    "separateNpmPackAcceptanceCommandClaimed": false,
+    "actualPackInstallCoveredByRuntimeRegressions": true
+  },
+  "nativeObservationResearch": {
+    "sourceOnly": true,
+    "sourceRef": "ff6aec96948b70d94983af2641a6b67c94faeff5",
+    "officialSourceBaseUrl": "https://github.com/openai/codex/blob/ff6aec96948b70d94983af2641a6b67c94faeff5/",
+    "retrievedAndHashVerifiedFiles": 18,
+    "nativePackageMetadataVersion": "0.159.2-linux-arm64",
+    "actualHarnessVersionThisStage": null,
+    "sourceRefIsBinaryBuildAttestation": false,
+    "claims": [
+      {
+        "id":"successful-skill-read-can-be-nested",
+        "statement":"Code Mode dispatch uses the ordinary tool runtime and obtains code_mode_result, rather than exposing the nested result as a direct ResponseItem. The Skill executor awaits its provider read and records an implicit invocation.",
+        "sources":[
+          {"file":"codex-rs/core/src/tools/code_mode/mod.rs","lines":[387,412]},
+          {"file":"codex-rs/core/src/tools/registry.rs","lines":[198,221]},
+          {"file":"codex-rs/ext/skills/src/tools/read.rs","lines":[181,235]},
+          {"file":"codex-rs/ext/skills/src/tools/read.rs","lines":[249,289]}
+        ],
+        "boundary":"Concrete source-supported route, not an observed native invocation; failed reads are not successful loads."
+      },
+      {
+        "id":"public-raw-clears-nested-inventory",
+        "statement":"The public RawResponseItem handler clears executed_tool_calls; the protocol marks that inventory warehouse-only and skips its public schema. Completeness does not describe success.",
+        "sources":[
+          {"file":"codex-rs/app-server/src/bespoke_event_handling.rs","lines":[1163,1176]},
+          {"file":"codex-rs/protocol/src/models.rs","lines":[975,993]}
+        ],
+        "boundary":"The examined raw notification alone is insufficient; not proof that every possible supported public carrier is absent."
+      },
+      {
+        "id":"internal-lifecycle-is-not-a-public-receipt",
+        "statement":"Internal lifecycle hooks call registered contributors; the Skill read executor itself emits no TurnItem, and timing guards omit nested calls.",
+        "sources":[
+          {"file":"codex-rs/core/src/tools/lifecycle.rs","lines":[21,60]},
+          {"file":"codex-rs/core/src/tools/lifecycle.rs","lines":[140,161]},
+          {"file":"codex-rs/core/src/tools/parallel.rs","lines":[350,378]},
+          {"file":"codex-rs/ext/skills/src/tools/read.rs","lines":[70,290]}
+        ],
+        "boundary":"Internal hooks and tracing are not relabeled as actual public selection receipts; all compiled contributors were not exhaustively excluded."
+      },
+      {
+        "id":"false-code-mode-flag-is-insufficient",
+        "statement":"ModelInfo.tool_mode takes priority over fallback feature flags, and CodeModeOnly normalization re-enables CodeMode.",
+        "sources":[
+          {"file":"codex-rs/core/src/tools/mod.rs","lines":[75,97]},
+          {"file":"codex-rs/features/src/lib.rs","lines":[697,701]},
+          {"file":"codex-rs/features/src/lib.rs","lines":[1052,1099]}
+        ],
+        "boundary":"features.code_mode=false alone does not attest the effective tool surface."
+      },
+      {
+        "id":"supported-namespace-guard-candidate",
+        "statement":"Supported direct_only_tool_namespaces and excluded_tool_namespaces exist. Direct-only matching tools become DirectModelOnly and are excluded from nested Code Mode specs.",
+        "sources":[
+          {"file":"codex-rs/features/src/feature_configs.rs","lines":[22,47]},
+          {"file":"codex-rs/core/src/tools/spec_plan.rs","lines":[520,551]},
+          {"file":"codex-rs/core/src/tools/spec_plan.rs","lines":[808,895]}
+        ],
+        "boundary":"Source-confirmed candidate only; not installed, not runtime-verified, and not proof of all remaining routes or genuine no-load."
+      },
+      {
+        "id":"public-feature-read-is-not-effective-tool-mode",
+        "statement":"Thread-scoped experimentalFeature/list and config/read report feature booleans, not the final ModelInfo tool mode or per-turn plan. model/list can refresh gateway credentials.",
+        "sources":[
+          {"file":"codex-rs/app-server/src/request_processors/catalog_processor.rs","lines":[185,216]},
+          {"file":"codex-rs/app-server/src/request_processors/catalog_processor.rs","lines":[346,410]},
+          {"file":"codex-rs/app-server/src/request_processors/config_processor.rs","lines":[103,129]},
+          {"file":"codex-rs/core/src/tools/mod.rs","lines":[75,97]}
+        ],
+        "boundary":"No model/list, config, feature, thread or turn RPC executed this stage."
+      }
+    ],
+    "retrieval": {
+      "externalPrimarySourcesActuallyRetrieved": true,
+      "officialTreeApiReturned403RateLimit": true,
+      "method":"Official HTML tree owner lookup and bounded credential-free pinned raw-source retrieval, following previously loaded research guidelines",
+      "newSearchSkillInvoked": false,
+      "exaOrGrokInvocationClaimed": false
+    },
+    "effectiveRuntimeProfileVerified": false,
+    "completeSuccessfulSkillReadUniverseProven": false,
+    "noLoadProven": false,
+    "allPossibleSupportedCarriersClaimedAbsent": false
+  },
+  "reviews": {
+    "axes": ["Standards", "Spec"],
+    "stageIncrementReviewed": true,
+    "finalNativeInputLifecycleRepairReviewed": true,
+    "finalNarrowReviewConfirmedResidualFindings": {"Standards":0,"Spec":0},
+    "finalReviewScope":"This stage's two runtime sources and final construction/verification/cleanup repair, against retained review snapshots and approved ticket/PRD scope",
+    "pathPermissionsPrivacyAndInputLifecycleIncluded": true,
+    "reviewersExecutedTests": false,
+    "reviewersIndependentlyVerifiedMainRawCommandLogsClaimed": false,
+    "mainIndependentlyVerifiedRawCommandLogs": true,
+    "wholeBaseToCurrentReviewReplacedByIncrementReview": false,
+    "wholeTicketOrNativeAcceptanceClearance": false
+  },
+  "retainedAuditBindings": [
+    {"file":".tmp-08-source-binding-3ad6c572/native-observation-20261007-7s0xhiuo/logs/final-main-verification.json","bytes":19834,"sha256":"6b6ce9dbbfbf27ffb5ef8666f4ff1de3fc0bbf87e21c1e911bfcbbb8fd5ade32"},
+    {"file":".tmp-08-source-binding-3ad6c572/native-observation-20261007-7s0xhiuo/review-final-source-index.json","bytes":326,"sha256":"83bb1059028d29cb03b6f94f57ed1ea969ddfac9a52011882e9abbdf16bb1209"},
+    {"file":".tmp-08-source-binding-3ad6c572/native-observation-20261007-7s0xhiuo/native-observation-analysis.json","bytes":6129,"sha256":"c7cb8103a6217ec25089d68a8018a22d48e7351205a609395dbf5695f98110e1"},
+    {"file":".tmp-08-source-binding-3ad6c572/native-observation-20261007-7s0xhiuo/logs/scope-preservation-before-ticket-append.json","bytes":1205,"sha256":"bb86d53215efb73b1007b4597187efe67ea26c8bebee142159fe919644fde596"}
+  ],
+  "preservation": {
+    "historicalEvidenceFilesRetainedUnchanged": 13,
+    "priorTicketPrefixBytes": 90633,
+    "priorTicketPrefixSha256":"e0da7c1855491e0ccc9f7727b70663c389d7fc3c8e0bc9e2cd8c6ca95d69ec3d",
+    "other14CodexSourcesUnchangedThisStage": true,
+    "approvedSharedSourcesUnchangedThisStage": [
+      {"file":"tests/agent-init/evaluation-harness.js","sha256":"d3cb83cb82ef672cd3c719558b5479a9cb2ac160931d5b7d88a8624abb8077af"},
+      {"file":"tests/agent-init/fixture-oracles.test.js","sha256":"961d9d146f121656744eded84dff29af4fee95c2d12f718abb261e5834f7d318"}
+    ],
+    "prdOtherTicketsFixturesCorpusPackageReleaseMetadataCiAndRulesUnchanged": true,
+    "headEqualsBase": true,
+    "stagingEmpty": true,
+    "priorUnknownProcessAbsenceRetrospectivelyProven": false,
+    "ownedStagesAndUnconfirmedAssetsRetained": true
+  },
+  "claimBoundary": {
+    "nativeExecutionDeferredGateRemoved": false,
+    "missingObservationConvertedToEmptyLoaded": false,
+    "unexpectedLoadedSkillsFiltered": false,
+    "actualHarnessVersionThisStage": null,
+    "realProposalApprovalApplyReconcileAndRoutingExecuted": false,
+    "realEndToEndRun": false,
+    "nativeSelectionEvidence": false,
+    "liveProof": false,
+    "ticket08Complete": false,
+    "ticket09ThresholdsProven": false,
+    "fullQualification": false,
+    "statusOrAcceptanceCheckboxesChanged": false,
+    "gitCommitPushMergePrReleaseOrCiOperationPerformed": false,
+    "nextTicketStarted": false
+  }
+}

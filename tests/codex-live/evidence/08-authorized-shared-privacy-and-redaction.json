@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "kind": "ticket08-authorized-shared-privacy-and-redaction",
+  "recordedAt": "2026-10-07",
+  "baseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+  "branch": "implement/v0.1.3-ticket-08",
+  "evidenceKinds": ["actual-offline-regression", "static-source-review", "authorized-historical-redaction"],
+  "authorization": {
+    "actualStructuredSelection": "全部三项（推荐）",
+    "sharedFreezeExceptionFiles": ["tests/agent-init/evaluation-harness.js", "tests/agent-init/fixture-oracles.test.js"],
+    "historicalRedactionFile": "tests/codex-live/evidence/08-contributor-context-regression.json",
+    "originalVmAttemptsUsed": 1,
+    "originalVmMaximumAttempts": 1,
+    "additionalVmMaximumAttempts": 1,
+    "additionalVmAttemptsUsedAtThisReceipt": 0,
+    "previousDeclineAndFailedAttemptHistoryRewritten": false,
+    "modelAccountLoginOrTurnStartAuthorized": false,
+    "actualFutureProposalApproved": false
+  },
+  "sharedRepair": {
+    "sensitiveEvidenceCasefoldsEveryPathComponent": true,
+    "sensitiveEvidencePresenceOnly": true,
+    "sensitiveByteCitationAndIndependentFingerprintRejected": true,
+    "sourceReaderOpenNonBlocking": true,
+    "existingRegularFileIdentitySingleLinkSizeAndPostReadChecksPreserved": true,
+    "defaultFixtureExactContractAndStructuredFactsApprovalDeltaClaimsPreserved": true,
+    "separateDeterministicOriginalFifoRaceRedClaimed": false,
+    "raceFreeNativePhysicalContainmentClaimed": false
+  },
+  "sources": [
+    {"file":"tests/agent-init/evaluation-harness.js","bytes":67778,"sha256":"db117215508719e1794a37e33ed3ba22f5b78c73e4ca20b7deadde3a66abf36c"},
+    {"file":"tests/agent-init/fixture-oracles.test.js","bytes":31519,"sha256":"d67c6fef3df04f5ebf08d036157a46d69ccf95b6726601d1de5b1bb60ad5aeb5"},
+    {"file":"tests/codex-live/source-binding.js","bytes":4439,"sha256":"fc92c3dcde7cad431ed175a86a670683143eb1bfe6d975841434ca8490b4223b","changeThisIncrement":"comment only"}
+  ],
+  "historicalRedaction": {
+    "file":"tests/codex-live/evidence/08-contributor-context-regression.json",
+    "jsonPointer":"/cleanup/earlierNegativeTestRuntimeRetained/ownedRoot",
+    "replacementRole":"<retained-synthetic-negative-runtime>",
+    "beforeBytes":19688,
+    "beforeSha256":"63fc27d600a873c85405ef9de9e06e485250765de16babda7887e382639351b5",
+    "afterBytes":19580,
+    "afterSha256":"5c85781a95b9c01a040a0ecd4a9d6885217af6f680717cf7a3dd6b2632c2e67f",
+    "privateOriginalRetained":true,
+    "onlyAuthorizedFieldChanged":true,
+    "identityNonceRootRemovedOldDatesAndAllOtherFieldsPreserved":true,
+    "historicalReferencesToOriginalDigestAreHistoricalNotCurrentBindings":true,
+    "publicEvidenceFilesCheckedBeforeThisReceipt":15,
+    "remainingKnownMachinePathPatternMatches":0,
+    "patternScanIsNotProofAgainstEveryPossiblePrivateValue":true
+  },
+  "tests": {
+    "publicSeam":"evaluateRunRecord",
+    "variants":[".ENV.private", "docs/.EnV.scope/config", ".env.scope/config"],
+    "fixtureMutationsOnlyInOwnedPrivateCopies":true,
+    "genuineRed":{"label":"authorized-shared-env-red","tests":4,"pass":0,"fail":4,"exitCode":1,"stdoutSha256":"sha256:3d131a02fec4ff6a48d68ec89737819c577a1a5ecd8e13179f79847445c4f6c7"},
+    "green":{"label":"authorized-shared-env-green","tests":4,"pass":4,"fail":0,"exitCode":0,"stdoutSha256":"sha256:43ca05ee537854d4a73514ae7e415f557c237481d0b8b3dbbe0ad658327fda84"},
+    "finalFull": {
+      "label":"authorized-shared-final-full",
+      "commandKind":"npm test through fixed Node/npm-cli in owned offline environment",
+      "nodeVersion":"v25.9.0",
+      "platform":"darwin-arm64",
+      "exitCode":0,
+      "elapsedSeconds":155.800492,
+      "tests":732,"pass":730,"fail":0,"cancelled":0,"skipped":2,"todo":0,
+      "skipBoundary":"existing Windows Native lifecycle and symlink EPERM fallback skips on macOS; not Windows qualification",
+      "stdoutBytes":57078,
+      "stdoutSha256":"sha256:3981d3c7383f6d85f43743aac0b1588db6400389e74f1cfd9db36f256f9c37d1",
+      "stderrBytes":0,
+      "stderrSha256":"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timedOut":false,"truncated":false,"processGroupConfirmedAbsent":true,"supervisionErrors":[]
+    },
+    "finalSyntax":{"label":"authorized-shared-final-syntax","checkedFiles":18,"exitCode":0,"elapsedSeconds":1.628267,"stdoutBytes":3222,"stdoutSha256":"sha256:b9896fbd176367e5ba26067395065dcbbfcc1f8a55b4a9c004a1cfb062238025","stderrBytes":0,"timedOut":false,"truncated":false,"processGroupConfirmedAbsent":true},
+    "mainIndependentlyVerified":{"reports":4,"rawStreams":8,"currentSourceBindings":18,"actualFinalTapCountsMatched":true},
+    "defaultTestsStartVmNativeCodexOrModel":false,
+    "earlier728SuiteReusedAsCurrentProof":false
+  },
+  "reviews": {
+    "axes":["Standards", "Spec"],
+    "currentIncrementConfirmedNewDefects":{"Standards":0,"Spec":0},
+    "standardsIndependentlyComparedPrivateOriginalAndOnlyFieldRedaction":true,
+    "specReadBackupIndexButDidNotIndependentlyReadOriginalBody":true,
+    "reviewersExecutedTestsVmNativeOrModel":false,
+    "mainIndependentlyVerifiedRawReceipts":true,
+    "wholeNativeTicketClearance":false,
+    "externalLookupThisIncrement":false,
+    "basis":"local context and already loaded TDD/two-axis code-review guidelines"
+  },
+  "auditBinding":{"file":".tmp-08-source-binding-3ad6c572/authorized-continuation-20261007-839637f09f53/logs/current-local-verification.json","bytes":12675,"sha256":"9f28b3eb3705452a9ff24ab38b1e7921f08ca7210eedd0bf8f3bb408265d79dc"},
+  "preservation": {
+    "otherHistoricalEvidenceFilesUnchanged":14,
+    "priorTicketPrefixBytes":103506,
+    "priorTicketPrefixSha256":"21a2f68ae42f453231e63c4aa2bc7f8e3e27c477e57176067ef98efb7c0873da",
+    "priorFourCodexRepairSourcesAndOtherElevenCodexSourcesUnchanged":true,
+    "otherSharedFixturesCorpusPrdPackageReleaseCiRulesOtherTicketsUnchanged":true,
+    "headEqualsBase":true,"stagingEmpty":true,"ownedAndUnconfirmedAssetsRetained":true
+  },
+  "claimBoundary": {
+    "sharedPrivacyAndHistoricalPathFindingsRepairedWithinAuthorizedScope":true,
+    "nativeExecutionDeferredGatesRemoved":false,
+    "actualContainmentProven":false,
+    "effectiveNativeObservableProfileVerified":false,
+    "completeNativeSelectionOrGenuineNoLoadProven":false,
+    "missingObservationConvertedToEmptyLoaded":false,
+    "actualProposalApprovalApplyReconcileRoutingExecuted":false,
+    "nativeExecuted":false,"modelExecuted":false,"liveProof":false,"realEndToEndRun":false,
+    "ticket08Complete":false,"ticket09ThresholdsProven":false,"fullQualification":false,
+    "statusOrEightAcceptanceCheckboxesChanged":false,
+    "gitCommitPushMergePrReleaseCiOrNextTicketOperationPerformed":false
+  }
+}

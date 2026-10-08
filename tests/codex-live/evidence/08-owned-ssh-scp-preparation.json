@@ -1,0 +1,2240 @@
+{
+  "schemaVersion": 1,
+  "kind": "ticket08-owned-SSH-SCP-pre-start-preparation",
+  "date": "2026-10-04",
+  "synthetic": false,
+  "localDiagnosticOnly": true,
+  "notNativeCodexAcceptance": true,
+  "baseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+  "branch": "implement/v0.1.3-ticket-08",
+  "worktree": ".claude/worktrees/v0.1.3-ticket-08",
+  "scope": {
+    "prototypeRoot": ".tmp-08-source-binding-3ad6c572",
+    "ownedRuntimeAlias": "ticket08-owned-vz-runtime",
+    "installedIntoRuntimePATH": false,
+    "globalConfigurationChanged": false,
+    "noStagingCommitPublication": true,
+    "ticketCommentsOnly": true,
+    "allOtherTrackedFilesAndFrozenSharedDeliveryUnchanged": true
+  },
+  "claims": {
+    "actualSystemSSHConfigurationRendered": true,
+    "scopeRejectionsVerified": true,
+    "nativeSCPArgumentFormsValidatedToMissingSourceGate": true,
+    "successfulSCPTransfer": false,
+    "VMStarted": false,
+    "containmentPassed": false,
+    "LinuxPrivilegeTransitionProven": false,
+    "connectedSSHExecuted": false,
+    "persistentDaemonAbsenceProven": false,
+    "nativeCodexExecuted": false,
+    "offlineProtocolProbeExecuted": false,
+    "nativeContributorConsumption": false,
+    "nativeSelectionCompleteness": false,
+    "nativeProviderSchemaAcceptance": false,
+    "modelExecuted": false,
+    "realHumanProposalApproval": false,
+    "liveEndToEnd": false,
+    "ticket08Complete": false,
+    "ticket09Complete": false,
+    "qualification": false
+  },
+  "implementation": {
+    "SSHForcedHostname": "127.0.0.1",
+    "SSHForcedUser": "ticket08ctl",
+    "configFile": "/dev/null",
+    "identityAndCertificateDefaults": "none",
+    "noInheritedAgent": true,
+    "closedOptionSets": true,
+    "strictNativeQuotedPathDecode": true,
+    "ownedPathsRejectExpansions": true,
+    "noAutoMasterPersistBackground": true,
+    "postDestinationLocalOptionsRejected": true,
+    "canonicalPrefixTerminator": true,
+    "SCPUploadOnly": true,
+    "SCPNativeURIAndLegacyForms": true,
+    "SCPNonceAndBasenameDestinationBound": true,
+    "SCPTransportSha256": "ce4470f32a2d78a64aed4abcadf6fd5dd55dcf7136ff834271f32a254fa46d9b"
+  },
+  "verification": {
+    "SSHLocalChecks": 42,
+    "SCPFailClosedChecks": 39,
+    "finalPublicRegressions": 15,
+    "PythonASTParsed": 17,
+    "postFixFullSuite": {
+      "tests": 689,
+      "pass": 687,
+      "fail": 0,
+      "skipped": 2,
+      "cancelled": 0,
+      "todo": 0
+    },
+    "npmReport": {
+      "label": "cmd-owned-ssh-scp-final-post-review-full",
+      "exitCode": 0,
+      "ownedChildPid": 6799,
+      "elapsedSeconds": 127.824564,
+      "timedOut": false,
+      "truncated": false,
+      "processGroupConfirmedAbsent": true,
+      "supervisionErrors": [],
+      "stdoutBytes": 52306,
+      "stdoutSha256": "sha256:d778aae0f584c848352d5d819fea65a4a542c93ac199f0f4209ef8c8fa1b83af",
+      "stderrBytes": 0,
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commandReports": [
+      {
+        "label": "cmd-ssh-peer-hostname-red",
+        "exitCode": 1,
+        "ownedChildPid": 97746,
+        "elapsedSeconds": 0.141577,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 352,
+        "stdoutSha256": "sha256:f267841800707efb1837a6c54c414857b323874493f0f690a60e51337f746c6b",
+        "stderrBytes": 275,
+        "stderrSha256": "sha256:a2f39abbe0078035a301a588c9c5d9879f7602e62456d59f1149e59b23310691"
+      },
+      {
+        "label": "cmd-ssh-peer-hostname-green",
+        "exitCode": 0,
+        "ownedChildPid": 446,
+        "elapsedSeconds": 0.187919,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 325,
+        "stdoutSha256": "sha256:795eba718906497ca1767f0476c86e1431190571545c0a78bcb3f28eb6bf3386",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-ssh-peer-remote-G-red",
+        "exitCode": 1,
+        "ownedChildPid": 97751,
+        "elapsedSeconds": 0.141867,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 290,
+        "stdoutSha256": "sha256:cec4ae04c473bd9d0636f98599f7c2cd5c3995a11b60285144dbf6d3608ffe9a",
+        "stderrBytes": 277,
+        "stderrSha256": "sha256:49222af2f1f0a6ef49981e51d7874a5fdb55180471805e3ab8a7fab0aeae14f5"
+      },
+      {
+        "label": "cmd-ssh-peer-remote-G-green",
+        "exitCode": 0,
+        "ownedChildPid": 460,
+        "elapsedSeconds": 0.194493,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 317,
+        "stdoutSha256": "sha256:f1e5965a510daabb3a7005532dab93c69c15e88cc60ea35f94aacba6a4b8bc5d",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-ssh-default-identities-red-attempt-2",
+        "exitCode": 1,
+        "ownedChildPid": 909,
+        "elapsedSeconds": 0.19312,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 385,
+        "stdoutSha256": "sha256:db577d77ef113195e69d526db30631e18421c7e2102bae6a9415608b361c38cf",
+        "stderrBytes": 366,
+        "stderrSha256": "sha256:4847904d063fb723d1abb89a7261c840fb760fc0db70aa7d93908d0dd56e4a37"
+      },
+      {
+        "label": "cmd-ssh-default-identities-green",
+        "exitCode": 0,
+        "ownedChildPid": 1118,
+        "elapsedSeconds": 0.195683,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 383,
+        "stdoutSha256": "sha256:631aaca257ed69e11f028f9fb52499bc59069c0637483a1e6a82a5a05b0a3f60",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-ssh-config-scope-red",
+        "exitCode": 1,
+        "ownedChildPid": 1429,
+        "elapsedSeconds": 0.19838,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 316,
+        "stdoutSha256": "sha256:d4740ae230df235e6d9468471dede83d8a090f11cd5dd51330ebe11a6091c7cd",
+        "stderrBytes": 281,
+        "stderrSha256": "sha256:a461ef3a4b096e3d64a6594c1fd9a98f905154387c3e28e12b4527767562f914"
+      },
+      {
+        "label": "cmd-ssh-config-scope-green",
+        "exitCode": 0,
+        "ownedChildPid": 1540,
+        "elapsedSeconds": 0.190852,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 316,
+        "stdoutSha256": "sha256:b31a4b8c80aa94686acaa4f6e06adf4f0e49e36aed7c0efeb90966171f76fbf4",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-ssh-command-option-red",
+        "exitCode": 1,
+        "ownedChildPid": 1622,
+        "elapsedSeconds": 0.191891,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 325,
+        "stdoutSha256": "sha256:d64a45f94394601512597765f11c85de5d04a8edd4d2a33edf5ec2f0c6489299",
+        "stderrBytes": 281,
+        "stderrSha256": "sha256:a0d2c9c9e7d930f170396b91674d79ab5479ced9b60fbf845ededf28200221f8"
+      },
+      {
+        "label": "cmd-ssh-command-option-green",
+        "exitCode": 0,
+        "ownedChildPid": 1677,
+        "elapsedSeconds": 0.190931,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 326,
+        "stdoutSha256": "sha256:7a6c1174f08c6a5e0ccda9a4f7c74536636855332f991f7d6ef64fe6120421c3",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-ssh-native-version-red",
+        "exitCode": 1,
+        "ownedChildPid": 1765,
+        "elapsedSeconds": 0.193452,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 269,
+        "stdoutSha256": "sha256:9ee38bee442ae353e248fc92c41bdfb423b6f09bd537bc8bebee93d101e2c90b",
+        "stderrBytes": 288,
+        "stderrSha256": "sha256:3a2e71acb46bd12af8b642cdde3be613b6d67d494d4c9722a32164ecacc08caf"
+      },
+      {
+        "label": "cmd-ssh-native-version-green",
+        "exitCode": 0,
+        "ownedChildPid": 1842,
+        "elapsedSeconds": 0.193508,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 268,
+        "stdoutSha256": "sha256:f21df696e90b434244d2c5870cb5593cf5959655d483e647a3446996701cb51e",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-ssh-native-quoted-paths-red",
+        "exitCode": 1,
+        "ownedChildPid": 1857,
+        "elapsedSeconds": 0.191679,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 267,
+        "stdoutSha256": "sha256:0ba29335e31d22e17f66d5ad37e3194f54a49cd80c9b1285542538e0d17e5d60",
+        "stderrBytes": 288,
+        "stderrSha256": "sha256:3a2e71acb46bd12af8b642cdde3be613b6d67d494d4c9722a32164ecacc08caf"
+      },
+      {
+        "label": "cmd-ssh-native-quoted-paths-green",
+        "exitCode": 0,
+        "ownedChildPid": 1997,
+        "elapsedSeconds": 0.195966,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 266,
+        "stdoutSha256": "sha256:93052c443ea6008509d0e5affa830d0bc411332ed7b7447c8e76b314b289778e",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-ssh-native-include-red",
+        "exitCode": 1,
+        "ownedChildPid": 2021,
+        "elapsedSeconds": 0.191426,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 271,
+        "stdoutSha256": "sha256:9fa54f9631144d0bc4698c81a54af2cd5fa9e93a00a8207615af725ea12068e3",
+        "stderrBytes": 289,
+        "stderrSha256": "sha256:5d73465cceab35de420e3bf439d13b64043078b3a4f69dc70c55ac1ce49f4dc8"
+      },
+      {
+        "label": "cmd-ssh-native-include-green",
+        "exitCode": 0,
+        "ownedChildPid": 2119,
+        "elapsedSeconds": 0.19356,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 270,
+        "stdoutSha256": "sha256:0197feafc823a653447b3ff7d67f1e4eecfb76d5efa73265e75e2e41176173a1",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-ssh-late-options-red",
+        "exitCode": 1,
+        "ownedChildPid": 4975,
+        "elapsedSeconds": 0.198151,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 328,
+        "stdoutSha256": "sha256:2b2b5dcc083f907d97d41c5273607fe454905699c829690bd630bdbaa20d5395",
+        "stderrBytes": 344,
+        "stderrSha256": "sha256:ba36f6f9bedd72566bef3ca2e872f30388001fbdd3b8fa879b815a4f4205a1b3"
+      },
+      {
+        "label": "cmd-ssh-late-options-green",
+        "exitCode": 0,
+        "ownedChildPid": 5230,
+        "elapsedSeconds": 0.196863,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 328,
+        "stdoutSha256": "sha256:ba8b337d7d248b5fbe7ee40fbb355ad354aff0053b3de7b02ce668b4bcfd23d1",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-scp-native-modern-red",
+        "exitCode": 1,
+        "ownedChildPid": 2701,
+        "elapsedSeconds": 0.194825,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 431,
+        "stdoutSha256": "sha256:2e1fd678405d370cddcd5229c3bdf60277c2282ff5e86f332237d12bedc9a124",
+        "stderrBytes": 350,
+        "stderrSha256": "sha256:632519f261b46cbcba8226a8b5b9585f2c850cb51998170cccd6838c17c99ba1"
+      },
+      {
+        "label": "cmd-scp-native-modern-green",
+        "exitCode": 0,
+        "ownedChildPid": 2832,
+        "elapsedSeconds": 0.196468,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 431,
+        "stdoutSha256": "sha256:21745736d53e12b00d25389d2fe61607b2700f66e15ff9b4414576dc9e7da3ea",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-scp-config-scope-red",
+        "exitCode": 1,
+        "ownedChildPid": 2891,
+        "elapsedSeconds": 0.19174,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 328,
+        "stdoutSha256": "sha256:c9c12124e2974170d6babf3fcf88d1cc7bda72410b7f5144834367c80234ecc6",
+        "stderrBytes": 339,
+        "stderrSha256": "sha256:f6241997441802ea03ed33701655d6c57c21b2ba40f2f65c1c68ffa2e4101fd0"
+      },
+      {
+        "label": "cmd-scp-config-scope-green",
+        "exitCode": 0,
+        "ownedChildPid": 2952,
+        "elapsedSeconds": 0.193768,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 319,
+        "stdoutSha256": "sha256:a272be0cc883a713b6de8fed8abbdb73107d2b54ee523f22fb76c6f8ff2aaf38",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-scp-option-scope-red",
+        "exitCode": 1,
+        "ownedChildPid": 3017,
+        "elapsedSeconds": 0.194099,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 334,
+        "stdoutSha256": "sha256:2080280d50523492287694c6c657f6d667a9e48c7256fcbe5189f10b696d9c7b",
+        "stderrBytes": 345,
+        "stderrSha256": "sha256:3465486357754b8b7476996ac6abca8723bce34609b355aa401492fc68e0edb2"
+      },
+      {
+        "label": "cmd-scp-option-scope-green",
+        "exitCode": 0,
+        "ownedChildPid": 3121,
+        "elapsedSeconds": 0.195257,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 331,
+        "stdoutSha256": "sha256:1ec530a68eff986d8e22410d55b3926c59ba3cc76f1822d0fced4fb5c78952bd",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-scp-uri-delimiter-red",
+        "exitCode": 1,
+        "ownedChildPid": 6162,
+        "elapsedSeconds": 0.194132,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 386,
+        "stdoutSha256": "sha256:0cd6b97d933c32edc8a7ee9aae4f67b4bc9f9d6894ba5ed73b55b417894865e1",
+        "stderrBytes": 339,
+        "stderrSha256": "sha256:714c301a5b699aceb5767633498c68a587d9d97115b8d2f215c1a6e68fc73f5d"
+      },
+      {
+        "label": "cmd-scp-uri-delimiter-green",
+        "exitCode": 0,
+        "ownedChildPid": 6203,
+        "elapsedSeconds": 0.194714,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 376,
+        "stdoutSha256": "sha256:17badf69e9c01b69d148907b6b31843015f09561fb5111235a38fcb6d28360e2",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-ssh-default-identities-red",
+        "exitCode": 1,
+        "ownedChildPid": 512,
+        "elapsedSeconds": 0.195741,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 0,
+        "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrBytes": 304,
+        "stderrSha256": "sha256:c66e8b517064764c07acb380d572d51cfa32880dd656a9631ff6f1439dba5f8a"
+      },
+      {
+        "label": "cmd-owned-ssh-adapter-final-local-validation",
+        "exitCode": 1,
+        "ownedChildPid": 2385,
+        "elapsedSeconds": 0.204939,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 0,
+        "stdoutSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrBytes": 405,
+        "stderrSha256": "sha256:9fb6db94716dc376b7a9b5216048800b16a878e9e903c4fd0431529824e9c719"
+      },
+      {
+        "label": "cmd-owned-ssh-safe-field-shape",
+        "exitCode": 0,
+        "ownedChildPid": 2443,
+        "elapsedSeconds": 0.193193,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 710,
+        "stdoutSha256": "sha256:227e51567756f2bfc9cc0d1fec27d12adbbf05df075f467d7e64066a819f05f0",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-owned-ssh-adapter-final-local-validation-attempt-2",
+        "exitCode": 0,
+        "ownedChildPid": 2524,
+        "elapsedSeconds": 2.953288,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 249,
+        "stdoutSha256": "sha256:f4ff6901e0f7869d964b6ba620760a59a38835853c4d02cb9a50f480f44305df",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-owned-ssh-adapter-post-review-local-validation",
+        "exitCode": 0,
+        "ownedChildPid": 5363,
+        "elapsedSeconds": 3.642012,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 249,
+        "stdoutSha256": "sha256:363e32e7bb6af10ec6ac35ea158bca1ecb5f674f93bcf5b654a5471063247081",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-owned-scp-adapter-local-validation",
+        "exitCode": 0,
+        "ownedChildPid": 5547,
+        "elapsedSeconds": 3.266169,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 367,
+        "stdoutSha256": "sha256:5871f5a43e195938a825695ccb4bbdd172854532c296bb2290a26e28eab94a09",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-owned-ssh-scp-post-review-regressions",
+        "exitCode": 0,
+        "ownedChildPid": 5678,
+        "elapsedSeconds": 2.519565,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 412,
+        "stdoutSha256": "sha256:848821ed7bf94bae6d3d7146eb9c823eb9c82a026a9c669fb1fad454889d0302",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-owned-scp-adapter-post-review-local-validation",
+        "exitCode": 0,
+        "ownedChildPid": 6280,
+        "elapsedSeconds": 3.443905,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 367,
+        "stdoutSha256": "sha256:60f509a7dc915da6f762e4cf1422e20933e94e60861115cb74c89342bf31838f",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-owned-ssh-scp-post-review-regressions-final",
+        "exitCode": 0,
+        "ownedChildPid": 6341,
+        "elapsedSeconds": 2.899315,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 412,
+        "stdoutSha256": "sha256:9fbc6a88a4d8d970667e3bda999bac2e8475d75a4a01a08d664720be0f23a702",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-owned-ssh-scp-post-fix-full",
+        "exitCode": 0,
+        "ownedChildPid": 3157,
+        "elapsedSeconds": 128.537908,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 52279,
+        "stdoutSha256": "sha256:a508abab48943f0510063dfd63d148e0f8295d90551944563d5d393d4cea17e1",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-owned-ssh-scp-final-post-review-full",
+        "exitCode": 0,
+        "ownedChildPid": 6799,
+        "elapsedSeconds": 127.824564,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 52306,
+        "stdoutSha256": "sha256:d778aae0f584c848352d5d819fea65a4a542c93ac199f0f4209ef8c8fa1b83af",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "cmd-owned-ssh-scp-static-final-check",
+        "exitCode": 0,
+        "ownedChildPid": 9075,
+        "elapsedSeconds": 0.112836,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 153,
+        "stdoutSha256": "sha256:b7c772b0d674969a996369b4063d61a33a1e2488fc0fa04aae1232424a450c64",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "streamDigestsVerified": 76,
+    "testPrerequisiteFailuresPreserved": [
+      "First default-identity test failed on a no-TTY stderr prerequisite, before the meaningful implicit-identity RED.",
+      "First full SSH checker expected explicit disabled fields that system -G omits; actual field-shape inspection corrected these assertions without treating omitted fields as authentication runtime proof."
+    ]
+  },
+  "redGreen": [
+    {
+      "seam": "owned adapter CLI",
+      "red": "cmd-ssh-peer-hostname-red",
+      "green": "cmd-ssh-peer-hostname-green",
+      "finalSourceRetestedBy": "cmd-owned-ssh-scp-post-review-regressions-final"
+    },
+    {
+      "seam": "owned adapter CLI",
+      "red": "cmd-ssh-peer-remote-G-red",
+      "green": "cmd-ssh-peer-remote-G-green",
+      "finalSourceRetestedBy": "cmd-owned-ssh-scp-post-review-regressions-final"
+    },
+    {
+      "seam": "owned adapter CLI",
+      "red": "cmd-ssh-default-identities-red-attempt-2",
+      "green": "cmd-ssh-default-identities-green",
+      "finalSourceRetestedBy": "cmd-owned-ssh-scp-post-review-regressions-final"
+    },
+    {
+      "seam": "owned adapter CLI",
+      "red": "cmd-ssh-config-scope-red",
+      "green": "cmd-ssh-config-scope-green",
+      "finalSourceRetestedBy": "cmd-owned-ssh-scp-post-review-regressions-final"
+    },
+    {
+      "seam": "owned adapter CLI",
+      "red": "cmd-ssh-command-option-red",
+      "green": "cmd-ssh-command-option-green",
+      "finalSourceRetestedBy": "cmd-owned-ssh-scp-post-review-regressions-final"
+    },
+    {
+      "seam": "owned adapter CLI",
+      "red": "cmd-ssh-native-version-red",
+      "green": "cmd-ssh-native-version-green",
+      "finalSourceRetestedBy": "cmd-owned-ssh-scp-post-review-regressions-final"
+    },
+    {
+      "seam": "owned adapter CLI",
+      "red": "cmd-ssh-native-quoted-paths-red",
+      "green": "cmd-ssh-native-quoted-paths-green",
+      "finalSourceRetestedBy": "cmd-owned-ssh-scp-post-review-regressions-final"
+    },
+    {
+      "seam": "owned adapter CLI",
+      "red": "cmd-ssh-native-include-red",
+      "green": "cmd-ssh-native-include-green",
+      "finalSourceRetestedBy": "cmd-owned-ssh-scp-post-review-regressions-final"
+    },
+    {
+      "seam": "owned adapter CLI",
+      "red": "cmd-ssh-late-options-red",
+      "green": "cmd-ssh-late-options-green",
+      "finalSourceRetestedBy": "cmd-owned-ssh-scp-post-review-regressions-final"
+    },
+    {
+      "seam": "owned adapter CLI",
+      "red": "cmd-scp-native-modern-red",
+      "green": "cmd-scp-native-modern-green",
+      "finalSourceRetestedBy": "cmd-owned-ssh-scp-post-review-regressions-final"
+    },
+    {
+      "seam": "owned adapter CLI",
+      "red": "cmd-scp-config-scope-red",
+      "green": "cmd-scp-config-scope-green",
+      "finalSourceRetestedBy": "cmd-owned-ssh-scp-post-review-regressions-final"
+    },
+    {
+      "seam": "owned adapter CLI",
+      "red": "cmd-scp-option-scope-red",
+      "green": "cmd-scp-option-scope-green",
+      "finalSourceRetestedBy": "cmd-owned-ssh-scp-post-review-regressions-final"
+    },
+    {
+      "seam": "owned adapter CLI",
+      "red": "cmd-scp-uri-delimiter-red",
+      "green": "cmd-scp-uri-delimiter-green",
+      "finalSourceRetestedBy": "cmd-owned-ssh-scp-post-review-regressions-final"
+    }
+  ],
+  "reviews": {
+    "owned-ssh-post-review-receipt.json": {
+      "kind": "ticket08-owned-SSH-static-review-receipt",
+      "date": "2026-10-04",
+      "source": "owned-ssh-adapter.py",
+      "sourceSha256": "ce4470f32a2d78a64aed4abcadf6fd5dd55dcf7136ff834271f32a254fa46d9b",
+      "reviewScope": "HostName and parsed metadata scope, config and identity defaults, option/path/auth restrictions, native post-destination reparse and final repair",
+      "initialFindings": [
+        "Non-loopback HostName can bypass literal peer allowlist",
+        "Remote-command -G can be misclassified as configuration mode",
+        "Implicit passwd-HOME config and identities, or owned -F Include/Match exec, are not constrained"
+      ],
+      "additionalFinding": "OpenSSH reinterprets unvalidated post-destination options without an explicit prefix terminator",
+      "findingOutcome": "All four concrete inputs are fixed; final post-destination repair was separately reviewed with no residual P1/P2 in that finding and related new diff",
+      "finalReviewResidualP1P2": 0,
+      "reviewerExecutedTests": false,
+      "reviewerIndependentlyRehashedSources": false,
+      "actualTestsRecordedByController": {
+        "result": "logs/owned-ssh-adapter-post-review-local-validation-result.json",
+        "checks": 42,
+        "configurationOnlyChecks": 9,
+        "EarlyRejectionChecks": 33
+      },
+      "futureCallerRequirements": [
+        "Bind the effective loopback port to the owned VM",
+        "Keep identity paths and immutable controller inputs within the owned runtime",
+        "Restrict remote command/subsystem execution to approved controller operations",
+        "Establish complete connected-process lifetime and teardown evidence separately"
+      ],
+      "omittedGFieldsAreNotAuthenticationRuntimeProof": true,
+      "noExecutionAuthorizationGrantedByReview": true,
+      "bootstrapClearance": false,
+      "connectedSSHExecuted": false,
+      "VMStarted": false,
+      "nativeCodexExecuted": false,
+      "modelExecuted": false,
+      "persistentDaemonAbsenceProven": false,
+      "externalRetrievalThisStage": false,
+      "newSearchSkillInvoked": false,
+      "onlyLocalContext": true
+    },
+    "owned-scp-post-review-receipt.json": {
+      "kind": "ticket08-owned-SCP-static-review-receipt",
+      "date": "2026-10-04",
+      "source": "owned-scp-adapter.py",
+      "sourceSha256": "55ec2aea6702ddd3006eb9a390711518848118a4b4383895a27f5a0c867020f0",
+      "reviewScope": "Native Lima argument forms, upload-only option/path/URI restrictions, source and pinned transport handling, empty URI delimiter repair",
+      "initialP1Findings": 0,
+      "initialP2Findings": 1,
+      "finding": "Empty query/fragment delimiters disappear from urllib path validation while the original SCP URI is forwarded",
+      "findingOutcome": "fixed: raw URI ?/# delimiters are rejected before urlsplit, source checks or native execution",
+      "finalReviewResidualP1P2": 0,
+      "finalReviewScope": "The concrete delimiter finding and one-line repair; not a runtime acceptance review",
+      "reviewerExecutedTests": false,
+      "reviewerIndependentlyRehashedSources": false,
+      "actualTestsRecordedByController": {
+        "result": "logs/owned-scp-adapter-post-review-local-validation-result.json",
+        "checks": 39,
+        "finalPublicRegressions": "logs/owned-ssh-scp-post-review-public-regressions-final.json",
+        "publicRegressions": 15
+      },
+      "unclosedCallerRequirements": [
+        "Freeze source snapshot content and directory entries for the entire native subprocess lifetime",
+        "Freeze prefix, pinned transport and all ancestor directory entries for the entire native subprocess lifetime",
+        "Keep guest and actor unable to write host source or transport paths",
+        "Bind actual owned VM address, port and user, with no conflicting or implicit port",
+        "Pinned SSH byte equality depends on separately reviewed SSH safety semantics, not merely its hash"
+      ],
+      "limits": [
+        "Legal-form tests stop at UPLOAD_SOURCE_MISSING and do not exercise source/transport or native transfer execution",
+        "Pathname reopen and exec are not descriptor-bound",
+        "Review does not prove native URI round-trip, connected daemon absence, containment or E2E"
+      ],
+      "noExecutionAuthorizationGrantedByReview": true,
+      "bootstrapClearance": false,
+      "transportExecuted": false,
+      "connectedSSHExecuted": false,
+      "successfulTransferProven": false,
+      "VMStarted": false,
+      "nativeCodexExecuted": false,
+      "modelExecuted": false,
+      "externalRetrievalThisStage": false,
+      "newSearchSkillInvoked": false,
+      "onlyLocalContext": true
+    }
+  },
+  "results": {
+    "owned-ssh-adapter-post-review-local-validation-result.json": {
+      "kind": "owned-restrictive-SSH-adapter-final-local-validation",
+      "adapterSha256": "ce4470f32a2d78a64aed4abcadf6fd5dd55dcf7136ff834271f32a254fa46d9b",
+      "syntaxParsed": true,
+      "checks": [
+        {
+          "name": "later-auto-persist-background-options",
+          "passed": true,
+          "fields": {
+            "hostname": "127.0.0.1",
+            "user": "ticket08ctl",
+            "controlmaster": "false",
+            "controlpersist": "no",
+            "forkafterauthentication": "no",
+            "forwardagent": "no",
+            "forwardx11": "no",
+            "permitlocalcommand": "no",
+            "gssapiauthentication": "no",
+            "gssapidelegatecredentials": "no",
+            "passwordauthentication": "no",
+            "kbdinteractiveauthentication": "no",
+            "hostbasedauthentication": "no",
+            "identityagent": "none",
+            "knownhostscommand": null,
+            "pkcs11provider": null,
+            "securitykeyprovider": null,
+            "addkeystoagent": "false",
+            "usekeychain": null,
+            "updatehostkeys": "false"
+          },
+          "omittedFieldsAreNotAuthenticationRuntimeProof": true,
+          "identityDefaultsDisabled": true,
+          "certificateDefaultsDisabled": true,
+          "networkRequested": false
+        },
+        {
+          "name": "forced-default-config-and-identities",
+          "passed": true,
+          "fields": {
+            "hostname": "127.0.0.1",
+            "user": "ticket08ctl",
+            "controlmaster": "false",
+            "controlpersist": "no",
+            "forkafterauthentication": "no",
+            "forwardagent": "no",
+            "forwardx11": "no",
+            "permitlocalcommand": "no",
+            "gssapiauthentication": "no",
+            "gssapidelegatecredentials": "no",
+            "passwordauthentication": "no",
+            "kbdinteractiveauthentication": "no",
+            "hostbasedauthentication": "no",
+            "identityagent": "none",
+            "knownhostscommand": null,
+            "pkcs11provider": null,
+            "securitykeyprovider": null,
+            "addkeystoagent": "false",
+            "usekeychain": null,
+            "updatehostkeys": "false"
+          },
+          "omittedFieldsAreNotAuthenticationRuntimeProof": true,
+          "identityDefaultsDisabled": true,
+          "certificateDefaultsDisabled": true,
+          "networkRequested": false
+        },
+        {
+          "name": "parsed-clustered-G",
+          "passed": true,
+          "fields": {
+            "hostname": "127.0.0.1",
+            "user": "ticket08ctl",
+            "controlmaster": "false",
+            "controlpersist": "no",
+            "forkafterauthentication": "no",
+            "forwardagent": "no",
+            "forwardx11": "no",
+            "permitlocalcommand": "no",
+            "gssapiauthentication": "no",
+            "gssapidelegatecredentials": "no",
+            "passwordauthentication": "no",
+            "kbdinteractiveauthentication": "no",
+            "hostbasedauthentication": "no",
+            "identityagent": "none",
+            "knownhostscommand": null,
+            "pkcs11provider": null,
+            "securitykeyprovider": null,
+            "addkeystoagent": "false",
+            "usekeychain": null,
+            "updatehostkeys": "false"
+          },
+          "omittedFieldsAreNotAuthenticationRuntimeProof": true,
+          "identityDefaultsDisabled": true,
+          "certificateDefaultsDisabled": true,
+          "networkRequested": false
+        },
+        {
+          "name": "native-no-master-sentinel",
+          "passed": true,
+          "fields": {
+            "hostname": "127.0.0.1",
+            "user": "ticket08ctl",
+            "controlmaster": "false",
+            "controlpersist": "no",
+            "forkafterauthentication": "no",
+            "forwardagent": "no",
+            "forwardx11": "no",
+            "permitlocalcommand": "no",
+            "gssapiauthentication": "no",
+            "gssapidelegatecredentials": "no",
+            "passwordauthentication": "no",
+            "kbdinteractiveauthentication": "no",
+            "hostbasedauthentication": "no",
+            "identityagent": "none",
+            "knownhostscommand": null,
+            "pkcs11provider": null,
+            "securitykeyprovider": null,
+            "addkeystoagent": "false",
+            "usekeychain": null,
+            "updatehostkeys": "false"
+          },
+          "omittedFieldsAreNotAuthenticationRuntimeProof": true,
+          "identityDefaultsDisabled": true,
+          "certificateDefaultsDisabled": true,
+          "networkRequested": false
+        },
+        {
+          "name": "hostname-loopback-pin",
+          "passed": true,
+          "fields": {
+            "hostname": "127.0.0.1",
+            "user": "ticket08ctl",
+            "controlmaster": "false",
+            "controlpersist": "no",
+            "forkafterauthentication": "no",
+            "forwardagent": "no",
+            "forwardx11": "no",
+            "permitlocalcommand": "no",
+            "gssapiauthentication": "no",
+            "gssapidelegatecredentials": "no",
+            "passwordauthentication": "no",
+            "kbdinteractiveauthentication": "no",
+            "hostbasedauthentication": "no",
+            "identityagent": "none",
+            "knownhostscommand": null,
+            "pkcs11provider": null,
+            "securitykeyprovider": null,
+            "addkeystoagent": "false",
+            "usekeychain": null,
+            "updatehostkeys": "false"
+          },
+          "omittedFieldsAreNotAuthenticationRuntimeProof": true,
+          "identityDefaultsDisabled": true,
+          "certificateDefaultsDisabled": true,
+          "networkRequested": false
+        },
+        {
+          "name": "system-scp-transport-options",
+          "passed": true,
+          "fields": {
+            "hostname": "127.0.0.1",
+            "user": "ticket08ctl",
+            "controlmaster": "false",
+            "controlpersist": "no",
+            "forkafterauthentication": "no",
+            "forwardagent": "no",
+            "forwardx11": "no",
+            "permitlocalcommand": "no",
+            "gssapiauthentication": "no",
+            "gssapidelegatecredentials": "no",
+            "passwordauthentication": "no",
+            "kbdinteractiveauthentication": "no",
+            "hostbasedauthentication": "no",
+            "identityagent": "none",
+            "knownhostscommand": null,
+            "pkcs11provider": null,
+            "securitykeyprovider": null,
+            "addkeystoagent": "false",
+            "usekeychain": null,
+            "updatehostkeys": "false"
+          },
+          "omittedFieldsAreNotAuthenticationRuntimeProof": true,
+          "identityDefaultsDisabled": true,
+          "certificateDefaultsDisabled": true,
+          "networkRequested": false
+        },
+        {
+          "name": "explicit-prefix-terminator",
+          "passed": true,
+          "fields": {
+            "hostname": "127.0.0.1",
+            "user": "ticket08ctl",
+            "controlmaster": "false",
+            "controlpersist": "no",
+            "forkafterauthentication": "no",
+            "forwardagent": "no",
+            "forwardx11": "no",
+            "permitlocalcommand": "no",
+            "gssapiauthentication": "no",
+            "gssapidelegatecredentials": "no",
+            "passwordauthentication": "no",
+            "kbdinteractiveauthentication": "no",
+            "hostbasedauthentication": "no",
+            "identityagent": "none",
+            "knownhostscommand": null,
+            "pkcs11provider": null,
+            "securitykeyprovider": null,
+            "addkeystoagent": "false",
+            "usekeychain": null,
+            "updatehostkeys": "false"
+          },
+          "omittedFieldsAreNotAuthenticationRuntimeProof": true,
+          "identityDefaultsDisabled": true,
+          "certificateDefaultsDisabled": true,
+          "networkRequested": false
+        },
+        {
+          "name": "remote-command-flags-remain-remote",
+          "passed": true,
+          "fields": {
+            "hostname": "127.0.0.1",
+            "user": "ticket08ctl",
+            "controlmaster": "false",
+            "controlpersist": "no",
+            "forkafterauthentication": "no",
+            "forwardagent": "no",
+            "forwardx11": "no",
+            "permitlocalcommand": "no",
+            "gssapiauthentication": "no",
+            "gssapidelegatecredentials": "no",
+            "passwordauthentication": "no",
+            "kbdinteractiveauthentication": "no",
+            "hostbasedauthentication": "no",
+            "identityagent": "none",
+            "knownhostscommand": null,
+            "pkcs11provider": null,
+            "securitykeyprovider": null,
+            "addkeystoagent": "false",
+            "usekeychain": null,
+            "updatehostkeys": "false"
+          },
+          "omittedFieldsAreNotAuthenticationRuntimeProof": true,
+          "identityDefaultsDisabled": true,
+          "certificateDefaultsDisabled": true,
+          "networkRequested": false
+        },
+        {
+          "name": "explicit-remote-terminator",
+          "passed": true,
+          "fields": {
+            "hostname": "127.0.0.1",
+            "user": "ticket08ctl",
+            "controlmaster": "false",
+            "controlpersist": "no",
+            "forkafterauthentication": "no",
+            "forwardagent": "no",
+            "forwardx11": "no",
+            "permitlocalcommand": "no",
+            "gssapiauthentication": "no",
+            "gssapidelegatecredentials": "no",
+            "passwordauthentication": "no",
+            "kbdinteractiveauthentication": "no",
+            "hostbasedauthentication": "no",
+            "identityagent": "none",
+            "knownhostscommand": null,
+            "pkcs11provider": null,
+            "securitykeyprovider": null,
+            "addkeystoagent": "false",
+            "usekeychain": null,
+            "updatehostkeys": "false"
+          },
+          "omittedFieldsAreNotAuthenticationRuntimeProof": true,
+          "identityDefaultsDisabled": true,
+          "certificateDefaultsDisabled": true,
+          "networkRequested": false
+        },
+        {
+          "name": "background-flag",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "BACKGROUND_OR_UNSUPPORTED_FLAG",
+          "networkRequested": false
+        },
+        {
+          "name": "combined-background-flag",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "BACKGROUND_OR_UNSUPPORTED_FLAG",
+          "networkRequested": false
+        },
+        {
+          "name": "master-flag",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "BACKGROUND_OR_UNSUPPORTED_FLAG",
+          "networkRequested": false
+        },
+        {
+          "name": "agent-forward-flag",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "BACKGROUND_OR_UNSUPPORTED_FLAG",
+          "networkRequested": false
+        },
+        {
+          "name": "X11-forward-flag",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "BACKGROUND_OR_UNSUPPORTED_FLAG",
+          "networkRequested": false
+        },
+        {
+          "name": "external-peer",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "OUTSIDE_OWNED_PEER",
+          "networkRequested": false
+        },
+        {
+          "name": "remote-command-G",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "OUTSIDE_OWNED_PEER",
+          "networkRequested": false
+        },
+        {
+          "name": "outside-key",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "OUTSIDE_OWNED_PATH",
+          "networkRequested": false
+        },
+        {
+          "name": "outside-config",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "CONFIG_SCOPE",
+          "networkRequested": false
+        },
+        {
+          "name": "owned-config",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "CONFIG_SCOPE",
+          "networkRequested": false
+        },
+        {
+          "name": "hostname-option",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "OUTSIDE_OWNED_HOSTNAME",
+          "networkRequested": false
+        },
+        {
+          "name": "proxy-command",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "EXTRA_PROCESS_COMMAND",
+          "networkRequested": false
+        },
+        {
+          "name": "known-hosts-command",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "EXTRA_PROCESS_COMMAND",
+          "networkRequested": false
+        },
+        {
+          "name": "include-option",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "UNSUPPORTED_OPTION",
+          "networkRequested": false
+        },
+        {
+          "name": "match-option",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "UNSUPPORTED_OPTION",
+          "networkRequested": false
+        },
+        {
+          "name": "external-certificate",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "CERTIFICATE_SCOPE",
+          "networkRequested": false
+        },
+        {
+          "name": "identity-agent",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "AGENT_SCOPE",
+          "networkRequested": false
+        },
+        {
+          "name": "identity-expansion",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "PATH_EXPANSION",
+          "networkRequested": false
+        },
+        {
+          "name": "wrong-user",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "USER_SCOPE",
+          "networkRequested": false
+        },
+        {
+          "name": "environment-forwarding",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "ENVIRONMENT_FORWARDING",
+          "networkRequested": false
+        },
+        {
+          "name": "control-forward",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "CONTROL_OPERATION",
+          "networkRequested": false
+        },
+        {
+          "name": "port-forward",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "FORWARD_OR_PROXY",
+          "networkRequested": false
+        },
+        {
+          "name": "port-zero",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "PORT_VALUE",
+          "networkRequested": false
+        },
+        {
+          "name": "missing-port-value",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "OPTION_VALUE",
+          "networkRequested": false
+        },
+        {
+          "name": "missing-config-value",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "CONFIG_VALUE",
+          "networkRequested": false
+        },
+        {
+          "name": "version-operand",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "VERSION_OPERANDS",
+          "networkRequested": false
+        },
+        {
+          "name": "late-peer-options",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "OUTSIDE_OWNED_PEER",
+          "networkRequested": false
+        },
+        {
+          "name": "external-log-file",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "BACKGROUND_OR_UNSUPPORTED_FLAG",
+          "networkRequested": false
+        },
+        {
+          "name": "post-peer-config",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "LATE_LOCAL_OPTION",
+          "networkRequested": false
+        },
+        {
+          "name": "post-peer-identity",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "LATE_LOCAL_OPTION",
+          "networkRequested": false
+        },
+        {
+          "name": "post-peer-control-socket",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "LATE_LOCAL_OPTION",
+          "networkRequested": false
+        },
+        {
+          "name": "post-peer-unknown-option",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "LATE_LOCAL_OPTION",
+          "networkRequested": false
+        },
+        {
+          "name": "post-peer-background-master",
+          "passed": true,
+          "expectedExitCode": 72,
+          "expectedError": "LATE_LOCAL_OPTION",
+          "networkRequested": false
+        }
+      ],
+      "checksPassed": 42,
+      "installedIntoRuntimePATH": false,
+      "globalConfigurationChanged": false,
+      "realSSHKeysOrAuthUsed": false,
+      "connectedSSHExecuted": false,
+      "VMStarted": false,
+      "nativeCodexExecuted": false,
+      "actualDaemonAbsenceProven": false,
+      "limit": "Actual entrypoint rejections and restricted system SSH -G fields only. No connection, daemon or VM lifecycle was exercised."
+    },
+    "owned-scp-adapter-post-review-local-validation-result.json": {
+      "kind": "owned-SCP-adapter-fail-closed-local-validation",
+      "adapterSha256": "55ec2aea6702ddd3006eb9a390711518848118a4b4383895a27f5a0c867020f0",
+      "pinnedTransportSha256": "ce4470f32a2d78a64aed4abcadf6fd5dd55dcf7136ff834271f32a254fa46d9b",
+      "syntaxParsed": true,
+      "checks": [
+        {
+          "name": "modern-native",
+          "passed": true,
+          "expectedError": "UPLOAD_SOURCE_MISSING",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "legacy-native",
+          "passed": true,
+          "expectedError": "UPLOAD_SOURCE_MISSING",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "quoted-owned-options",
+          "passed": true,
+          "expectedError": "UPLOAD_SOURCE_MISSING",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "no-master-sentinel",
+          "passed": true,
+          "expectedError": "UPLOAD_SOURCE_MISSING",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "wrong-source-root",
+          "passed": true,
+          "expectedError": "UPLOAD_SOURCE",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "source-subdirectory",
+          "passed": true,
+          "expectedError": "UPLOAD_SOURCE",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "relative-source",
+          "passed": true,
+          "expectedError": "NONCANONICAL_PATH",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "outside-source",
+          "passed": true,
+          "expectedError": "OUTSIDE_PATH",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "external-peer",
+          "passed": true,
+          "expectedError": "UPLOAD_PEER",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "external-uri",
+          "passed": true,
+          "expectedError": "UPLOAD_PEER",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "wrong-uri-user",
+          "passed": true,
+          "expectedError": "UPLOAD_PEER",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "uri-password",
+          "passed": true,
+          "expectedError": "UPLOAD_PEER",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "uri-query",
+          "passed": true,
+          "expectedError": "UPLOAD_PEER",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "uri-fragment",
+          "passed": true,
+          "expectedError": "UPLOAD_PEER",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "uri-empty-query",
+          "passed": true,
+          "expectedError": "UPLOAD_PEER",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "uri-empty-fragment",
+          "passed": true,
+          "expectedError": "UPLOAD_PEER",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "uri-whitespace",
+          "passed": true,
+          "expectedError": "UPLOAD_PEER",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "uri-missing-port",
+          "passed": true,
+          "expectedError": "UPLOAD_PEER",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "uri-port-range",
+          "passed": true,
+          "expectedError": "UPLOAD_PEER",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "uri-encoded-path",
+          "passed": true,
+          "expectedError": "UPLOAD_DESTINATION",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "wrong-destination",
+          "passed": true,
+          "expectedError": "UPLOAD_DESTINATION",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "traversal-destination",
+          "passed": true,
+          "expectedError": "UPLOAD_DESTINATION",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "wrong-arity",
+          "passed": true,
+          "expectedError": "UPLOAD_OPERANDS",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "transport-override",
+          "passed": true,
+          "expectedError": "TRANSPORT_OVERRIDE",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "recursive-copy",
+          "passed": true,
+          "expectedError": "UNSUPPORTED_COPY_FLAG",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "outside-config",
+          "passed": true,
+          "expectedError": "CONFIG_SCOPE",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "owned-config",
+          "passed": true,
+          "expectedError": "CONFIG_SCOPE",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "include-option",
+          "passed": true,
+          "expectedError": "UNSUPPORTED_OPTION",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "wrong-user-option",
+          "passed": true,
+          "expectedError": "USER_SCOPE",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "hostname-option",
+          "passed": true,
+          "expectedError": "OUTSIDE_OWNED_HOSTNAME",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "outside-identity",
+          "passed": true,
+          "expectedError": "OUTSIDE_PATH",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "identity-expansion",
+          "passed": true,
+          "expectedError": "PATH_EXPANSION",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "known-hosts-command",
+          "passed": true,
+          "expectedError": "EXTRA_PROCESS_COMMAND",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "proxy-command",
+          "passed": true,
+          "expectedError": "EXTRA_PROCESS_COMMAND",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "agent-option",
+          "passed": true,
+          "expectedError": "AGENT_SCOPE",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "certificate-option",
+          "passed": true,
+          "expectedError": "CERTIFICATE_SCOPE",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "known-hosts-option",
+          "passed": true,
+          "expectedError": "KNOWN_HOSTS_SCOPE",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "port-zero",
+          "passed": true,
+          "expectedError": "PORT_VALUE",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        },
+        {
+          "name": "missing-option-value",
+          "passed": true,
+          "expectedError": "OPTION_VALUE",
+          "transportExecuted": false,
+          "connectedSSHExecuted": false
+        }
+      ],
+      "checksPassed": 39,
+      "installedIntoRuntimePATH": false,
+      "transportExecuted": false,
+      "connectedSSHExecuted": false,
+      "successfulTransferProven": false,
+      "VMStarted": false,
+      "nativeCodexExecuted": false,
+      "limit": "Valid native argument forms reach an intentionally missing owned upload source; negative requests are rejected earlier. Neither system SCP nor SSH transport nor a live transfer is exercised."
+    },
+    "owned-ssh-scp-post-review-public-regressions-final.json": {
+      "kind": "owned-SSH-SCP-post-review-public-regressions",
+      "checksPassed": 15,
+      "checks": [
+        {
+          "args": [
+            "check-ssh-peer-scope.py",
+            "hostname"
+          ],
+          "helperSha256": "63ebe07d9d17fb531d79dce9b9655e95ff491072fcf8a021bbf18a263bf62170",
+          "exitCode": 0,
+          "stdoutBytes": 325,
+          "stdoutSha256": "795eba718906497ca1767f0476c86e1431190571545c0a78bcb3f28eb6bf3386",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "case": "hostname",
+            "actualExitCode": 72,
+            "expectedExitCode": 72,
+            "actualStderr": "TICKET08_SSH_ADAPTER: OUTSIDE_OWNED_HOSTNAME\n",
+            "expectedError": "OUTSIDE_OWNED_HOSTNAME",
+            "networkSafety": "configuration-only prefix -G, or invalid port zero fails before DNS/connect/auth",
+            "connectedSSHRequested": false
+          }
+        },
+        {
+          "args": [
+            "check-ssh-peer-scope.py",
+            "remote-G"
+          ],
+          "helperSha256": "63ebe07d9d17fb531d79dce9b9655e95ff491072fcf8a021bbf18a263bf62170",
+          "exitCode": 0,
+          "stdoutBytes": 317,
+          "stdoutSha256": "f1e5965a510daabb3a7005532dab93c69c15e88cc60ea35f94aacba6a4b8bc5d",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "case": "remote-G",
+            "actualExitCode": 72,
+            "expectedExitCode": 72,
+            "actualStderr": "TICKET08_SSH_ADAPTER: OUTSIDE_OWNED_PEER\n",
+            "expectedError": "OUTSIDE_OWNED_PEER",
+            "networkSafety": "configuration-only prefix -G, or invalid port zero fails before DNS/connect/auth",
+            "connectedSSHRequested": false
+          }
+        },
+        {
+          "args": [
+            "check-ssh-default-identity.py"
+          ],
+          "helperSha256": "b0e6a2541a5f2424be498252db10a02a06c75180e6635f3500a0797bb2f125ad",
+          "exitCode": 0,
+          "stdoutBytes": 383,
+          "stdoutSha256": "8493333e2b973ff7f5b00b85e68d544a7142abd76ed04401e896771e6c963a20",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "kind": "owned-SSH-default-identity-regression",
+            "adapterSha256": "ce4470f32a2d78a64aed4abcadf6fd5dd55dcf7136ff834271f32a254fa46d9b",
+            "actualDefaultIdentityEntries": 1,
+            "implicitIdentityDefaultsDisabled": true,
+            "certificateDefaultsDisabled": true,
+            "rawConfigOrIdentityPathsSaved": false,
+            "configMode": "-F /dev/null with prefix -G",
+            "connectedSSHExecuted": false
+          }
+        },
+        {
+          "args": [
+            "check-ssh-config-scope.py"
+          ],
+          "helperSha256": "1f0876aa24d58b9b17b74f7e55f0f8b1f0388c0b43091d54f7dffd78bcc33f27",
+          "exitCode": 0,
+          "stdoutBytes": 316,
+          "stdoutSha256": "83e38f13e966f197c1390b1aaaef822b019e8d3740f8bcf3bf17910623a29282",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "kind": "owned-SSH-config-scope-regression",
+            "adapterSha256": "ce4470f32a2d78a64aed4abcadf6fd5dd55dcf7136ff834271f32a254fa46d9b",
+            "actualExitCode": 72,
+            "expectedExitCode": 72,
+            "expectedError": "CONFIG_SCOPE",
+            "systemConfigParsed": false,
+            "connectedSSHExecuted": false,
+            "realSSHConfigUsed": false
+          }
+        },
+        {
+          "args": [
+            "check-ssh-command-option.py"
+          ],
+          "helperSha256": "dd92ddfcb1e5e4bee36c17a23a014833fb0419d1768d6e1eb8ae42f0f0dda681",
+          "exitCode": 0,
+          "stdoutBytes": 326,
+          "stdoutSha256": "626c2fb8188fc5d8da846abfde4b44adb9352d307ddae05a11ce2b882189261b",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "kind": "owned-SSH-command-option-regression",
+            "adapterSha256": "ce4470f32a2d78a64aed4abcadf6fd5dd55dcf7136ff834271f32a254fa46d9b",
+            "actualExitCode": 72,
+            "expectedExitCode": 72,
+            "expectedError": "EXTRA_PROCESS_COMMAND",
+            "connectedSSHExecuted": false,
+            "extraCommandExecuted": false,
+            "rawConfigSaved": false
+          }
+        },
+        {
+          "args": [
+            "check-ssh-native-grammar.py",
+            "version"
+          ],
+          "helperSha256": "785951b018ac581eab7ba4ccb5c89454a7cc5a0a647429e1056911a59f5ebf06",
+          "exitCode": 0,
+          "stdoutBytes": 268,
+          "stdoutSha256": "249df93256a08c6bef14bfa8598e8dbade3735ffbe44042c80e7097a484d599e",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "kind": "owned-SSH-native-grammar-regression",
+            "case": "version",
+            "adapterSha256": "ce4470f32a2d78a64aed4abcadf6fd5dd55dcf7136ff834271f32a254fa46d9b",
+            "actualExitCode": 0,
+            "expectedExitCode": 0,
+            "connectedSSHExecuted": false,
+            "rawConfigSaved": false
+          }
+        },
+        {
+          "args": [
+            "check-ssh-native-grammar.py",
+            "paths"
+          ],
+          "helperSha256": "785951b018ac581eab7ba4ccb5c89454a7cc5a0a647429e1056911a59f5ebf06",
+          "exitCode": 0,
+          "stdoutBytes": 266,
+          "stdoutSha256": "22159a2a687dd38e1a51ebcc6e75c7f9a2b538ebfff60550687dfda5573ed9ef",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "kind": "owned-SSH-native-grammar-regression",
+            "case": "paths",
+            "adapterSha256": "ce4470f32a2d78a64aed4abcadf6fd5dd55dcf7136ff834271f32a254fa46d9b",
+            "actualExitCode": 0,
+            "expectedExitCode": 0,
+            "connectedSSHExecuted": false,
+            "rawConfigSaved": false
+          }
+        },
+        {
+          "args": [
+            "check-ssh-native-grammar.py",
+            "include"
+          ],
+          "helperSha256": "785951b018ac581eab7ba4ccb5c89454a7cc5a0a647429e1056911a59f5ebf06",
+          "exitCode": 0,
+          "stdoutBytes": 270,
+          "stdoutSha256": "2b6699fa442d3e7d1447dcabc3c18b2459fc8ed6c20bb90665f1f041bf7c4052",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "kind": "owned-SSH-native-grammar-regression",
+            "case": "include",
+            "adapterSha256": "ce4470f32a2d78a64aed4abcadf6fd5dd55dcf7136ff834271f32a254fa46d9b",
+            "actualExitCode": 72,
+            "expectedExitCode": 72,
+            "connectedSSHExecuted": false,
+            "rawConfigSaved": false
+          }
+        },
+        {
+          "args": [
+            "check-ssh-late-options.py"
+          ],
+          "helperSha256": "251c5749de7fd026ea5c0a5c745b854816cc4a9e9bf84a773ca9d60768757df5",
+          "exitCode": 0,
+          "stdoutBytes": 328,
+          "stdoutSha256": "ba8b337d7d248b5fbe7ee40fbb355ad354aff0053b3de7b02ce668b4bcfd23d1",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "kind": "owned-SSH-post-peer-option-regression",
+            "adapterSha256": "ce4470f32a2d78a64aed4abcadf6fd5dd55dcf7136ff834271f32a254fa46d9b",
+            "actualExitCode": 72,
+            "expectedExitCode": 72,
+            "expectedError": "LATE_LOCAL_OPTION",
+            "systemConfigParsed": false,
+            "connectedSSHExecuted": false,
+            "realConfigOrKeysRead": false
+          }
+        },
+        {
+          "args": [
+            "check-scp-native-grammar.py",
+            "modern"
+          ],
+          "helperSha256": "25ff6d84d469fa74d6b3106c94104dafa5c4fbae7c580361d9aeb80cdffa68a1",
+          "exitCode": 0,
+          "stdoutBytes": 431,
+          "stdoutSha256": "be2d4193869751fc9d62fc1a8b0b0133bd003e33f6a1719d70a5610affdcb60b",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "kind": "owned-SCP-native-grammar-fail-closed-regression",
+            "case": "modern",
+            "adapterSha256": "55ec2aea6702ddd3006eb9a390711518848118a4b4383895a27f5a0c867020f0",
+            "actualExitCode": 72,
+            "expectedExitCode": 72,
+            "actualError": "TICKET08_SCP_ADAPTER: UPLOAD_SOURCE_MISSING\n",
+            "expectedError": "UPLOAD_SOURCE_MISSING",
+            "transportExecuted": false,
+            "connectedSSHExecuted": false,
+            "successfulTransferProven": false
+          }
+        },
+        {
+          "args": [
+            "check-scp-native-grammar.py",
+            "legacy"
+          ],
+          "helperSha256": "25ff6d84d469fa74d6b3106c94104dafa5c4fbae7c580361d9aeb80cdffa68a1",
+          "exitCode": 0,
+          "stdoutBytes": 431,
+          "stdoutSha256": "81d5940392a21f4da393a8c9b0ee422e304664e04089b67deeb796af7b2d2521",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "kind": "owned-SCP-native-grammar-fail-closed-regression",
+            "case": "legacy",
+            "adapterSha256": "55ec2aea6702ddd3006eb9a390711518848118a4b4383895a27f5a0c867020f0",
+            "actualExitCode": 72,
+            "expectedExitCode": 72,
+            "actualError": "TICKET08_SCP_ADAPTER: UPLOAD_SOURCE_MISSING\n",
+            "expectedError": "UPLOAD_SOURCE_MISSING",
+            "transportExecuted": false,
+            "connectedSSHExecuted": false,
+            "successfulTransferProven": false
+          }
+        },
+        {
+          "args": [
+            "check-scp-config-scope.py"
+          ],
+          "helperSha256": "6b87716074f0bf1da18047ce205ee157d903ceedba1eb79d8b58a687143bd376",
+          "exitCode": 0,
+          "stdoutBytes": 319,
+          "stdoutSha256": "aebe60b0ed02aa4a55312ff26ccb3782fe7588ff633ab1fc7b2c7ff09ef37d20",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "kind": "owned-SCP-config-scope-regression",
+            "adapterSha256": "55ec2aea6702ddd3006eb9a390711518848118a4b4383895a27f5a0c867020f0",
+            "actualExitCode": 72,
+            "actualError": "TICKET08_SCP_ADAPTER: CONFIG_SCOPE\n",
+            "expectedError": "CONFIG_SCOPE",
+            "connectedSSHExecuted": false,
+            "realConfigOrKeysRead": false
+          }
+        },
+        {
+          "args": [
+            "check-scp-option-scope.py"
+          ],
+          "helperSha256": "81ed3fba36732f0698d54d14573dfe85d28b981694a5e3b4c536e28f09908b85",
+          "exitCode": 0,
+          "stdoutBytes": 331,
+          "stdoutSha256": "05defcfeb98380f90ac4265fc3cde0c958632517e85356afeb0951b6fedf0f6e",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "kind": "owned-SCP-option-scope-regression",
+            "adapterSha256": "55ec2aea6702ddd3006eb9a390711518848118a4b4383895a27f5a0c867020f0",
+            "actualExitCode": 72,
+            "actualError": "TICKET08_SCP_ADAPTER: UNSUPPORTED_OPTION\n",
+            "expectedError": "UNSUPPORTED_OPTION",
+            "connectedSSHExecuted": false,
+            "realConfigOrKeysRead": false
+          }
+        },
+        {
+          "args": [
+            "check-scp-uri-delimiter.py",
+            "?"
+          ],
+          "helperSha256": "baf7b3614cbc5cbc9d061fa074f819eaf5ed1f79d0067ee57a43cedf9eab42a1",
+          "exitCode": 0,
+          "stdoutBytes": 376,
+          "stdoutSha256": "17badf69e9c01b69d148907b6b31843015f09561fb5111235a38fcb6d28360e2",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "kind": "owned-SCP-raw-URI-delimiter-regression",
+            "delimiter": "?",
+            "adapterSha256": "55ec2aea6702ddd3006eb9a390711518848118a4b4383895a27f5a0c867020f0",
+            "actualExitCode": 72,
+            "actualError": "TICKET08_SCP_ADAPTER: UPLOAD_PEER\n",
+            "expectedError": "UPLOAD_PEER",
+            "transportExecuted": false,
+            "connectedSSHExecuted": false,
+            "successfulTransferProven": false
+          }
+        },
+        {
+          "args": [
+            "check-scp-uri-delimiter.py",
+            "#"
+          ],
+          "helperSha256": "baf7b3614cbc5cbc9d061fa074f819eaf5ed1f79d0067ee57a43cedf9eab42a1",
+          "exitCode": 0,
+          "stdoutBytes": 376,
+          "stdoutSha256": "22b92d80e0871301f3c04cd7be9bc1a8e67189b7305549b4604f1c5cdc78e911",
+          "stderrBytes": 0,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "result": {
+            "kind": "owned-SCP-raw-URI-delimiter-regression",
+            "delimiter": "#",
+            "adapterSha256": "55ec2aea6702ddd3006eb9a390711518848118a4b4383895a27f5a0c867020f0",
+            "actualExitCode": 72,
+            "actualError": "TICKET08_SCP_ADAPTER: UPLOAD_PEER\n",
+            "expectedError": "UPLOAD_PEER",
+            "transportExecuted": false,
+            "connectedSSHExecuted": false,
+            "successfulTransferProven": false
+          }
+        }
+      ],
+      "sources": {
+        "owned-ssh-adapter.py": "ce4470f32a2d78a64aed4abcadf6fd5dd55dcf7136ff834271f32a254fa46d9b",
+        "owned-scp-adapter.py": "55ec2aea6702ddd3006eb9a390711518848118a4b4383895a27f5a0c867020f0"
+      },
+      "installedIntoRuntimePATH": false,
+      "VMStarted": false,
+      "bootstrapAttempts": 0,
+      "connectedSSHExecuted": false,
+      "successfulTransferProven": false,
+      "nativeCodexExecuted": false,
+      "modelExecuted": false,
+      "actualDaemonAbsenceProven": false
+    }
+  },
+  "prototypeSources": [
+    {
+      "path": "owned-ssh-adapter.py",
+      "bytes": 9348,
+      "mode": 420,
+      "sha256": "ce4470f32a2d78a64aed4abcadf6fd5dd55dcf7136ff834271f32a254fa46d9b"
+    },
+    {
+      "path": "owned-scp-adapter.py",
+      "bytes": 8231,
+      "mode": 420,
+      "sha256": "55ec2aea6702ddd3006eb9a390711518848118a4b4383895a27f5a0c867020f0"
+    },
+    {
+      "path": "check-owned-ssh-adapter.py",
+      "bytes": 7389,
+      "mode": 420,
+      "sha256": "66243fddb10417758689e1fdc72fc481870c18a374178868b3d9c8c94d4d55fc"
+    },
+    {
+      "path": "check-owned-scp-adapter.py",
+      "bytes": 6180,
+      "mode": 420,
+      "sha256": "3b4a703e33b5556edd3ec457406d990ebd5d1d5c90108e7b4406840541910347"
+    },
+    {
+      "path": "check-ssh-peer-scope.py",
+      "bytes": 1735,
+      "mode": 420,
+      "sha256": "63ebe07d9d17fb531d79dce9b9655e95ff491072fcf8a021bbf18a263bf62170"
+    },
+    {
+      "path": "check-ssh-default-identity.py",
+      "bytes": 1798,
+      "mode": 420,
+      "sha256": "b0e6a2541a5f2424be498252db10a02a06c75180e6635f3500a0797bb2f125ad"
+    },
+    {
+      "path": "check-ssh-config-scope.py",
+      "bytes": 1628,
+      "mode": 420,
+      "sha256": "1f0876aa24d58b9b17b74f7e55f0f8b1f0388c0b43091d54f7dffd78bcc33f27"
+    },
+    {
+      "path": "check-ssh-command-option.py",
+      "bytes": 1392,
+      "mode": 420,
+      "sha256": "dd92ddfcb1e5e4bee36c17a23a014833fb0419d1768d6e1eb8ae42f0f0dda681"
+    },
+    {
+      "path": "check-ssh-native-grammar.py",
+      "bytes": 2474,
+      "mode": 420,
+      "sha256": "785951b018ac581eab7ba4ccb5c89454a7cc5a0a647429e1056911a59f5ebf06"
+    },
+    {
+      "path": "check-ssh-late-options.py",
+      "bytes": 1514,
+      "mode": 420,
+      "sha256": "251c5749de7fd026ea5c0a5c745b854816cc4a9e9bf84a773ca9d60768757df5"
+    },
+    {
+      "path": "check-scp-native-grammar.py",
+      "bytes": 1926,
+      "mode": 420,
+      "sha256": "25ff6d84d469fa74d6b3106c94104dafa5c4fbae7c580361d9aeb80cdffa68a1"
+    },
+    {
+      "path": "check-scp-config-scope.py",
+      "bytes": 1494,
+      "mode": 420,
+      "sha256": "6b87716074f0bf1da18047ce205ee157d903ceedba1eb79d8b58a687143bd376"
+    },
+    {
+      "path": "check-scp-option-scope.py",
+      "bytes": 1534,
+      "mode": 420,
+      "sha256": "81ed3fba36732f0698d54d14573dfe85d28b981694a5e3b4c536e28f09908b85"
+    },
+    {
+      "path": "check-scp-uri-delimiter.py",
+      "bytes": 1592,
+      "mode": 420,
+      "sha256": "baf7b3614cbc5cbc9d061fa074f819eaf5ed1f79d0067ee57a43cedf9eab42a1"
+    },
+    {
+      "path": "inspect-owned-ssh-safe-fields.py",
+      "bytes": 1314,
+      "mode": 420,
+      "sha256": "77ed9fb131b2eb864bec5f1413731c84ac6e99a3a9046b86f671ff88f3a8bb53"
+    },
+    {
+      "path": "check-ssh-scp-post-review.py",
+      "bytes": 2893,
+      "mode": 420,
+      "sha256": "bc42c4d790804e30bf3bd422f5e3e21781aba6d7477d3a3ac840c0d4891573fb"
+    },
+    {
+      "path": "save-ssh-scp-preparation-evidence.py",
+      "bytes": 14339,
+      "mode": 420,
+      "sha256": "beb3903cf147e5be5cd5c65f0f24b5fb8cf22b5589219bf40caa068fb9e6487d"
+    }
+  ],
+  "unchangedDeliverySources": [
+    {
+      "path": "tests/codex-live/app-server.js",
+      "bytes": 13682,
+      "mode": 420,
+      "sha256": "a2de07fb77df49fa0b23fe0e932ff699f177024dc5164e0c9a0590f228003665"
+    },
+    {
+      "path": "tests/codex-live/contributor-context.js",
+      "bytes": 4360,
+      "mode": 420,
+      "sha256": "0312ad1fd7be9a0d48cada863170fa0fd3c40082c9842986643c5ab383859a02"
+    },
+    {
+      "path": "tests/codex-live/machine-record.js",
+      "bytes": 6462,
+      "mode": 420,
+      "sha256": "fdf0aec0b97b5e763a0c6be802a6b1f7979d4b8129e73c78e68541c5e2010998"
+    },
+    {
+      "path": "tests/codex-live/owned-runtime.js",
+      "bytes": 19032,
+      "mode": 420,
+      "sha256": "a4d4d6c3cab74a563f0d4e2ed90776bd7a2ecddfe02b40bdd967e06107a108ba"
+    },
+    {
+      "path": "tests/codex-live/owned-runtime.test.js",
+      "bytes": 12691,
+      "mode": 420,
+      "sha256": "dfaa179465531da3c564b8366e436e9a898734ffebf054eb673a00d1fb2035e4"
+    },
+    {
+      "path": "tests/codex-live/parser.js",
+      "bytes": 6916,
+      "mode": 420,
+      "sha256": "5f0f87c10ea8d2a7545aa2189bc767d24c0337f99bf35a89e3a1f445eecf9a09"
+    },
+    {
+      "path": "tests/codex-live/parser.test.js",
+      "bytes": 7330,
+      "mode": 420,
+      "sha256": "a709b17262e5ea386bf09d041c620e83a1ab89296293f13bb57010c5eb8346cc"
+    },
+    {
+      "path": "tests/codex-live/process-ownership.js",
+      "bytes": 687,
+      "mode": 420,
+      "sha256": "f57bbdea2f675c5128807757b3c7335599083f654a870f96354b59b506ea90ee"
+    },
+    {
+      "path": "tests/codex-live/protocol.test.js",
+      "bytes": 8405,
+      "mode": 420,
+      "sha256": "b5336b9cab373965c617ca0141d05845d363b0aaa740338e58b3d9197251a1dc"
+    },
+    {
+      "path": "tests/codex-live/runner.js",
+      "bytes": 30917,
+      "mode": 420,
+      "sha256": "aa02f9d11cb0df98ec830ac4a954353bd69f13567992f648c4095052ee2a32d7"
+    },
+    {
+      "path": "tests/codex-live/runner.test.js",
+      "bytes": 53734,
+      "mode": 420,
+      "sha256": "2fade099b5c52e0f0de436c327200adb04aeacff4d4dd797168ec5739d11b305"
+    },
+    {
+      "path": "tests/codex-live/source-binding.js",
+      "bytes": 3979,
+      "mode": 420,
+      "sha256": "1f2773d08c48e81c9d91b810adb04d4ab7528ddfffaabea38cfc0397ebf0d79e"
+    },
+    {
+      "path": "tests/codex-live/support/synthetic-app-server.mjs",
+      "bytes": 9915,
+      "mode": 420,
+      "sha256": "98378fac29eae6e17ad8c4d6bf27bd80eee87361b7e2393158b74f84f6a9acc8"
+    },
+    {
+      "path": "tests/codex-live/support/synthetic-scenarios.js",
+      "bytes": 8607,
+      "mode": 420,
+      "sha256": "2d3002a60f49cc209dab1838557a4fa0fcf07e277daf84f994b79e4daa936c9f"
+    }
+  ],
+  "unchangedApprovedSharedHashes": {
+    "tests/agent-init/evaluation-harness.js": "d3cb83cb82ef672cd3c719558b5479a9cb2ac160931d5b7d88a8624abb8077af",
+    "tests/agent-init/fixture-oracles.test.js": "961d9d146f121656744eded84dff29af4fee95c2d12f718abb261e5834f7d318"
+  },
+  "preservedHistoricalEvidence": [
+    {
+      "path": "tests/codex-live/evidence/08-blocked-preflight.json",
+      "bytes": 7464,
+      "mode": 420,
+      "sha256": "b64133e67510dd4355b4a384fafd34480e7932ca76ab2d8decc8b7e3db048e2c"
+    },
+    {
+      "path": "tests/codex-live/evidence/08-native-preparation-regression.json",
+      "bytes": 25044,
+      "mode": 420,
+      "sha256": "3b8b975257a6c6032fad34b1ee07e8c8dba5f634f5450fce8e6cb85cf4af5828"
+    },
+    {
+      "path": "tests/codex-live/evidence/08-offline-native-wire-diagnostic.json",
+      "bytes": 15242,
+      "mode": 420,
+      "sha256": "7a42f0a4513dae086d84e1a4f9010aca4e122b4a44cdc189b40867a4b5559b9d"
+    },
+    {
+      "path": "tests/codex-live/evidence/08-owned-sandbox-abort-diagnostic.json",
+      "bytes": 32991,
+      "mode": 420,
+      "sha256": "dc3ee805643800cd0964fd606f93423e9e41be80778481b88e5af53c5ff22452"
+    },
+    {
+      "path": "tests/codex-live/evidence/08-synthetic-implementation-regression.json",
+      "bytes": 232275,
+      "mode": 420,
+      "sha256": "09ebbedce922c3cd36a431e7130a28416bd83fa883dfd803545c1d5ad33a7678"
+    },
+    {
+      "path": "tests/codex-live/evidence/08-source-bound-coordination.json",
+      "bytes": 21350,
+      "mode": 420,
+      "sha256": "5cabf5479ed0482f9974f4131568d2325fded7cc5756497a9fb384575abdabee"
+    },
+    {
+      "path": "tests/codex-live/evidence/08-source-bound-integration.json",
+      "bytes": 15781,
+      "mode": 420,
+      "sha256": "015cf8b66dc7e003cfcafdce0a9adf70c2fe75ce83d53e73589c9b76e16d42d8"
+    },
+    {
+      "path": "tests/codex-live/evidence/08-contributor-context-regression.json",
+      "bytes": 19688,
+      "mode": 420,
+      "sha256": "63fc27d600a873c85405ef9de9e06e485250765de16babda7887e382639351b5"
+    },
+    {
+      "path": "tests/codex-live/evidence/08-owned-vz-preparation.json",
+      "bytes": 19678,
+      "mode": 420,
+      "sha256": "64e20662c1564a56f5edde5dc9a41a8b24163c0a1e9e6071f5a40c6185932b06"
+    }
+  ],
+  "preservedTicketPrefix": {
+    "path": ".scratch/v0.1.3/issues/08-codex-live-acceptance.md",
+    "bytes": 70351,
+    "sha256": "c3847ea5e9dd1c2860a53932ba64e8dc64c162a0ea1cbb57ffc7be068540ab72",
+    "status": "ready-for-agent",
+    "uncheckedCriteria": 8
+  },
+  "runtime": {
+    "bootstrapAttempts": 0,
+    "maximumBootstrapAttempts": 1,
+    "approvedLimits": {
+      "cpus": 2,
+      "memoryBytes": 2147483648,
+      "virtualDiskBytes": 17179869184,
+      "allOwnedStorageBytes": 25769803776,
+      "bootstrapPreflightSeconds": 900,
+      "teardownSeconds": 120
+    },
+    "currentAllocatedOwnedBytes": 5595627520,
+    "storageMonitorIsNotFilesystemQuota": true,
+    "instanceColdMarkersVerifiedAbsent": true,
+    "hostExecutionGatePresent": true,
+    "finalCombinedBootstrapReviewReceiptPresent": false,
+    "ownedRootsRetained": true
+  },
+  "remainingGates": [
+    "Runtime PATH integration and actual owned-instance/loopback-port binding",
+    "Whole connected host-process lifetime and descendant teardown proof",
+    "Host healthy Running event plus exact matching list, complete capture and cancellation/finalization",
+    "Same-single-VM-lifetime conditional offline Codex orchestration before spending the only bootstrap",
+    "Actual Linux namespaces/UID/capabilities/filesystem/network/cgroup canary and teardown proof",
+    "Native measurement and complete selection/no-load/contributor consumption observation",
+    "Separate account/model/network/cost authorization, exact actual Proposal approval and genuine real E2E"
+  ],
+  "informationSources": {
+    "externalRetrievalThisStage": false,
+    "newSearchSkillInvoked": false,
+    "onlyLocalContext": true,
+    "method": "Previously loaded TDD and review guidelines; read-only grammar excerpts from existing fixed Lima 2.2.1 tar cache and earlier owned system SCP dummy-transport receipt",
+    "newSSHOwnershipHypothesisSearch": false,
+    "priorOwnershipHypothesisBudgetSpent": 3
+  },
+  "limitations": [
+    "System -G output is configuration-only; null omitted fields are not authentication runtime proof.",
+    "SCP valid-form tests intentionally stop on the absent owned source and never run system SCP or its SSH transport.",
+    "Process-group absence for these local configuration/rejection checks is not connected SSH daemon/VM descendant absence.",
+    "The default npm suite does not execute these opt-in prototypes, guest Linux transitions or native Codex.",
+    "Static review does not grant bootstrap authorization or close runtime containment/native/live acceptance."
+  ]
+}

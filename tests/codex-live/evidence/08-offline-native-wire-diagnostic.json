@@ -1,0 +1,253 @@
+{
+  "schemaVersion": 1,
+  "kind": "codex-ticket-08-offline-native-wire-diagnostic",
+  "recordedAt": "2026-10-02T01:52:59.204815Z",
+  "baseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+  "harness": "codex",
+  "harnessVersion": null,
+  "outcome": "blocked-before-codex-execution",
+  "scope": {
+    "liveAcceptanceArtifact": false,
+    "runnerImplemented": false,
+    "parserImplemented": false,
+    "nativeCodexExecutions": 0,
+    "nativeTurns": 0,
+    "realCodexModelRequests": 0,
+    "loginCalls": 0,
+    "accountCalls": 0,
+    "setupExecuted": false,
+    "proposalProduced": false,
+    "applyExecuted": false,
+    "realEndToEndExecuted": false,
+    "gitPublicationExecuted": false
+  },
+  "baseline": {
+    "source": "https://github.com/Apparux/agent-init.git",
+    "fetchSucceeded": true,
+    "localMainOriginMainAndActualRemoteMainMatched": true,
+    "previousWorktreeHead": "5cf20167db06bcb334baa00724855cdd3d21efc1",
+    "refresh": "ff-only; no stash, reset, rebase or WIP commit",
+    "ownedFilesPreservedAcrossRefresh": [
+      {
+        "path": ".scratch/v0.1.3/issues/08-codex-live-acceptance.md",
+        "sha256": "sha256:1ec87aad96c0457104de002b809255ab0bdafd66b9bf1bc717d4c083d9cea69a",
+        "bytes": 14898,
+        "bytesModeAndEntryIdentityUnchanged": true
+      },
+      {
+        "path": "tests/codex-live/evidence/08-blocked-preflight.json",
+        "sha256": "sha256:b64133e67510dd4355b4a384fafd34480e7932ca76ab2d8decc8b7e3db048e2c",
+        "bytes": 7464,
+        "bytesModeAndEntryIdentityUnchanged": true
+      }
+    ],
+    "coordinatedRepairsAlreadyMerged": [
+      {"commit": "ee1d04538b76faa74d4c09758a94ca195e4c2cb0", "scope": "strict recorded fact JSON comparison and public regressions"},
+      {"commit": "e5097877fa4172c8b2eb27b394aff374803b42fe", "scope": "independent Codex explicitProbes and caller-bound v2 artifacts"}
+    ],
+    "implicitCases": 21,
+    "explicitProbes": 5,
+    "ci": {
+      "runUrl": "https://github.com/Apparux/agent-init/actions/runs/36841335921",
+      "headSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "failure",
+      "statusActuallyRefreshedViaAnonymousPublicApi": true,
+      "successfulJobs": ["ubuntu-latest / Node 18", "macos-latest / Node 18", "Package / Node 22"],
+      "failedJob": "Windows Native / Node 18 smoke and recovery",
+      "testLogComparison": "Earlier in this same session, actual e509787 logs verified the same ten ordered Windows failures as the preceding baseline; this phase refreshed run/job status, not test logs.",
+      "workflowRerunOrDispatch": false,
+      "unrelatedWindowsFix": false
+    }
+  },
+  "installedBinary": {
+    "package": "@openai/codex-darwin-arm64",
+    "packageMetadataVersion": "0.159.2",
+    "packageRelativePath": "vendor/aarch64-apple-darwin/bin/codex",
+    "bytes": 240184096,
+    "sha256": "sha256:16593cc2f422d5f398a8e40f550ebbaf1245392528957be342c295920a300704",
+    "digestRecheckedBeforeGate": true,
+    "versionCommandExecutedThisPhase": false,
+    "schemaCommandExecutedThisPhase": false,
+    "buildAttestationToOfficialSourceEstablished": false
+  },
+  "budget": {
+    "limits": {"nativeTurns": 7, "allOwnedLoopbackHttpRequests": 20, "nativeExperimentSeconds": 720, "attemptsPerProblem": 3, "bytesPerCaptureMessage": 1048576, "totalCaptureBytes": 16777216, "realCodexModelRequests": 0},
+    "actual": {"nativeTurns": 0, "allOwnedLoopbackHttpRequests": 4, "mockResponsesRequests": 0, "isolationGateAttempts": 1, "rawActorStdoutBytes": 0, "rawActorStderrBytes": 0, "realCodexModelRequests": 0},
+    "canaryMeasuredSecondsBeforeListenerCleanup": 0.121,
+    "retryPerformed": false,
+    "unsupportedNativeBranchWasNotStarted": true
+  },
+  "isolationGate": {
+    "syntheticPublicCanariesOnly": true,
+    "passed": false,
+    "exitCode": -6,
+    "signal": "SIGABRT",
+    "failureStage": "unknown; empty capture does not distinguish wrapper/profile application, runtime initialization or later execution",
+    "actorAssertionRecords": 0,
+    "actorStateWriteFilesPresent": {"parent": false, "descendant": false},
+    "profileApplicationVerified": false,
+    "ownedReadContainmentVerified": false,
+    "ownedWriteContainmentVerified": false,
+    "networkContainmentVerified": false,
+    "descendantContainmentVerified": false,
+    "protectedPublicFileBytesAndIdentityUnchanged": true,
+    "protectedDirectoryEntriesUnchanged": true,
+    "publicInputBytesUnchanged": true,
+    "unchangedCanariesAreNotSuccessfulDenialAssertions": true,
+    "loopbackReceipts": {
+      "controllerLivenessBeforeAndAfter": {"allowedModelPort": 2, "blockedOwnedPort": 2},
+      "allowedActor": 0,
+      "forbiddenActor": 0,
+      "zeroActorReceiptsAreNotProofOfNetworkDenial": true
+    },
+    "capture": {
+      "stdout": {"bytes": 0, "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+      "stderr": {"bytes": 0, "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+      "temporaryGateRecordSha256": "sha256:6ca240475c5a7fdb5c80ce9e3032fab843f52f7d5997f3aede6ef832b10af21f",
+      "controllerSha256": "sha256:7eb95807612d019f699a95af67813050cfa94eb8ab932afa699b338db9120813",
+      "actorSourceSha256": "sha256:c0e8f4a9ef55c2701888bf6eb35d168ec06da428c5fca9ee35e2d692e4060ed9"
+    },
+    "profileIntentNotAppliedProof": {
+      "rawProfileSha256": "sha256:c3d509061ddabdccbaa2af57d99319d6312aa2a6701068cd85ebc59d84644d9c",
+      "rawParametersSha256": "sha256:dccff8c4b5d99dd6eacc96ac5140734621a9a988c036be3140e4f436ef798ee1",
+      "default": "deny",
+      "recursiveReadRootRoles": ["synthetic-input-a", "owned-state-a", "bin", "usr-bin", "usr-lib", "system-frameworks", "system-private-frameworks", "clt-python-framework", "system-locale", "system-zoneinfo"],
+      "recursiveWriteRootRoles": ["owned-state-a"],
+      "fixedReadFileRoles": ["installed-native-binary", "system-version", "localtime", "null-device", "random-devices"],
+      "ancestorLiteralMetadataRules": 41,
+      "processRules": ["exec", "fork", "same-sandbox signal", "same-sandbox process-info"],
+      "networkIntent": "outbound to one allocated localhost model port only; no bind, DNS or other-port grant",
+      "fcntlDeniedCommands": [80, 110],
+      "sysctlReadFields": ["hw.ncpu", "hw.activecpu", "hw.pagesize", "hw.logicalcpu", "hw.logicalcpu_max", "hw.physicalcpu", "hw.physicalcpu_max", "hw.memsize", "kern.osrelease", "kern.ostype", "kern.osversion", "kern.osproductversion"],
+      "machLookupOrKeychainGrant": false,
+      "stockBaseProfileImported": false,
+      "externalSandboxEnabled": false,
+      "unsandboxedFallback": false
+    },
+    "childEnvironmentKeys": ["CODEX_HOME", "GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_SYSTEM", "GIT_OPTIONAL_LOCKS", "HOME", "LANG", "LC_ALL", "PATH", "SHELL", "TMPDIR", "USERPROFILE", "XDG_CACHE_HOME", "XDG_CONFIG_HOME", "XDG_DATA_HOME"],
+    "cleanup": {"actorProcessGroupAbsent": true, "listenerThreadsStopped": true, "listenerSocketsClosed": true}
+  },
+  "nativeSamples": {
+    "status": "all-not-executed; isolation precondition failed",
+    "plannedKinds": ["explicit-single-body-injection", "explicit-two-roots-and-context", "no-explicit-input-no-tool", "explicit-owned-read-failure", "scripted-owned-tool-read", "scripted-tool-truncation", "incomplete-sse"],
+    "nativeRequestsOrNotificationsCaptured": false,
+    "nativeProvenanceSidecarCreated": false,
+    "observedLoadedProduced": false
+  },
+  "officialSourceFindingsNotRuntimeProof": {
+    "retrieval": "Actual fixed official source/public raw GET verification; no new search Skill invoked. These are source facts, not execution or attestation of the installed binary.",
+    "commit": "ff6aec96948b70d94983af2641a6b67c94faeff5",
+    "releaseUrl": "https://github.com/openai/codex/releases/tag/rust-v0.159.2",
+    "basePolicyBytes": 3910,
+    "basePolicySha256": "sha256:5103332ddb8885ee5e1926de6c0ef23a61f4e55e31297506ae05fa4e0b24ba74",
+    "explicitPositiveEvidencePath": "Actual host-read Skill contents can enter a user skill fragment in Codex-constructed model input; catalog, caller input and mock replies alone do not prove loading.",
+    "implicitLimit": "A concrete successful scripted tool output would prove that read, not autonomous model routing, the complete host-read universe or an authoritative empty loaded set.",
+    "rawLimit": "app-server raw item notifications are transformed surfaces, not raw HTTP packet capture; ephemeral threads require live capture.",
+    "multiRootLimit": "Runtime extra roots are skills directories; actual discovery does not by itself prove all contributing repository context is injected.",
+    "urls": [
+      "https://github.com/openai/codex/blob/ff6aec96948b70d94983af2641a6b67c94faeff5/codex-rs/ext/skills/src/host_prompt.rs",
+      "https://github.com/openai/codex/blob/ff6aec96948b70d94983af2641a6b67c94faeff5/codex-rs/ext/skills/src/fragments.rs",
+      "https://github.com/openai/codex/blob/ff6aec96948b70d94983af2641a6b67c94faeff5/codex-rs/app-server/tests/suite/v2/skills_list.rs",
+      "https://github.com/openai/codex/blob/ff6aec96948b70d94983af2641a6b67c94faeff5/codex-rs/sandboxing/src/seatbelt_base_policy.sbpl",
+      "https://github.com/openai/codex/blob/ff6aec96948b70d94983af2641a6b67c94faeff5/codex-rs/model-provider-info/src/lib.rs"
+    ]
+  },
+  "currentInputDigests": {
+    "PRD.md": "sha256:60f04037aba5c7d05810c1276cbde53588cfc00347e5d06d41bedfad5d6ca265",
+    "package.json": "sha256:a801720f0b6e02f68cb93ff8bdf9f8d2fab7cde2b0efdda9ed11361fed0cd973",
+    "release-manifest.json": "sha256:53fdbcd6bd0bf37c4aad969cc05a94ba91c4b4f14287815ed03f6acaac620018",
+    "tests/agent-init/evaluation-harness.js": "sha256:ff8e4e02f7be680d96cfe28a903d430a123916f7da3077dd2367a1170ed1176f",
+    "tests/agent-init/fixture-oracles.test.js": "sha256:cbdeaba92fab9f42170d26ec4b81002a8306b7629a70a98d097ae607788dadaa",
+    "tests/agent-init/trigger-evaluation.js": "sha256:a1224bf60b36ee25052d8eb26e77bfb7e321c6bd5f95873c1b21e98513b3cddc",
+    "tests/agent-init/trigger-evaluation.test.js": "sha256:7cac7caf3f29f978da58ca92f990601311df24ebab2ba0686cc4214c132ab853",
+    "tests/trigger-corpus/cases.json": "sha256:c8067a0e4c427c9e8a0e4a107ed1daa0672e04ed4cd5c7ae1567acbc4aff712c"
+  },
+  "claims": {
+    "nativeWireObserved": false,
+    "nativeExplicitBodyInjectionObserved": false,
+    "completeImplicitUniverseProven": false,
+    "authoritativeEmptySetProven": false,
+    "liveSkillBehaviorProven": false,
+    "claudeCodeBehaviorProven": false,
+    "codexBehaviorProven": false,
+    "ticketAcceptanceComplete": false,
+    "thresholdQualificationProven": false
+  },
+  "handoff": {
+    "acceptanceCheckboxesRemainUnchecked": 8,
+    "remainingBlockers": ["Verified read/write/network/descendant containment is not established.", "Complete implicit selection and authoritative empty-set observation are unestablished.", "Safe combined Skill discovery and all contributor repository context are not observed.", "The real runner, authorized model access, dynamic Proposal approval/Apply and complete E2E remain absent."],
+    "minimumNextStep": "Independently establish an approved containment mechanism or obtain diagnostic evidence explaining this abort using only owned non-secret inputs. Do not broaden runtime/IPC permissions, use externalSandbox or an unsandboxed fallback without a new specific authorization.",
+    "defaultNpmTestRunsLive": false
+  },
+  "verification": {
+    "state": "local-regression-verified; native-diagnostic-blocked",
+    "reviews": {"standardsHardFindings": 0, "standardsMaterialSmells": 0, "specIntroducedFindings": 0, "supplementalPathPrivacyPermissionsProcessProvenanceReviewed": true},
+    "sourceChecksBeforeNativeTemporaryRemoval": {"sourceAndCaptureDigestsMatched": 15, "ownedBackupDigestsMatched": 2, "historicalEvidenceBytesUnchanged": true, "originalTrackedTicketBytesRemainExactPrefix": true, "uncheckedAcceptanceBoxes": 8},
+    "initialNpmTest": {
+      "postReview": true,
+      "exitCode": 1,
+      "tests": 544,
+      "passed": 540,
+      "failed": 2,
+      "skipped": 2,
+      "failedTests": ["deterministic detector collects only bounded facts and never mutates the repository", "fixture detector expectations are executable and remain interpretation-free"],
+      "failure": "Both expected git.isRepository=false but observed true: owned TMPDIR was nested inside the 08 worktree and Git discovered the ancestor repository.",
+      "diagnosisActuallyReproduced": {"beforeCeilingGitExitCode": 0, "beforeCeilingFoundParentWorktree": true, "afterOwnedCeilingGitExitCode": 128},
+      "correction": "Added GIT_CEILING_DIRECTORIES only to the owned verification process environment; no source, test, global config or repository config change.",
+      "stdoutSha256": "sha256:c2321a9aed940b1c4778342c40f65202f48e0059013d8229fdb8d0720c462c19"
+    },
+    "postCorrectionNpmTest": {
+      "command": "npm test",
+      "postReview": true,
+      "exitCode": 0,
+      "tests": 544,
+      "passed": 542,
+      "failed": 0,
+      "skipped": 2,
+      "nodeVersion": "v25.9.0",
+      "environment": "explicit owned HOME/USERPROFILE/CODEX_HOME/XDG/npm configs/cache/TMPDIR; npm offline; owned Git discovery ceiling",
+      "localTarballLifecycleTestObservedPassing": true,
+      "notANewExternalDependencyOrGlobalInstall": true,
+      "stdoutSha256": "sha256:f23ef08ed505407227e04950fb7aeb9db549fb0f9d97421ac604b3c23f2b6320",
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "skippedNames": ["Windows Native CLI completes install, real update, doctor, and uninstall", "Windows Native symlink EPERM falls back to managed copies"]
+    },
+    "trackedJsSyntax": {"files": 51, "passed": 51, "commandKind": "node --check"},
+    "isolatedPack": {
+      "commandKind": "npm pack --json --ignore-scripts --offline --pack-destination <owned-pack>",
+      "entryCount": 23,
+      "treeDigest": "sha256:cc11f062f3aa557d1f03441014c8fd966cc17e99c891d817f6597ba9f8f1b031",
+      "allBytesMatchedImmutableBaseSha": true,
+      "fullFileModesMatchedManifestAndGitBaseline": true,
+      "packShasumAndIntegrityMatchedTarballBytes": true,
+      "packedOnlyDeclaredFiles": true,
+      "manifestRegenerated": false,
+      "published": false
+    },
+    "deterministicChecksAreNotLiveOrIsolationProof": true
+  },
+  "temporaryAssetCleanup": {
+    "state": "verified-removed",
+    "ownedRootIdentityAndSessionChecked": true,
+    "regularFilesRemoved": 12,
+    "childDirectoriesRemoved": 10,
+    "declaredSymlinksRemoved": 2,
+    "symlinkTargetsWereOnlyTheSameOwnedPublicProtectedFile": true,
+    "exactOwnedRootConfirmedAbsent": true,
+    "conservativeExperimentThroughRemovalSeconds": 667.579,
+    "withinApproved720SecondLimit": true,
+    "independentPostReviewVerificationRoot": {
+      "state": "verified-removed",
+      "ownedRootIdentityAndSessionChecked": true,
+      "regularFilesRemoved": 641,
+      "childDirectoriesRemoved": 108,
+      "symlinksPresent": 0,
+      "ownedHomeAndCodexHomeWereEmpty": true,
+      "failureSuccessSyntaxPackRecordsCheckedBeforeRemoval": true,
+      "exactOwnedRootConfirmedAbsent": true
+    },
+    "otherWorktreesOrUserAssetsRemoved": false
+  }
+}

@@ -1,0 +1,435 @@
+{
+  "schemaVersion": 1,
+  "kind": "ticket08-source-bound-codex-integration-regression",
+  "date": "2026-10-03",
+  "synthetic": true,
+  "baseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+  "branch": "implement/v0.1.3-ticket-08",
+  "worktree": ".claude/worktrees/v0.1.3-ticket-08",
+  "scope": {
+    "approvedSerialSharedException": [
+      "tests/agent-init/evaluation-harness.js",
+      "tests/agent-init/fixture-oracles.test.js"
+    ],
+    "codexDeliveryNamespace": "tests/codex-live",
+    "ticketCommentsOnly": true,
+    "otherSharedFixturesTicketsPackageCIUnchanged": true,
+    "noStagingCommitOrPublication": true
+  },
+  "claims": {
+    "localSourceBoundRunnerIntegrationVerified": true,
+    "nativeExecution": false,
+    "nativeSelectionCompleteness": false,
+    "nativeContributorDelivery": false,
+    "nativeProviderSchemaAcceptance": false,
+    "realHumanProposalApproval": false,
+    "liveEndToEnd": false,
+    "ticket08Complete": false,
+    "qualification": false
+  },
+  "integration": {
+    "controllerBindingBeforeActor": true,
+    "originalVersionedFixtureSource": true,
+    "sameBindingUsedByBothEvaluations": true,
+    "actorCannotChooseTrustRootOrMode": true,
+    "independentNarrationPreserved": true,
+    "approvalReceivesOriginalLedgerAndIndependentAudit": true,
+    "invalidSourceProofPreservesCaptureAndCannotApprove": true,
+    "sourceBoundAllFixtures": 15,
+    "implicitCases": 21,
+    "explicitProbes": 5,
+    "freshSyntheticSessions": 41,
+    "defaultExactModeStillStrict": true,
+    "canonicalSharing": {
+      "physicalRelativeSymlinkVerifiedOn": "darwin",
+      "actionId": "synthetic-shared-reference",
+      "linkText": "../../.agents/skills/build-verify",
+      "canonicalTarget": ".agents/skills/build-verify",
+      "noCopiedMotherPayload": true
+    },
+    "threadScopedWarnings": {
+      "exactThreadAndMessageRequired": true,
+      "warningDoesNotProveTurnIdentityOrSelectionCompleteness": true,
+      "unknownThreadNotificationsStillRejected": true
+    },
+    "semanticLimit": "A byte/hash/range match does not prove arbitrary narration entailment, relevance, KEEP/SKIP reasons or workflow judgement. Independent review and exact human approval of a real Proposal remain required."
+  },
+  "redGreen": [
+    {
+      "publicSeam": "runCodex",
+      "red": "codex-source-integration-red",
+      "green": "codex-source-integration-green"
+    },
+    {
+      "publicSeam": "runCodex",
+      "red": "codex-canonical-sharing-red",
+      "green": "codex-canonical-sharing-green"
+    },
+    {
+      "publicSeam": "parseCodexTurn/parseCodexSelection",
+      "red": "codex-thread-warning-red",
+      "green": "codex-thread-warning-green"
+    }
+  ],
+  "verification": {
+    "focused": {
+      "tests": 76,
+      "passed": 76,
+      "failed": 0,
+      "skipped": 0
+    },
+    "finalFullSuite": {
+      "tests": 680,
+      "pass": 678,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 2,
+      "todo": 0
+    },
+    "syntaxChecks": 64,
+    "isolatedPack": {
+      "entryCount": 23,
+      "treeDigest": "sha256:cc11f062f3aa557d1f03441014c8fd966cc17e99c891d817f6597ba9f8f1b031",
+      "unchangedVerifierInFreshOwnedCopy": true
+    },
+    "commands": [
+      {
+        "label": "codex-source-integration-red",
+        "exitCode": 1,
+        "ownedChildPid": 47962,
+        "elapsedSeconds": 6.538697,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 1629,
+        "stdoutSha256": "sha256:8a226e2e5dfc2fa4dbddf110cfbae0df92489806a3c509c36a2d5b3cd51d2a91",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "codex-source-integration-green",
+        "exitCode": 0,
+        "ownedChildPid": 55785,
+        "elapsedSeconds": 2.114157,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 248,
+        "stdoutSha256": "sha256:7ea3146689081f39bfd26326cddedcddd3e2ac95986982d47a778b29400ff1a2",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "codex-source-integration-regressions",
+        "exitCode": 0,
+        "ownedChildPid": 55945,
+        "elapsedSeconds": 24.831659,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 1273,
+        "stdoutSha256": "sha256:51cb025f1a7f3f5152b7f52b24dd98a73edd1f4655623da7c6928523ff2a946e",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "codex-canonical-sharing-red",
+        "exitCode": 1,
+        "ownedChildPid": 56302,
+        "elapsedSeconds": 2.031114,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 1135,
+        "stdoutSha256": "sha256:7032914f2b3d198ec6bb85309dbe773b09daf3b5057e9e21e30fe6dac3e7e0cf",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "codex-canonical-sharing-green",
+        "exitCode": 0,
+        "ownedChildPid": 56415,
+        "elapsedSeconds": 1.967289,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 237,
+        "stdoutSha256": "sha256:94e213ddba3c2399101681b51036144b6f89ea859258890c1de55655dd5624a7",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "codex-thread-warning-red",
+        "exitCode": 1,
+        "ownedChildPid": 56481,
+        "elapsedSeconds": 0.202466,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 1536,
+        "stdoutSha256": "sha256:cc26166e91163c4e5f0c59b1a7bb1e2115969c6c58cec0bc997db943872f5d51",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "codex-thread-warning-green",
+        "exitCode": 0,
+        "ownedChildPid": 56536,
+        "elapsedSeconds": 0.21126,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 778,
+        "stdoutSha256": "sha256:8f6c8659d50b22e71e78becba69a2ef0a4cbcd241817467576b449fbf8b9dbea",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "codex-integration-focused",
+        "exitCode": 0,
+        "ownedChildPid": 56646,
+        "elapsedSeconds": 80.945331,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 6952,
+        "stdoutSha256": "sha256:524a0fb8061e841fea7a1005ed1007f1b3e8acb1d63f71ab75217f636e4a19c6",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "codex-integration-full-before-review",
+        "exitCode": 0,
+        "ownedChildPid": 63532,
+        "elapsedSeconds": 111.869003,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 51429,
+        "stdoutSha256": "sha256:0ef092ed8140e2a23f7ad95ab856d88852d67351a73116d6461063ea4e4df49f",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "codex-integration-final-full",
+        "exitCode": 0,
+        "ownedChildPid": 66368,
+        "elapsedSeconds": 111.441579,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 51422,
+        "stdoutSha256": "sha256:0b299cb422c7f5cccdb23e1bc597277fbb33dc563857fccad0628b7f08469bfb",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "codex-integration-pack-check",
+        "exitCode": 0,
+        "ownedChildPid": 66080,
+        "elapsedSeconds": 0.515962,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 261,
+        "stdoutSha256": "sha256:d6ee00f7aaa32e3c9d4a373c32eab1cfab6f26cdc7a70b8cc5a59f4fe7245a1f",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "codex-integration-syntax",
+        "exitCode": 0,
+        "ownedChildPid": 66095,
+        "elapsedSeconds": 4.31197,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 2476,
+        "stdoutSha256": "sha256:767c6cba7ac7a83fd7df70b98ffd8757caf31e42f5c021766ab60a24258eb984",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "checkedStreamDigests": 24
+  },
+  "review": {
+    "standards": {
+      "completed": true,
+      "confirmedFindings": 0,
+      "materialSmells": 0
+    },
+    "spec": {
+      "completed": true,
+      "introducedLocalFindings": 0,
+      "scopeCreepFindings": 0,
+      "wholeTicketAcceptance": false
+    },
+    "staticReviewNotIndependentTestExecution": true,
+    "reviewedKeyHashes": {
+      "tests/codex-live/runner.js": "410ddd72d0846742d6edc06ecf586220588a9ac20a8d85eb013661408a802081",
+      "tests/codex-live/runner.test.js": "2d6cb4808509c9b096e44bd387fdea986ce69c0cc2f7a785647a6b79bd2bfb51",
+      "tests/codex-live/source-binding.js": "1f2773d08c48e81c9d91b810adb04d4ab7528ddfffaabea38cfc0397ebf0d79e",
+      "tests/codex-live/machine-record.js": "fdf0aec0b97b5e763a0c6be802a6b1f7979d4b8129e73c78e68541c5e2010998",
+      "tests/codex-live/parser.js": "5f0f87c10ea8d2a7545aa2189bc767d24c0337f99bf35a89e3a1f445eecf9a09"
+    }
+  },
+  "deliverySources": [
+    {
+      "path": "tests/codex-live/app-server.js",
+      "bytes": 13682,
+      "mode": 420,
+      "sha256": "a2de07fb77df49fa0b23fe0e932ff699f177024dc5164e0c9a0590f228003665"
+    },
+    {
+      "path": "tests/codex-live/machine-record.js",
+      "bytes": 6462,
+      "mode": 420,
+      "sha256": "fdf0aec0b97b5e763a0c6be802a6b1f7979d4b8129e73c78e68541c5e2010998"
+    },
+    {
+      "path": "tests/codex-live/owned-runtime.js",
+      "bytes": 16958,
+      "mode": 420,
+      "sha256": "720d6c7c20eaf266f18ff86363ddfc32c337f309ca78166739677dddc8e30380"
+    },
+    {
+      "path": "tests/codex-live/owned-runtime.test.js",
+      "bytes": 12691,
+      "mode": 420,
+      "sha256": "dfaa179465531da3c564b8366e436e9a898734ffebf054eb673a00d1fb2035e4"
+    },
+    {
+      "path": "tests/codex-live/parser.js",
+      "bytes": 6916,
+      "mode": 420,
+      "sha256": "5f0f87c10ea8d2a7545aa2189bc767d24c0337f99bf35a89e3a1f445eecf9a09"
+    },
+    {
+      "path": "tests/codex-live/parser.test.js",
+      "bytes": 7330,
+      "mode": 420,
+      "sha256": "a709b17262e5ea386bf09d041c620e83a1ab89296293f13bb57010c5eb8346cc"
+    },
+    {
+      "path": "tests/codex-live/process-ownership.js",
+      "bytes": 687,
+      "mode": 420,
+      "sha256": "f57bbdea2f675c5128807757b3c7335599083f654a870f96354b59b506ea90ee"
+    },
+    {
+      "path": "tests/codex-live/protocol.test.js",
+      "bytes": 8405,
+      "mode": 420,
+      "sha256": "b5336b9cab373965c617ca0141d05845d363b0aaa740338e58b3d9197251a1dc"
+    },
+    {
+      "path": "tests/codex-live/runner.js",
+      "bytes": 29532,
+      "mode": 420,
+      "sha256": "410ddd72d0846742d6edc06ecf586220588a9ac20a8d85eb013661408a802081"
+    },
+    {
+      "path": "tests/codex-live/runner.test.js",
+      "bytes": 40569,
+      "mode": 420,
+      "sha256": "2d6cb4808509c9b096e44bd387fdea986ce69c0cc2f7a785647a6b79bd2bfb51"
+    },
+    {
+      "path": "tests/codex-live/source-binding.js",
+      "bytes": 3979,
+      "mode": 420,
+      "sha256": "1f2773d08c48e81c9d91b810adb04d4ab7528ddfffaabea38cfc0397ebf0d79e"
+    },
+    {
+      "path": "tests/codex-live/support/synthetic-app-server.mjs",
+      "bytes": 9915,
+      "mode": 420,
+      "sha256": "98378fac29eae6e17ad8c4d6bf27bd80eee87361b7e2393158b74f84f6a9acc8"
+    },
+    {
+      "path": "tests/codex-live/support/synthetic-scenarios.js",
+      "bytes": 8607,
+      "mode": 420,
+      "sha256": "2d3002a60f49cc209dab1838557a4fa0fcf07e277daf84f994b79e4daa936c9f"
+    }
+  ],
+  "unchangedSharedStageHashes": {
+    "tests/agent-init/evaluation-harness.js": "d3cb83cb82ef672cd3c719558b5479a9cb2ac160931d5b7d88a8624abb8077af",
+    "tests/agent-init/fixture-oracles.test.js": "961d9d146f121656744eded84dff29af4fee95c2d12f718abb261e5834f7d318"
+  },
+  "preservedHistoricalEvidence": [
+    {
+      "path": "tests/codex-live/evidence/08-blocked-preflight.json",
+      "bytes": 7464,
+      "sha256": "b64133e67510dd4355b4a384fafd34480e7932ca76ab2d8decc8b7e3db048e2c",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/evidence/08-native-preparation-regression.json",
+      "bytes": 25044,
+      "sha256": "3b8b975257a6c6032fad34b1ee07e8c8dba5f634f5450fce8e6cb85cf4af5828",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/evidence/08-offline-native-wire-diagnostic.json",
+      "bytes": 15242,
+      "sha256": "7a42f0a4513dae086d84e1a4f9010aca4e122b4a44cdc189b40867a4b5559b9d",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/evidence/08-owned-sandbox-abort-diagnostic.json",
+      "bytes": 32991,
+      "sha256": "dc3ee805643800cd0964fd606f93423e9e41be80778481b88e5af53c5ff22452",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/evidence/08-synthetic-implementation-regression.json",
+      "bytes": 232275,
+      "sha256": "09ebbedce922c3cd36a431e7130a28416bd83fa883dfd803545c1d5ad33a7678",
+      "mode": 420
+    },
+    {
+      "path": "tests/codex-live/evidence/08-source-bound-coordination.json",
+      "bytes": 21350,
+      "mode": 420,
+      "sha256": "5cabf5479ed0482f9974f4131568d2325fded7cc5756497a9fb384575abdabee"
+    }
+  ],
+  "preservedTicketPrefix": {
+    "path": ".scratch/v0.1.3/issues/08-codex-live-acceptance.md",
+    "bytes": 55425,
+    "sha256": "5bf6c577f77340125ad7514b18570db4f4202cb6268dca257984eb6e6805b847",
+    "mode": 420
+  },
+  "remainingGates": [
+    "full contributor workspace/context delivery",
+    "read-only native measurement tooling",
+    "verified isolated runtime containment and descendant cleanup",
+    "supported complete native selection/no-load evidence",
+    "separate real account/model/network/cost authorization",
+    "exact human approval of the actual Proposal",
+    "at least one real setup/Apply/fresh routing/artifact E2E"
+  ],
+  "cleanup": {
+    "status": "owned-root-retained-for-approved-runtime-preparation",
+    "removed": false,
+    "firstWrapperAbsenceNotAttested": true,
+    "noWholeRootDeletionPerformed": true
+  },
+  "externalLookup": {
+    "newLookupForThisCodeIntegration": false,
+    "basis": "local context and earlier fixed official source inspection; separate runtime asset research does not establish native behavior"
+  }
+}
