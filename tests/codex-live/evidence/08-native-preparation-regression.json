@@ -1,0 +1,617 @@
+{
+  "schemaVersion": 1,
+  "kind": "ticket08-local-native-preparation-regression",
+  "synthetic": true,
+  "sessionDate": "2026-10-03",
+  "recordedAt": "2026-10-03T08:25:48.634Z",
+  "baseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+  "branch": "implement/v0.1.3-ticket-08",
+  "status": "local-repairs-verified-real-acceptance-blocked",
+  "acceptanceComplete": false,
+  "integrationReady": false,
+  "claims": {
+    "localContractPreparationVerified": true,
+    "nativeExecution": false,
+    "nativeProviderSchemaAccepted": false,
+    "nativeCompleteSelectionProven": false,
+    "runtimeContainmentProven": false,
+    "liveEndToEnd": false,
+    "ticket08Complete": false,
+    "threshold09Passed": false,
+    "qualification": false
+  },
+  "authorization": {
+    "scope": "approved local installer-retention and explicit machine-request repairs; no bypass or further environment-question loop",
+    "nativeCalls": 0,
+    "modelAccountAuthCalls": 0,
+    "userHomeCopied": false,
+    "tokensRequestedOrWritten": false,
+    "sandboxWrapperAttempts": 0,
+    "previousWrapperLimitExhausted": true,
+    "externalEnvironmentInstalledOrStarted": false,
+    "deploymentMigrationDatabaseStagingActions": 0,
+    "nativeLauncherRemainsClosed": true,
+    "nextTicketStarted": false
+  },
+  "changes": {
+    "installation": [
+      "bounded actual command capture on failures as well as success",
+      "caught signal/probe errors and bounded close/finalization waits",
+      "original install and secondary cleanup errors preserved",
+      "unconfirmed owned process-group absence retains root without deletion",
+      "runCodex reports installation and cleanup before runtime assignment"
+    ],
+    "requests": [
+      "fixture identity and nested phase-specific output schemas in actual serialized requests",
+      "CREATE/UPDATE/non-write grammars and KEEP reuseExisting shape",
+      "locator/evidence ID and fact ID slots only; no oracle values/statuses/classifications/Skill decisions or canonical evidence prose",
+      "setup capture retained before identity/semantic validation; invalid observation stays non-pass before approval"
+    ],
+    "limits": [
+      "No native-provider schema acceptance is claimed.",
+      "Exact ledger prose required by frozen evaluator may still reject genuine model narration; no canonical-answer refill or consumer weakening.",
+      "Native complete selection/no-load and late-read universe remain unproved."
+    ]
+  },
+  "tests": {
+    "commands": {
+      "full": "npm test",
+      "focused": "node --test tests/codex-live/runner.test.js tests/codex-live/owned-runtime.test.js tests/codex-live/parser.test.js tests/codex-live/protocol.test.js"
+    },
+    "finalTest": {
+      "label": "npm-test-final",
+      "exitCode": 0,
+      "elapsedSeconds": 93.658087,
+      "timedOut": false,
+      "truncated": false,
+      "processGroupConfirmedAbsent": true,
+      "stdoutBytes": 46894,
+      "stdoutSha256": "sha256:71083ad5307a646d417aa025a8e1a9310f1551e559c7aab467e7489764616bb4",
+      "stderrBytes": 0,
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "outcome": "passed",
+      "counts": {
+        "tests": 608,
+        "pass": 606,
+        "fail": 0,
+        "skipped": 2
+      }
+    },
+    "focusedTest": {
+      "label": "codex-focused",
+      "exitCode": 0,
+      "elapsedSeconds": 58.702718,
+      "timedOut": false,
+      "truncated": false,
+      "processGroupConfirmedAbsent": true,
+      "stdoutBytes": 5887,
+      "stdoutSha256": "sha256:1c6a3ea7c0e54caefc8c2e15a73e60d085eea123971f2c864242654e86226e69",
+      "stderrBytes": 0,
+      "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "outcome": "passed",
+      "counts": {
+        "tests": 64,
+        "pass": 64,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    "records": [
+      {
+        "label": "codex-focused",
+        "exitCode": 0,
+        "elapsedSeconds": 58.702718,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "stdoutBytes": 5887,
+        "stdoutSha256": "sha256:1c6a3ea7c0e54caefc8c2e15a73e60d085eea123971f2c864242654e86226e69",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outcome": "passed",
+        "counts": {
+          "tests": 64,
+          "pass": 64,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "final-syntax-pack",
+        "exitCode": 0,
+        "elapsedSeconds": 6.065613,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "stdoutBytes": 4207,
+        "stdoutSha256": "sha256:dcd0307b8d8914b01bbb22bf99cd8528292fd1cca9363dd9cea5b64b9ecc1b66",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outcome": "passed"
+      },
+      {
+        "label": "install-cleanup-regression",
+        "exitCode": 0,
+        "elapsedSeconds": 6.765785,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "stdoutBytes": 803,
+        "stdoutSha256": "sha256:e9f9b72d790addc7d65bd0458cecf3c41eae7e166c6da366f100ee0abc752e26",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outcome": "passed",
+        "counts": {
+          "tests": 6,
+          "pass": 6,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "install-provenance-green",
+        "exitCode": 0,
+        "elapsedSeconds": 0.379433,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "stdoutBytes": 233,
+        "stdoutSha256": "sha256:f297d48f9483f3f8e060ed01f3f229af3a81b21ae0162379c526eda6059c7c32",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outcome": "passed",
+        "counts": {
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "install-provenance-red",
+        "exitCode": 1,
+        "elapsedSeconds": 0.292952,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "stdoutBytes": 813,
+        "stdoutSha256": "sha256:5695c93794f521d87cd71383ff660f2de5e41eecf66030e44084b81bab8ec5e5",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outcome": "failed",
+        "counts": {
+          "tests": 1,
+          "pass": 0,
+          "fail": 1,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "npm-test-final",
+        "exitCode": 0,
+        "elapsedSeconds": 93.658087,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "stdoutBytes": 46894,
+        "stdoutSha256": "sha256:71083ad5307a646d417aa025a8e1a9310f1551e559c7aab467e7489764616bb4",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outcome": "passed",
+        "counts": {
+          "tests": 608,
+          "pass": 606,
+          "fail": 0,
+          "skipped": 2
+        }
+      },
+      {
+        "label": "request-keep-schema-green",
+        "exitCode": 0,
+        "elapsedSeconds": 1.924917,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "stdoutBytes": 236,
+        "stdoutSha256": "sha256:75c63a5e3ee25d363c28a11fde70ba43bf03bc1305eb8e6df680198a61270234",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outcome": "passed",
+        "counts": {
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "request-keep-schema-red",
+        "exitCode": 1,
+        "elapsedSeconds": 1.919201,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "stdoutBytes": 807,
+        "stdoutSha256": "sha256:dea447379afd3bf9d319cb74757c58778b26eeb5aa36d4a2690fb1d8618bebf2",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outcome": "failed",
+        "counts": {
+          "tests": 1,
+          "pass": 0,
+          "fail": 1,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "request-schema-green",
+        "exitCode": 0,
+        "elapsedSeconds": 11.125611,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "stdoutBytes": 483,
+        "stdoutSha256": "sha256:0f6615b0d6d4d616c90221b530004b7c334428269e5119a0a97c16bdf5924872",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outcome": "passed",
+        "counts": {
+          "tests": 3,
+          "pass": 3,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "request-schema-red",
+        "exitCode": 1,
+        "elapsedSeconds": 1.91267,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "stdoutBytes": 1030,
+        "stdoutSha256": "sha256:3adf21740eeff6d21acdcb74caa15efd391ddf1d23b81fefae4c03412c19e54f",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outcome": "failed",
+        "counts": {
+          "tests": 1,
+          "pass": 0,
+          "fail": 1,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "setup-capture-green",
+        "exitCode": 0,
+        "elapsedSeconds": 8.592962,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "stdoutBytes": 685,
+        "stdoutSha256": "sha256:6d350ca54a687a5dbeec93d90e345ddd05a167d9145651fc70fd74957c94832d",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outcome": "passed",
+        "counts": {
+          "tests": 6,
+          "pass": 6,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "label": "setup-capture-red",
+        "exitCode": 1,
+        "elapsedSeconds": 5.237548,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "stdoutBytes": 2589,
+        "stdoutSha256": "sha256:4f9282f053c6ab93648f37cb60ad2642c26b5786c32ce3630e5ea8651de5e589",
+        "stderrBytes": 0,
+        "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "outcome": "failed",
+        "counts": {
+          "tests": 4,
+          "pass": 0,
+          "fail": 4,
+          "skipped": 0
+        }
+      }
+    ],
+    "verifiedStreamDigests": 24,
+    "redGreen": [
+      {
+        "red": "install-provenance-red",
+        "green": "install-provenance-green",
+        "failure": "failed command had no retained installation record",
+        "publicSeam": "createCodexRuntime / runCodex"
+      },
+      {
+        "red": "request-schema-red",
+        "green": "request-schema-green",
+        "failure": "actual serialized request omitted fixtureId and meaningful output schema",
+        "publicSeam": "runCodex"
+      },
+      {
+        "red": "setup-capture-red",
+        "green": "setup-capture-green",
+        "failure": "invalid actual setup capture was lost although approval was correctly denied",
+        "publicSeam": "runCodex"
+      },
+      {
+        "red": "request-keep-schema-red",
+        "green": "request-keep-schema-green",
+        "failure": "request candidate schema omitted KEEP reuseExisting",
+        "publicSeam": "runCodex"
+      }
+    ],
+    "negativeInstaller": "short-lived inspectable owned Node specimen emits literal streams and exits23; never substitutes for actual successful npm pack/install",
+    "nonceDrift": "actual owned nonce mutation, nonzero exit, dual errors and preserved root checked; test restores/deletes only after owned identity/inventory and process absence checks; already-green regression",
+    "staticOnly": [
+      "signaling/probe errors and unconfirmed post-SIGKILL group branches; no permission changes, private child_process mocks, unkillable actors or manufactured dynamic RED"
+    ],
+    "skippedTests": [
+      "Windows Native CLI completes install, real update, doctor, and uninstall",
+      "Windows Native symlink EPERM falls back to managed copies"
+    ],
+    "windowsQualificationProven": false,
+    "prior601SuiteIsHistoricalOnly": true
+  },
+  "syntaxPack": {
+    "baseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+    "nodeVersion": "v25.9.0",
+    "trackedJavaScriptCount": 51,
+    "scopedJavaScriptCount": 12,
+    "checkedJavaScriptCount": 63,
+    "sourceHashes": {
+      "tests/codex-live/app-server.js": "a2de07fb77df49fa0b23fe0e932ff699f177024dc5164e0c9a0590f228003665",
+      "tests/codex-live/machine-record.js": "2f6e820024af8d14e80e316fb3ef7f8b4fbdf2558cd22dd368a73196a9003784",
+      "tests/codex-live/owned-runtime.js": "720d6c7c20eaf266f18ff86363ddfc32c337f309ca78166739677dddc8e30380",
+      "tests/codex-live/owned-runtime.test.js": "dfaa179465531da3c564b8366e436e9a898734ffebf054eb673a00d1fb2035e4",
+      "tests/codex-live/parser.js": "1e08f8a215faebd480d7943b018a5ace1c7bb6aca8507853a3b7390bae651b38",
+      "tests/codex-live/parser.test.js": "382060ab7fad730e4a6fe5a447ae97e7f9ca653b6a02fc979025bcc7eb3dcac2",
+      "tests/codex-live/process-ownership.js": "f57bbdea2f675c5128807757b3c7335599083f654a870f96354b59b506ea90ee",
+      "tests/codex-live/protocol.test.js": "b5336b9cab373965c617ca0141d05845d363b0aaa740338e58b3d9197251a1dc",
+      "tests/codex-live/runner.js": "92c214142738125e753dd37495cdd772bbc21577801ba04b53715d4d287e8cef",
+      "tests/codex-live/runner.test.js": "77aa7da1084e9881164a8518d7e2a638ea08a59f027ea0bbb662f393bb697595",
+      "tests/codex-live/support/synthetic-app-server.mjs": "d9e81a419c48740aa96ce39e1ca134ba30dcaeeb1bf93a7abc03ac9470c4c09b",
+      "tests/codex-live/support/synthetic-scenarios.js": "2d3002a60f49cc209dab1838557a4fa0fcf07e277daf84f994b79e4daa936c9f"
+    },
+    "preserved": [
+      {
+        "path": ".scratch/v0.1.3/issues/08-codex-live-acceptance.md",
+        "bytes": 46191,
+        "sha256": "5e5edf9a034aff8e6f5a8b6e47e403ad0536f237189a7d73496364ecda4394cd",
+        "mode": 420
+      },
+      {
+        "path": "tests/codex-live/evidence/08-blocked-preflight.json",
+        "bytes": 7464,
+        "sha256": "b64133e67510dd4355b4a384fafd34480e7932ca76ab2d8decc8b7e3db048e2c",
+        "mode": 420
+      },
+      {
+        "path": "tests/codex-live/evidence/08-offline-native-wire-diagnostic.json",
+        "bytes": 15242,
+        "sha256": "7a42f0a4513dae086d84e1a4f9010aca4e122b4a44cdc189b40867a4b5559b9d",
+        "mode": 420
+      },
+      {
+        "path": "tests/codex-live/evidence/08-owned-sandbox-abort-diagnostic.json",
+        "bytes": 32991,
+        "sha256": "dc3ee805643800cd0964fd606f93423e9e41be80778481b88e5af53c5ff22452",
+        "mode": 420
+      },
+      {
+        "path": "tests/codex-live/evidence/08-synthetic-implementation-regression.json",
+        "bytes": 232275,
+        "sha256": "09ebbedce922c3cd36a431e7130a28416bd83fa883dfd803545c1d5ad33a7678",
+        "mode": 420
+      }
+    ],
+    "pack": {
+      "name": "@apparux/agent-init",
+      "version": "0.1.3-rc.2",
+      "filename": "apparux-agent-init-0.1.3-rc.2.tgz",
+      "entryCount": 23,
+      "treeDigest": "sha256:cc11f062f3aa557d1f03441014c8fd966cc17e99c891d817f6597ba9f8f1b031",
+      "tarballSha256": "a7d49382b128df38cb839ecdb651d81a2a1474f7f1b291cdaf3eaef49d903e30",
+      "shasum": "76a8b86ab9991b50f4775ebc0c9a041d0ad5ab8d",
+      "integrity": "sha512-3CNnfRfpWvGznDWCUxr2o+5r0oqI9DyMWnotVJS0klDEbYpZJp9gvw20KBIjs0G0CZiexQSNdtjXLpuqmkkzEQ==",
+      "bytesModesAndDigestsVerified": true,
+      "commands": [
+        {
+          "exitCode": 0,
+          "signal": null,
+          "processGroupAbsent": true,
+          "stdoutDigest": "sha256:c6d6d2938844520ef6519d78d38b07300c98320a45f90c58541529e9fd757f9a",
+          "stderrDigest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "exitCode": 0,
+          "signal": null,
+          "processGroupAbsent": true,
+          "stdoutDigest": "sha256:f9b80d3ab549519a9f1649f35d437fa7f5f9fec4afbc9e62312fb49270a73787",
+          "stderrDigest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "exitCode": 0,
+          "signal": null,
+          "processGroupAbsent": true,
+          "stdoutDigest": "sha256:529f0d2bcbb540cef9d2c1199126d685d6604bc1765966ebcfaf5f0a6186a601",
+          "stderrDigest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "packageRuntimeCleanup": {
+      "removed": true,
+      "files": 591,
+      "directories": 58,
+      "links": 7
+    }
+  },
+  "review": {
+    "method": "Continuation two-axis review of full BASE working scope, staged/commit ranges and untracked list; changed five files inspected, unchanged hashes matched prior full review",
+    "baseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+    "standards": {
+      "remainingLocalFindings": 0,
+      "materialSmells": 0,
+      "readOnlyStaticReview": true,
+      "reviewedSourceHashes": {
+        "tests/codex-live/owned-runtime.js": "720d6c7c20eaf266f18ff86363ddfc32c337f309ca78166739677dddc8e30380",
+        "tests/codex-live/owned-runtime.test.js": "dfaa179465531da3c564b8366e436e9a898734ffebf054eb673a00d1fb2035e4",
+        "tests/codex-live/runner.js": "92c214142738125e753dd37495cdd772bbc21577801ba04b53715d4d287e8cef",
+        "tests/codex-live/runner.test.js": "77aa7da1084e9881164a8518d7e2a638ea08a59f027ea0bbb662f393bb697595",
+        "tests/codex-live/machine-record.js": "2f6e820024af8d14e80e316fb3ef7f8b4fbdf2558cd22dd368a73196a9003784"
+      },
+      "summary": "Bounded command supervision catches signal/probe errors, keeps failure provenance and actual cleanup outcome; unknown absence retains root. Request identity/schema slots do not supply answers. No material finding or heuristic smell.",
+      "testsOrNativeExecutedByReviewer": false
+    },
+    "spec": {
+      "remainingLocalFindings": 0,
+      "readOnlyStaticReview": true,
+      "reviewedSourceHashes": {
+        "tests/codex-live/owned-runtime.js": "720d6c7c20eaf266f18ff86363ddfc32c337f309ca78166739677dddc8e30380",
+        "tests/codex-live/owned-runtime.test.js": "dfaa179465531da3c564b8366e436e9a898734ffebf054eb673a00d1fb2035e4",
+        "tests/codex-live/runner.js": "92c214142738125e753dd37495cdd772bbc21577801ba04b53715d4d287e8cef",
+        "tests/codex-live/runner.test.js": "77aa7da1084e9881164a8518d7e2a638ea08a59f027ea0bbb662f393bb697595",
+        "tests/codex-live/machine-record.js": "2f6e820024af8d14e80e316fb3ef7f8b4fbdf2558cd22dd368a73196a9003784"
+      },
+      "summary": "Five-file local scope conforms to approved continuation. Original failure plus cleanup refusal survive; request schemas and allowlisted locator IDs are not oracle output; actual invalid captures remain pre-approval non-pass. No native activation or shared interface change.",
+      "testsOrNativeExecutedByReviewer": false
+    },
+    "supplementalScope": [
+      "owned path and root identity",
+      "permissions",
+      "privacy",
+      "bounded stdio",
+      "process finalization",
+      "capture preservation",
+      "no oracle answer refill"
+    ],
+    "evidenceLimit": "Signaling/probe and post-SIGKILL unknown-absence branches verified statically, not dynamically forced. Review is not native-provider compatibility, containment or real acceptance proof.",
+    "allEightAcceptanceCriteriaStillIncomplete": true,
+    "reviewersUsedOnlyLocalContext": true
+  },
+  "officialSourceFollowUp": {
+    "method": "continued earlier research primary-source method; three bounded anonymous HTTPS in-memory source reads; no new search Skill, writes or native probes",
+    "ref": "ff6aec96948b70d94983af2641a6b67c94faeff5",
+    "actualSourceRetrieved": true,
+    "sourceCompatibilityNotRuntimeAttestation": true,
+    "findings": [
+      {
+        "symbol": "record_conversation_items",
+        "lines": "3530-3554",
+        "url": "https://github.com/openai/codex/blob/ff6aec96948b70d94983af2641a6b67c94faeff5/codex-rs/core/src/session/mod.rs#L3530-L3554",
+        "finding": "awaits recording of prepared envelopes"
+      },
+      {
+        "symbol": "record_prepared_conversation_items",
+        "lines": "3556-3677",
+        "url": "https://github.com/openai/codex/blob/ff6aec96948b70d94983af2641a6b67c94faeff5/codex-rs/core/src/session/mod.rs#L3556-L3677",
+        "finding": "clones all prepared item-level metadata before history recording, then awaits raw response item sending"
+      },
+      {
+        "symbol": "send_raw_response_items",
+        "lines": "4253-4262",
+        "url": "https://github.com/openai/codex/blob/ff6aec96948b70d94983af2641a6b67c94faeff5/codex-rs/core/src/session/mod.rs#L4253-L4262",
+        "finding": "iterates every supplied item and awaits turn-bound raw event production; no core raw opt-in check"
+      }
+    ],
+    "incomplete": [
+      "deliver_event_raw and public opt-in/filter/serialization completeness before terminal barrier",
+      "attempted selection when prompt reads fail",
+      "late tool-loaded Skills"
+    ],
+    "sourceFollowUpDoesNotProveCompletePublicSelection": true,
+    "additionalResearchStoppedAtApprovedBound": true
+  },
+  "preservation": [
+    {
+      "path": ".scratch/v0.1.3/issues/08-codex-live-acceptance.md",
+      "bytes": 46191,
+      "sha256": "5e5edf9a034aff8e6f5a8b6e47e403ad0536f237189a7d73496364ecda4394cd",
+      "mode": 420,
+      "prefixOnly": true
+    },
+    {
+      "path": "tests/codex-live/evidence/08-blocked-preflight.json",
+      "bytes": 7464,
+      "sha256": "b64133e67510dd4355b4a384fafd34480e7932ca76ab2d8decc8b7e3db048e2c",
+      "mode": 420,
+      "prefixOnly": false
+    },
+    {
+      "path": "tests/codex-live/evidence/08-offline-native-wire-diagnostic.json",
+      "bytes": 15242,
+      "sha256": "7a42f0a4513dae086d84e1a4f9010aca4e122b4a44cdc189b40867a4b5559b9d",
+      "mode": 420,
+      "prefixOnly": false
+    },
+    {
+      "path": "tests/codex-live/evidence/08-owned-sandbox-abort-diagnostic.json",
+      "bytes": 32991,
+      "sha256": "dc3ee805643800cd0964fd606f93423e9e41be80778481b88e5af53c5ff22452",
+      "mode": 420,
+      "prefixOnly": false
+    },
+    {
+      "path": "tests/codex-live/evidence/08-synthetic-implementation-regression.json",
+      "bytes": 232275,
+      "sha256": "09ebbedce922c3cd36a431e7130a28416bd83fa883dfd803545c1d5ad33a7678",
+      "mode": 420,
+      "prefixOnly": false
+    }
+  ],
+  "deliveryReview": {
+    "scope": "new evidence and 2026-10-03 continuation Comments before owned-root finalization",
+    "standardsHardFindings": 0,
+    "standardsMaterialSmells": 0,
+    "specContradictions": 0,
+    "checkedEvidenceSha256": "418827a27b40a748f9127eb933c47082d3cc3042e00d44e5a9d923507bc04b61",
+    "checkedTicketSha256": "b508bbbb6b1533602915e55dd58a54e26e451aa4fd329f17669be9f78aa1fb9c",
+    "cleanupWasStillPendingAtReview": true,
+    "testsOrNativeExecutedByReviewers": false,
+    "onlyLocalDeliverablesInspected": true
+  },
+  "cleanup": {
+    "status": "identity-checked-owned-assets-removed",
+    "role": "owned-ticket08-native-preparation-root",
+    "removed": true,
+    "rootConfirmedAbsent": true,
+    "ownershipNonceAndIdentityMatched": true,
+    "doubleInventoryMatched": true,
+    "noLinksOrSpecialEntries": true,
+    "homeCodexHomeEmpty": true,
+    "remainingRuntimeRoots": 0,
+    "deletedEntries": {
+      "files": 647,
+      "directories": 55,
+      "links": 0
+    },
+    "verifiedSourceFiles": 12,
+    "verifiedBackups": 16,
+    "verifiedCommandRecords": 13,
+    "verifiedStreamDigests": 26,
+    "evidenceBeforeCleanupSha256": "418827a27b40a748f9127eb933c47082d3cc3042e00d44e5a9d923507bc04b61",
+    "removalElapsedSeconds": 0.061139
+  },
+  "completionGate": [
+    "verified owned read/write/network/descendant containment in an available isolated runtime",
+    "complete native selected/loaded and no-load universe with contributor context",
+    "separately confirmed real account/model/network budget and stop limits",
+    "exact human approval of actual dynamic Proposal",
+    "actual install/setup/Apply/fresh-routing/artifact end-to-end run"
+  ],
+  "publication": {
+    "staged": false,
+    "committed": false,
+    "pushed": false,
+    "merged": false,
+    "pullRequestCreated": false,
+    "released": false,
+    "ciRerunOrDispatch": false
+  }
+}

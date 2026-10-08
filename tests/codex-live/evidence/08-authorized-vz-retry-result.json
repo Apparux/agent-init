@@ -1,0 +1,819 @@
+{
+  "schemaVersion": 1,
+  "kind": "ticket08-actual-authorized-vz-retry-result",
+  "recordedAt": "2026-10-07",
+  "baseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+  "branch": "implement/v0.1.3-ticket-08",
+  "evidenceKinds": [
+    "actual-native-lima-interface-create-install-start-and-teardown",
+    "actual-recorded-readiness-failure",
+    "read-only-cached-source-postmortem",
+    "not-codex-trigger-acceptance"
+  ],
+  "authorization": {
+    "actualStructuredSelection": "全部三项（推荐）",
+    "originalVmAttemptsUsed": 1,
+    "originalVmMaximumAttempts": 1,
+    "additionalVmAttemptsUsed": 1,
+    "additionalVmMaximumAttempts": 1,
+    "spentAttemptNotResetOrResumed": true,
+    "furtherBootstrapAuthorized": false,
+    "modelAccountLoginProviderTurnStartOrHostCodexAuthorized": false,
+    "unknownFutureProposalApproved": false,
+    "conditionalGuestOfflineProbeEntered": false,
+    "conditionalProbeRequiredActualCanaryAndCleanup": true,
+    "maximumConditionalCodexSessions": 3,
+    "maximumConditionalProtocolRequests": 10,
+    "actualConditionalCodexSessions": 0,
+    "actualConditionalProtocolRequests": 0
+  },
+  "profile": {
+    "limaActualVersion": "2.2.1",
+    "nativeLimaProgramSha256": "6d32fb0f880c0ea750434f2ac855a3f2129126752a301ce4d88adbd2fa599e1e",
+    "localArchiveSha256": "9e9eacce88f37e185c346bad73aa6136f738d8cdf8c3bb23cd42b071824bc66e",
+    "freshSignatureOrBinaryBuildAttestationClaimed": false,
+    "platform": "darwin-arm64",
+    "backend": "Apple VZ",
+    "vcpus": 2,
+    "ramGiB": 2,
+    "virtualDiskGiB": 16,
+    "hostMounts": [],
+    "realHomeAuthOrProviderTokenCopied": false,
+    "bootstrapPreflightDeadlineSeconds": 900,
+    "teardownDeadlineSeconds": 120,
+    "ownedHostAllocatedStorageLimitBytes": 25769803776,
+    "knownOwnedRootAccounting": "finite recorded roots; no-follow walk; dev/ino deduplication; st_blocks allocated bytes",
+    "observedSupervisedLifetimePeakAllocatedAllKnownOwnedBytes": 11607281664,
+    "allocatedAllKnownOwnedAtPostTeardownVerificationBytes": 11607388160,
+    "laterEvidenceFilesCanIncreaseAllocatedStorageAfterLifetimePeak": true,
+    "monitorIsNotFilesystemHardQuota": true,
+    "logicalSparseDiskBytesAreNotAllocatedQuotaBytes": true,
+    "freshStageIdentity": {
+      "dev": 16777233,
+      "ino": 128672785
+    },
+    "freshRuntimeIdentity": {
+      "dev": 16777233,
+      "ino": 128830193
+    },
+    "freshStageNonce": "7a631b0a-561f-45fd-8c20-7a26064be861",
+    "freshRuntimeNonce": "8b681183-ce0f-4d1a-9e65-3f7f632e2f3a",
+    "instanceName": "i-7a631b0a",
+    "freshRuntimeNonceIdentityAndInstalledTransportNotReusedFromOldVm": true,
+    "originalFailedRuntimeReceiptAndInstalledSshScpBytesUnchanged": true
+  },
+  "prestart": {
+    "initialStaticSnapshotPreservedNotOverwritten": true,
+    "finalSourceBinding": {
+      "file": "<fresh-owned-stage>/logs/final-prestart-source-binding.json",
+      "bytes": 3748,
+      "sha256": "6ff2b721191e1a91398a4bf165f2afe65fdafee3c590e68b47dd08ff46547c1f"
+    },
+    "mainMatchedFinalSources": 20,
+    "syntaxCheckedPythonSources": 19,
+    "sources": [
+      {
+        "file": "prepare-vm-prefix.py",
+        "bytes": 3398,
+        "sha256": "cbd85244eacf1cc7a22ec3fea2af1568aad6d9c8feca0d5f5a3c18c852253772"
+      },
+      {
+        "file": "prepare-vz-instance.py",
+        "bytes": 12347,
+        "sha256": "57e12d8ebd3e51b6cc477b53b383d6879e8bdfe7d54523a718b81599038d8488"
+      },
+      {
+        "file": "verify-vz-preparation.py",
+        "bytes": 4855,
+        "sha256": "2411b8c2e793b939f7ddeb5e7f88c9ecfab4db3130134d57c8ee07fde8e2ec14"
+      },
+      {
+        "file": "inspect-lima-executable.py",
+        "bytes": 4989,
+        "sha256": "ee9d98cf35de1b2d582648cee7b3d35251deaa2dca701614e20d5bf0cca2873f"
+      },
+      {
+        "file": "inspect-lima-guest-cli.py",
+        "bytes": 4822,
+        "sha256": "63c9b6fd990b539f2be630a68aeb3da7dfc1ab0ab2e60354991a64a6c2b686c6"
+      },
+      {
+        "file": "owned-vz-supervision.py",
+        "bytes": 31774,
+        "sha256": "5db00415d15e26aa5e5eb0a36330671649d934f97c578c2156f3e1547406a98f"
+      },
+      {
+        "file": "run-owned-vz-canary.py",
+        "bytes": 46600,
+        "sha256": "d19bd8783c9bdfc0724dc5c8124c85a586cee4a2bfc013702cccaa1492d3e86b"
+      },
+      {
+        "file": "install-owned-transport.py",
+        "bytes": 7140,
+        "sha256": "42900cc26a7d8ef31228b3b1e5df6580b28c2751ff6e2613dff353707adf7358"
+      },
+      {
+        "file": "owned-ssh-adapter.py",
+        "bytes": 12192,
+        "sha256": "eb4ce01918fde49f146e1e901f294d3735aa6e77c7d109152ae632d87f048bbe"
+      },
+      {
+        "file": "owned-scp-adapter.py",
+        "bytes": 8231,
+        "sha256": "19641cccdeef452a8c2eedd613db8a7c2b1a7f48d4081b6d67b4eff9d90cdfc0"
+      },
+      {
+        "file": "guest-actor-bootstrap.py",
+        "bytes": 12605,
+        "sha256": "0c812db4c91433ca0428e0a13a6b3d921bfac597e5a698673e45cc32074cf252"
+      },
+      {
+        "file": "guest-public-canary.py",
+        "bytes": 12345,
+        "sha256": "16c0928237d520d5411c8881958e820de5e50dc47989b622d18010d4ade0a43b"
+      },
+      {
+        "file": "guest-canary-launcher.py",
+        "bytes": 11894,
+        "sha256": "e764a10a0472f8041ef600f9aa9a397a388c33bc9d4203127ccb98bd5f411f1e"
+      },
+      {
+        "file": "guest-canary-controller.py",
+        "bytes": 48654,
+        "sha256": "e23dba4def482a3d244ffd7ce71c0d44dce63ea7d1791a8dc42afab0b8ceadcb"
+      },
+      {
+        "file": "guest-offline-protocol.py",
+        "bytes": 15831,
+        "sha256": "e00b09b46bb42b2d2df6ff6e850d27ecf52a2b4cba5f72ca98e9265d32239be5"
+      },
+      {
+        "file": "lima-fixed-source.tgz",
+        "bytes": 7887831,
+        "sha256": "d551efb52115ba006c1052d5c929e4d3afac363c78c9cfca6975af1f85c1426a"
+      },
+      {
+        "file": "retry-quota.py",
+        "bytes": 2025,
+        "sha256": "8ffd4e7b20a74541f5b9d2ffca216575639d6951880f9f97f84cf555fe29b11e"
+      },
+      {
+        "file": "collect-recorded-owned-roots.py",
+        "bytes": 4948,
+        "sha256": "a73b5c6cd6476f7c312405a925ee9568906f43413920774cfc8a30e295309339"
+      },
+      {
+        "file": "run-main-phase.py",
+        "bytes": 3287,
+        "sha256": "1f3a4ea33d11f08ff23376890a71e9973d23347b750a2db2cb81e2182ae96547"
+      },
+      {
+        "file": "check-no-mux.py",
+        "bytes": 2095,
+        "sha256": "4a20aca21b8839bc557918f9ed983cfbc58824c3f2790d293e963147c89f569e"
+      }
+    ],
+    "repairs": {
+      "sshControlPathFixedNone": true,
+      "localControlPathAndDashSOverridesNotForwarded": true,
+      "actualExecSpyRedSubcases": 3,
+      "actualExecSpyGreenSubcases": 3,
+      "actualExecSpyGreenParentTests": 1,
+      "execSpyTestWasNotConnectedSshOrContainmentProof": true,
+      "guestOutsideLivePidAndPublicAuthSentinelChecksAdded": true,
+      "mainSetsidChildGrandchildUseSameDenialChecks": true,
+      "guestCanaryCleanupRequiredBeforeCodex": true,
+      "rootShimReadsBoundedNoFollowInputsAndExecutesValidatedMemory": true,
+      "rootShimAndLinuxPidAuthChecksActuallyExecuted": false
+    },
+    "reviews": [
+      {
+        "receipt": {
+          "file": "<fresh-owned-stage>/logs/owned-vz-host-final-review.json",
+          "bytes": 1416,
+          "sha256": "a29763d7fec2c0ac44a468bdad88f3fcbec485ca5357af1cf988cd39714e2965"
+        },
+        "kind": "current-final-host-standards-review",
+        "scope": [
+          "run-owned-vz-canary.py",
+          "owned-vz-supervision.py",
+          "retry-quota.py",
+          "run-main-phase.py",
+          "install-owned-transport.py",
+          "owned-ssh-adapter.py",
+          "owned-scp-adapter.py"
+        ],
+        "completed": true,
+        "confirmedResidualP1P2": 0,
+        "sourceOnly": true,
+        "wholeRuntimeOrTicketClearance": false,
+        "noExecutionAuthorizationGrantedByReview": true
+      },
+      {
+        "receipt": {
+          "file": "<fresh-owned-stage>/logs/guest-canary-final-preflight-review.json",
+          "bytes": 1739,
+          "sha256": "539bc4599728976cd0408ef486595c024748efedbd108b6b64f8493ce84c4d20"
+        },
+        "kind": "current-final-guest-spec-review",
+        "scope": [
+          "guest-actor-bootstrap.py",
+          "guest-public-canary.py",
+          "guest-canary-launcher.py",
+          "guest-canary-controller.py",
+          "guest-offline-protocol.py",
+          "run-owned-vz-canary.py"
+        ],
+        "completed": true,
+        "confirmedResidualP1P2": 0,
+        "sourceOnly": true,
+        "wholeRuntimeOrTicketClearance": false,
+        "noExecutionAuthorizationGrantedByReview": true
+      },
+      {
+        "receipt": {
+          "file": "<fresh-owned-stage>/logs/transport-endpoint-final-review.json",
+          "bytes": 1134,
+          "sha256": "86430e08eff0a63085bad0995f2fb17853fab222d88c882980812f5e49856837"
+        },
+        "kind": "current-final-transport-review",
+        "scope": [
+          "owned-ssh-adapter.py",
+          "owned-scp-adapter.py",
+          "install-owned-transport.py"
+        ],
+        "completed": true,
+        "confirmedResidualP1P2": 0,
+        "sourceOnly": true,
+        "wholeRuntimeOrTicketClearance": false,
+        "noExecutionAuthorizationGrantedByReview": true
+      }
+    ],
+    "preExecutionZeroResidualSourceFindingsNotFunctionalRuntimePass": true
+  },
+  "actualPreparation": {
+    "interfaceCommands": [
+      {
+        "label": "lima-version",
+        "supervisionErrors": [],
+        "exitCode": 0,
+        "elapsedSeconds": 1.036431,
+        "processGroupConfirmedAbsent": true,
+        "timedOut": false,
+        "truncated": false,
+        "stdoutBytes": 22,
+        "stdoutSha256": "cc3d40a6c7ac3172ad74fd8735aafa70e78c2d3b8bc9d866e05bacb39412cd07",
+        "stderrBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "lima-create-help",
+        "supervisionErrors": [],
+        "exitCode": 0,
+        "elapsedSeconds": 0.023185,
+        "processGroupConfirmedAbsent": true,
+        "timedOut": false,
+        "truncated": false,
+        "stdoutBytes": 4146,
+        "stdoutSha256": "d42d0e1bf6cd6dec4d9875f65987c1431ccaa7f9138ffcdaf3cdc4a5bd10e72f",
+        "stderrBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "guestCliHelpCommands": [
+      {
+        "name": "start",
+        "supervisionErrors": [],
+        "exitCode": 0,
+        "elapsedSeconds": 0.022802,
+        "processGroupConfirmedAbsent": true,
+        "timedOut": false,
+        "truncated": false,
+        "stdoutBytes": 3213,
+        "stdoutSha256": "297f4ad9df2924ac9582fe48e03c9e5969c81a03b198a6ac7c45558258639b84",
+        "stderrBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "shell",
+        "supervisionErrors": [],
+        "exitCode": 0,
+        "elapsedSeconds": 0.021891,
+        "processGroupConfirmedAbsent": true,
+        "timedOut": false,
+        "truncated": false,
+        "stdoutBytes": 1638,
+        "stdoutSha256": "da71502fc472041f4ee3ac91c9186575bf04f12db7b195c825afde4020075604",
+        "stderrBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "copy",
+        "supervisionErrors": [],
+        "exitCode": 0,
+        "elapsedSeconds": 0.021751,
+        "processGroupConfirmedAbsent": true,
+        "timedOut": false,
+        "truncated": false,
+        "stdoutBytes": 1606,
+        "stdoutSha256": "7a7ddf3e01aa96ec423dc4a05b35556aed9fefbd61563396e633eb36f0992710",
+        "stderrBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "list",
+        "supervisionErrors": [],
+        "exitCode": 0,
+        "elapsedSeconds": 0.021903,
+        "processGroupConfirmedAbsent": true,
+        "timedOut": false,
+        "truncated": false,
+        "stdoutBytes": 2068,
+        "stdoutSha256": "be8de86c54d0430b64892206c968f757e169844baa638ecd68b5ad7a81b8d674",
+        "stderrBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "createReceipt": {
+      "file": "<fresh-owned-stage>/logs/vz-instance-preparation.json",
+      "bytes": 2595,
+      "sha256": "f0763dab8fae7268623d8561bc37d04cfc434e0520fa9138dad54a2a70cf65ce"
+    },
+    "createdInstanceSuccessfully": true,
+    "assetServerClosed": true,
+    "rawDiskAndConfigVerificationReceipt": {
+      "file": "<fresh-owned-stage>/logs/vz-preparation-verification.json",
+      "bytes": 2123,
+      "sha256": "aba7ddc359e263cfe5c58faad22e8b737b7c1bc6822d88e66b25bebffca58582"
+    },
+    "rawDiskPrefixEqualsConvertedImage": true,
+    "rawDiskConfigVerificationIsNotRuntimeIsolationProof": true,
+    "installedTransportReceipt": {
+      "file": "<fresh-owned-runtime>/logs/owned-transport-installation.json",
+      "bytes": 2790,
+      "sha256": "9ec9757e94bf4fcae1d1b69838d3cd7d1467580a2b6c9557775256d7c83b5770"
+    },
+    "transportInstallationActuallyExecuted": true
+  },
+  "actualAttempt": {
+    "bootstrapMarker": {
+      "file": "<fresh-owned-runtime>/logs/bootstrap-attempt.json",
+      "bytes": 1704,
+      "sha256": "41be145117c10281473d89548e05c1c85dc1a4e9f406a7d9eb125eb3890f2ba8"
+    },
+    "resultReceipt": {
+      "file": "<fresh-owned-stage>/logs/vz-canary-runtime-result.json",
+      "bytes": 7868,
+      "sha256": "80da43949ebfc81b3e1a768015ebab43adfcd01e0d7f186c99721e2cedf7f16b"
+    },
+    "status": "fail",
+    "error": {
+      "message": "list status unknown or broken",
+      "operation": "owned-host-lifetime",
+      "type": "ReadinessError"
+    },
+    "outerExitCode": 1,
+    "outerElapsedSeconds": 33.718527,
+    "timedOut": false,
+    "truncated": false,
+    "initialNativeListStates": [
+      "Stopped",
+      "Broken"
+    ],
+    "brokenListRenderedErrors": [],
+    "renderedEmptyErrorsAreNotProofOfNoUnderlyingError": true,
+    "lowLevelVZRunningEventActuallyCaptured": true,
+    "driverVMStartedField": false,
+    "driverVMStartedFieldMeansVerifiedReadinessNotAnyVZBootEvent": true,
+    "guestControllerInvoked": false,
+    "guestReadiness": null,
+    "guestCanaryEntered": false,
+    "guestResult": null,
+    "nativeCodexExecuted": false,
+    "modelExecuted": false,
+    "actualCodexHarnessVersion": null,
+    "nativeSelectionEvidence": null,
+    "missingObservationConvertedToEmptyLoaded": false
+  },
+  "nativeTimeline": {
+    "nativeCaptureDate": "2026-10-08",
+    "timezone": "+08:00",
+    "sessionHeadingDateNotSubstitutedForNativeCaptureDate": true,
+    "vzRunningLogTime": "2026-10-08T10:23:05+08:00",
+    "sigtermLogTime": "2026-10-08T10:23:06+08:00",
+    "lateNativeRunningEvent": {
+      "time": "2026-10-08T10:23:24.268875+08:00",
+      "status": {
+        "running": true,
+        "sshLocalPort": 58776
+      }
+    },
+    "exitingEventTime": "2026-10-08T10:23:36.153225+08:00",
+    "lateRunningOccurredDuringTeardownDoesNotResumeAttempt": true,
+    "laterHealthyEventDoesNotProveCanaryOrFutureBootPass": true
+  },
+  "postmortem": {
+    "basis": "one completed read-only cached official Lima 2.2.1 source lookup and current controller source; only local context, no new external search",
+    "cachedSourceArchiveSha256": "d551efb52115ba006c1052d5c929e4d3afac363c78c9cfca6975af1f85c1426a",
+    "controllerOwner": {
+      "file": "owned-vz-supervision.py",
+      "symbol": "parse_instance_list",
+      "lines": "164-167",
+      "finding": "Stopped continues readiness polling; Broken immediately raises ReadinessError."
+    },
+    "officialOwners": [
+      {
+        "member": "pkg/driver/vz/vz_driver_darwin.go",
+        "symbol": "LimaVzDriver.InspectStatus",
+        "lines": "579-581",
+        "finding": "Empty driver status selects PID-file fallback."
+      },
+      {
+        "member": "pkg/store/instance.go",
+        "symbol": "inspectStatusWithPIDFiles",
+        "lines": "176-197",
+        "finding": "Positive host-agent PID with zero driver PID can produce Broken; this is a possible mechanism, not this run's proven root cause."
+      },
+      {
+        "member": "cmd/limactl/list.go",
+        "lines": "321-324",
+        "finding": "Empty JSON objects can be stripped; rendered errors:[] does not prove underlying error absence."
+      }
+    ],
+    "controllerEarlyAbortOnBrokenConfirmed": true,
+    "exactReasonNativeListReturnedBrokenProven": false,
+    "driverPidAtBrokenObservationEstablished": false,
+    "genericEnvironmentFailureRootCauseClaimed": false,
+    "earlierFailedAttemptRootCauseRetroactivelyProven": false,
+    "postmortemEditsTestsNativeSshNetworkOrRetryExecuted": false
+  },
+  "cleanup": {
+    "teardownElapsedSeconds": 30.640961,
+    "hostCleanupConfirmed": true,
+    "controllerCommandCleanupConfirmed": true,
+    "cleanupErrors": [],
+    "retainedActualChildren": [
+      {
+        "label": "foreground-hostagent",
+        "status": "fail",
+        "exitCode": 1,
+        "elapsedSeconds": 31.820398,
+        "childWaitConfirmed": true,
+        "pipeEOFConfirmed": {
+          "stderr": true,
+          "stdout": true
+        },
+        "processGroupConfirmedAbsent": true,
+        "escapedDaemonAbsenceProvenByProcessGroup": false,
+        "timedOut": false,
+        "cancelled": false,
+        "errors": [],
+        "truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "stdoutBytes": 0,
+        "stdoutSeenBytes": 0,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrBytes": 326,
+        "stderrSeenBytes": 326,
+        "stderrSha256": "4478737dca2960e134488b9c9aca63be8d71fde666be1889e9bade067b8566b6"
+      },
+      {
+        "label": "readiness-0",
+        "status": "pass",
+        "exitCode": 0,
+        "elapsedSeconds": 0.061654,
+        "childWaitConfirmed": true,
+        "pipeEOFConfirmed": {
+          "stderr": true,
+          "stdout": true
+        },
+        "processGroupConfirmedAbsent": true,
+        "escapedDaemonAbsenceProvenByProcessGroup": false,
+        "timedOut": false,
+        "cancelled": false,
+        "errors": [],
+        "truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "stdoutBytes": 1961,
+        "stdoutSeenBytes": 1961,
+        "stdoutSha256": "b7d30261691ccb19c82c78f427ec045231cca93172620c86133c129154a4df7a",
+        "stderrBytes": 0,
+        "stderrSeenBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "readiness-1",
+        "status": "pass",
+        "exitCode": 0,
+        "elapsedSeconds": 0.056278,
+        "childWaitConfirmed": true,
+        "pipeEOFConfirmed": {
+          "stderr": true,
+          "stdout": true
+        },
+        "processGroupConfirmedAbsent": true,
+        "escapedDaemonAbsenceProvenByProcessGroup": false,
+        "timedOut": false,
+        "cancelled": false,
+        "errors": [],
+        "truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "stdoutBytes": 2014,
+        "stdoutSeenBytes": 2014,
+        "stdoutSha256": "33bb0ed50997392a973f240eef37260d84ce664fd775bbea587ec3402ff8d6b4",
+        "stderrBytes": 137,
+        "stderrSeenBytes": 137,
+        "stderrSha256": "4ce2d965d5b01877e7a0a1987cdd9aa0e41a620683b037132e9832aeeb62466d"
+      }
+    ],
+    "allRetainedChildrenWaitPipeEofAndOwnedProcessGroupAbsenceMatched": true,
+    "nativeLogEofConfirmedAfterChildWait": {
+      "stderr": true,
+      "stdout": true
+    },
+    "exactNamedPostTeardownState": "Stopped",
+    "namedHaPidHaSocketSshSocketAbsent": true,
+    "postTeardownQuery": {
+      "label": "post-teardown-exact-instance-list",
+      "status": "pass",
+      "exitCode": 0,
+      "elapsedSeconds": 0.058042,
+      "childWaitConfirmed": true,
+      "pipeEOFConfirmed": {
+        "stdout": true,
+        "stderr": true
+      },
+      "processGroupConfirmedAbsent": true,
+      "escapedDaemonAbsenceProvenByProcessGroup": false,
+      "timedOut": false,
+      "cancelled": false,
+      "errors": [],
+      "truncated": {
+        "stdout": false,
+        "stderr": false
+      },
+      "stdoutBytes": 1982,
+      "stdoutSeenBytes": 1982,
+      "stdoutSha256": "6c7ada4798706c85d21984cebd4998a7674c13ea36a4cac495f228aca9eef5b4",
+      "stderrBytes": 0,
+      "stderrSeenBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "escapedOrPersistentDaemonAbsenceProven": false,
+    "unknownEarlierLifetimesRetrospectivelyCleared": false,
+    "oldAndNewRootsDisksBackupsAndWorktreeRetained": true,
+    "assetsRemoved": false
+  },
+  "rawBindings": {
+    "phaseReports": [
+      {
+        "label": "main-guest-help",
+        "status": "pass",
+        "exitCode": 0,
+        "elapsedSeconds": 0.249935,
+        "childWaitConfirmed": true,
+        "pipeEOFConfirmed": {
+          "stdout": true,
+          "stderr": true
+        },
+        "processGroupConfirmedAbsent": true,
+        "escapedDaemonAbsenceProvenByProcessGroup": false,
+        "timedOut": false,
+        "cancelled": false,
+        "errors": [],
+        "truncated": {
+          "stdout": false,
+          "stderr": false
+        },
+        "stdoutBytes": 11032,
+        "stdoutSeenBytes": 11032,
+        "stdoutSha256": "31472874283e77baa23ccdab98724e9057559c634f969ab0da74415a2960cf1c",
+        "stderrBytes": 0,
+        "stderrSeenBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "maximumAllocatedAllKnownOwnedBytes": 0
+      },
+      {
+        "label": "main-create",
+        "status": "pass",
+        "exitCode": 0,
+        "elapsedSeconds": 7.886174,
+        "childWaitConfirmed": true,
+        "pipeEOFConfirmed": {
+          "stdout": true,
+          "stderr": true
+        },
+        "processGroupConfirmedAbsent": true,
+        "escapedDaemonAbsenceProvenByProcessGroup": false,
+        "timedOut": false,
+        "cancelled": false,
+        "errors": [],
+        "truncated": {
+          "stdout": false,
+          "stderr": false
+        },
+        "stdoutBytes": 3937,
+        "stdoutSeenBytes": 3937,
+        "stdoutSha256": "1e20aa681a9bb936da9d46a62e4e3eb3647eaac6da9c6e261f6201fe4b44501d",
+        "stderrBytes": 0,
+        "stderrSeenBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "maximumAllocatedAllKnownOwnedBytes": 11398647808
+      },
+      {
+        "label": "main-verify",
+        "status": "pass",
+        "exitCode": 0,
+        "elapsedSeconds": 16.367571,
+        "childWaitConfirmed": true,
+        "pipeEOFConfirmed": {
+          "stdout": true,
+          "stderr": true
+        },
+        "processGroupConfirmedAbsent": true,
+        "escapedDaemonAbsenceProvenByProcessGroup": false,
+        "timedOut": false,
+        "cancelled": false,
+        "errors": [],
+        "truncated": {
+          "stdout": false,
+          "stderr": false
+        },
+        "stdoutBytes": 2123,
+        "stdoutSeenBytes": 2123,
+        "stdoutSha256": "aba7ddc359e263cfe5c58faad22e8b737b7c1bc6822d88e66b25bebffca58582",
+        "stderrBytes": 0,
+        "stderrSeenBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "maximumAllocatedAllKnownOwnedBytes": 11398664192
+      },
+      {
+        "label": "main-install",
+        "status": "pass",
+        "exitCode": 0,
+        "elapsedSeconds": 0.475851,
+        "childWaitConfirmed": true,
+        "pipeEOFConfirmed": {
+          "stdout": true,
+          "stderr": true
+        },
+        "processGroupConfirmedAbsent": true,
+        "escapedDaemonAbsenceProvenByProcessGroup": false,
+        "timedOut": false,
+        "cancelled": false,
+        "errors": [],
+        "truncated": {
+          "stdout": false,
+          "stderr": false
+        },
+        "stdoutBytes": 2790,
+        "stdoutSeenBytes": 2790,
+        "stdoutSha256": "9ec9757e94bf4fcae1d1b69838d3cd7d1467580a2b6c9557775256d7c83b5770",
+        "stderrBytes": 0,
+        "stderrSeenBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "maximumAllocatedAllKnownOwnedBytes": 11398934528
+      },
+      {
+        "label": "main-lifetime",
+        "status": "fail",
+        "exitCode": 1,
+        "elapsedSeconds": 33.718527,
+        "childWaitConfirmed": true,
+        "pipeEOFConfirmed": {
+          "stdout": true,
+          "stderr": true
+        },
+        "processGroupConfirmedAbsent": true,
+        "escapedDaemonAbsenceProvenByProcessGroup": false,
+        "timedOut": false,
+        "cancelled": false,
+        "errors": [],
+        "truncated": {
+          "stdout": false,
+          "stderr": false
+        },
+        "stdoutBytes": 7868,
+        "stdoutSeenBytes": 7868,
+        "stdoutSha256": "80da43949ebfc81b3e1a768015ebab43adfcd01e0d7f186c99721e2cedf7f16b",
+        "stderrBytes": 0,
+        "stderrSeenBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "maximumAllocatedAllKnownOwnedBytes": 11607281664
+      },
+      {
+        "label": "post-teardown-exact-instance-list",
+        "status": "pass",
+        "exitCode": 0,
+        "elapsedSeconds": 0.058042,
+        "childWaitConfirmed": true,
+        "pipeEOFConfirmed": {
+          "stdout": true,
+          "stderr": true
+        },
+        "processGroupConfirmedAbsent": true,
+        "escapedDaemonAbsenceProvenByProcessGroup": false,
+        "timedOut": false,
+        "cancelled": false,
+        "errors": [],
+        "truncated": {
+          "stdout": false,
+          "stderr": false
+        },
+        "stdoutBytes": 1982,
+        "stdoutSeenBytes": 1982,
+        "stdoutSha256": "6c7ada4798706c85d21984cebd4998a7674c13ea36a4cac495f228aca9eef5b4",
+        "stderrBytes": 0,
+        "stderrSeenBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "nativeHostagentStdout": {
+      "file": "<fresh-owned-runtime>/logs/native-hostagent.stdout",
+      "bytes": 353,
+      "sha256": "174b3145798241b83cc58f0847a329c90de7d4fda14876d4212a8c74ae90a78e"
+    },
+    "nativeHostagentStderr": {
+      "file": "<fresh-owned-runtime>/logs/native-hostagent.stderr",
+      "bytes": 12885,
+      "sha256": "0de453ee8ab17fbc46e5ea0bb1dccb003ef3ee281e38982f75cb5c8d10730b11"
+    },
+    "readinessStreams": [
+      {
+        "label": "readiness-0",
+        "stdout": {
+          "bytes": 1961,
+          "sha256": "b7d30261691ccb19c82c78f427ec045231cca93172620c86133c129154a4df7a"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "label": "readiness-1",
+        "stdout": {
+          "bytes": 2014,
+          "sha256": "33bb0ed50997392a973f240eef37260d84ce664fd775bbea587ec3402ff8d6b4"
+        },
+        "stderr": {
+          "bytes": 137,
+          "sha256": "4ce2d965d5b01877e7a0a1987cdd9aa0e41a620683b037132e9832aeeb62466d"
+        }
+      }
+    ],
+    "mainIndependentVerification": {
+      "file": "<fresh-owned-stage>/logs/main-independent-runtime-verification.json",
+      "bytes": 9420,
+      "sha256": "3ff8613ed718962872f408490bf2ed494d70419f8228ccc2bdf291e96bef3d38"
+    },
+    "verifiedPhaseReports": 6,
+    "verifiedPhaseStreams": 12,
+    "nativeAndRetainedChildStreamsAdditionallyMatched": true,
+    "actualHelpAndCreateStreamsAdditionallyMatched": true,
+    "largeRawLogsNotCopiedIntoPublicArtifact": true
+  },
+  "preservation": {
+    "priorPublicEvidenceFilesUnchanged": 16,
+    "priorTicketPrefixBytes": 108039,
+    "priorTicketPrefixSha256": "87e74f043c42f5e095d22e024255e20f22a19ee2b1f0e9f03ba4dcea1379d64a",
+    "currentDeliveryJsMjsSourceBindingsStillMatch": 18,
+    "currentSourceBound732SuiteReexecutedForThisLogOnlyAppend": false,
+    "priorSourceBoundSuite": {
+      "tests": 732,
+      "pass": 730,
+      "fail": 0,
+      "skipped": 2,
+      "stdoutSha256": "3981d3c7383f6d85f43743aac0b1588db6400389e74f1cfd9db36f256f9c37d1",
+      "syntaxFiles": 18
+    },
+    "otherSharedFixturesCorpusPrdMotherSkillInstallationHelpersPackageReleaseCiRulesOtherTicketsUnchanged": true,
+    "headEqualsBase": true,
+    "stagingEmpty": true
+  },
+  "claimBoundary": {
+    "nativeLimaActuallyExecuted": true,
+    "nativeExecuted": false,
+    "nativeExecutedFlagMeaning": "Codex native execution; not Lima runtime commands",
+    "actualContainmentProven": false,
+    "nativeExecutionDeferredGatesRemoved": false,
+    "effectiveNativeObservableProfileVerified": false,
+    "completeNativeSelectionOrGenuineNoLoadProven": false,
+    "actualProposalApprovalApplyReconcileRoutingExecuted": false,
+    "nativeCodexExecuted": false,
+    "modelExecuted": false,
+    "liveProof": false,
+    "realEndToEndRun": false,
+    "ticket08Complete": false,
+    "ticket09ThresholdsProven": false,
+    "fullQualification": false,
+    "statusOrEightAcceptanceCheckboxesChanged": false,
+    "gitCommitPushMergePrReleaseCiOrNextTicketOperationPerformed": false
+  }
+}

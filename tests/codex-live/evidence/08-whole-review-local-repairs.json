@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "kind": "ticket08-whole-review-local-repairs",
+  "recordedAt": "2026-10-07",
+  "baseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+  "branch": "implement/v0.1.3-ticket-08",
+  "localDiagnosticOnly": true,
+  "notNativeCodexAcceptance": true,
+  "evidenceKinds": ["actual-offline-package-and-filesystem-regression", "synthetic-protocol-regression", "static-source-review"],
+  "repairs": {
+    "codexEvidencePrivacy": {
+      "casefoldsEveryPathComponentForEnvPrefix": true,
+      "unsupportedSensitiveNonPresenceRejectedBeforeBindingReadAndActorLaunch": true,
+      "explicitPresenceAndLegacyLowercaseBasenameSemanticsPreserved": true,
+      "fixtureOrOracleNormalizedToBypassFrozenEvaluator": false,
+      "directSharedEvaluatorPrivacyRepaired": false
+    },
+    "codexReaders": {
+      "sourceBindingOpenNonBlocking": true,
+      "contributorDocumentOpenNonBlocking": true,
+      "boundedDescriptorReaderUsedForFixtureCopiesAndLaterInventories": true,
+      "separateDeterministicOriginalFifoRaceRedClaimed": false,
+      "pathReopenChecksAreNativePhysicalContainmentProof": false
+    },
+    "firstFixtureAndSnapshotIntake": {
+      "boundedRepositoryInventoryBeforeFirstCopy": true,
+      "repositoryFileBytes": 1048576,
+      "repositoryAggregateBytes": 16777216,
+      "repositoryEntries": 4096,
+      "copyBudgetSharedAcrossRecursion": true,
+      "oversizedRepositoryRejectedBeforeInputOrWorkDirectoriesCreated": true,
+      "snapshotAndRoutingBaselineUseBoundedRepositoryInventory": true
+    },
+    "laterOwnedInventories": {
+      "fileBytes": 16777216,
+      "aggregateBytes": 67108864,
+      "entries": 4096,
+      "boundedNoFollowNonBlockingDescriptorReads": true,
+      "overBudgetEntriesSilentlyTruncated": false,
+      "controllerCaptureCapIsDifferentFromTighterRepositoryIntakeCap": true
+    }
+  },
+  "sources": [
+    {"file":"tests/codex-live/source-binding.js","bytes":4453,"sha256":"19321de6937dc8dfcb093f14ff56ee074aa4380301c7c6abcbcd08d749e3d59d"},
+    {"file":"tests/codex-live/runner.test.js","bytes":59010,"sha256":"9ab47e01a33763864510dedd72e39af6705b8b906890402efdb60657b7f11043"},
+    {"file":"tests/codex-live/owned-runtime.js","bytes":39855,"sha256":"604d741abfbb6049a5ea27cdca92cbbecaf1dbee8f75d374e850969152b1f5e5"},
+    {"file":"tests/codex-live/owned-runtime.test.js","bytes":25429,"sha256":"fdd0ef92cc516620c19b2afe8a2cd2c24b7eb612ea12d72208a6380407afaf65"},
+    {"file":"tests/codex-live/contributor-context.js","bytes":4404,"sha256":"42945ba3fe9c90b1a790dd01c180616f9c0bf12cc3f6a40ba8752655c1ac9006"}
+  ],
+  "tests": {
+    "genuineVerticalRedGreen": [
+      {"seam":"runCodex unsupported sensitive byte evidence before actor or approval", "red":"full-review-sensitive-guard-red", "green":"full-review-sensitive-guard-green", "pathVariants":3},
+      {"seam":"createCodexRuntime first fixture preparation size bound", "red":"full-review-fixture-first-read-red", "green":"full-review-fixture-first-read-green"},
+      {"seam":"inventoryCodexTree post-capture file bound", "red":"full-review-post-inventory-budget-red", "green":"full-review-post-inventory-budget-green"}
+    ],
+    "newRetainedTopLevelTests": 3,
+    "finalFull": {
+      "commandKind":"npm test via fixed Node and npm-cli in owned offline environment, after final source reviews",
+      "label":"full-review-final-full",
+      "platform":"darwin-arm64",
+      "nodeVersion":"v25.9.0",
+      "exitCode":0,
+      "elapsedSeconds":145.106913,
+      "tests":728,
+      "pass":726,
+      "fail":0,
+      "cancelled":0,
+      "skipped":2,
+      "todo":0,
+      "skipBoundary":"existing Windows Native lifecycle and symlink EPERM fallback skips on macOS, not Windows qualification",
+      "stdoutBytes":56667,
+      "stdoutSha256":"sha256:7ff5c83939a7a38d51bc88619759d6ff9874d53c8a4516843c076914898dc409",
+      "stderrBytes":0,
+      "stderrSha256":"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timedOut":false,
+      "truncated":false,
+      "verifierProcessGroupConfirmedAbsent":true,
+      "supervisionErrors":[]
+    },
+    "finalSyntax": {
+      "label":"full-review-final-syntax",
+      "checkedFiles":16,
+      "exitCode":0,
+      "elapsedSeconds":1.170902,
+      "stdoutBytes":819,
+      "stdoutSha256":"sha256:cb6b5dc14781e4d29d12c44215396f4b8ec5bb4d051aa7cc9fba927e22736174",
+      "stderrBytes":0,
+      "timedOut":false,
+      "truncated":false,
+      "verifierProcessGroupConfirmedAbsent":true
+    },
+    "mainIndependentlyVerified": {
+      "commandReports":8,
+      "rawStreams":16,
+      "finalSourceBytesAndDigestsMatched":true,
+      "actualFinalTapSummaryMatched":true,
+      "historicalEvidenceBindingsMatched":14
+    },
+    "earlier722SuiteReusedAsFinalSourceProof":false,
+    "separateCurrentPackAcceptanceCommandClaimed":false,
+    "actualOfflinePackAndInstallCoveredByFullRuntimeTests":true
+  },
+  "reviews": {
+    "wholeBaseWorkingTreeScope": {
+      "emptyThreeDotDiffUsedAsSoleInput":false,
+      "trackedChanges":3,
+      "codexJsMjsSources":16,
+      "evidenceJsonFilesAtReview":14,
+      "stagedAndCommitRangesCheckedEmpty":true,
+      "standardsOriginalFindings":2,
+      "standardsMaterialSmells":0,
+      "specOriginalIntroducedDefects":3,
+      "specScopeCreepFindings":0,
+      "originalApi429InterruptedAttemptsClaimedComplete":false,
+      "subsequentAvailableModelReviewCompleted":true
+    },
+    "finalNarrowRepairs": {
+      "axes":["Standards","Spec"],
+      "fiveSourceBindingsIndependentlyMatched":true,
+      "confirmedNewDefectsInFinalIncrement":{"Standards":0,"Spec":0},
+      "reviewersExecutedTests":false,
+      "reviewersIndependentlyAttestedMainRawLogs":false,
+      "allWholeDeliveryFindingsCleared":false,
+      "nativeOrFullTicketClearance":false
+    },
+    "externalLookupThisFollowUp":false,
+    "basis":"local source, retained snapshots, raw command receipts and already loaded TDD/code-review guidelines"
+  },
+  "unresolvedFindings": [
+    {
+      "id":"frozen-shared-source-privacy",
+      "file":"tests/agent-init/evaluation-harness.js",
+      "line":629,
+      "statement":"Direct shared source-bound evaluation still detects sensitive evidence only by lowercase basename. The Codex preguard rejects unsupported paths; it does not repair the shared interface.",
+      "sharedFreezeRespected":true
+    },
+    {
+      "id":"frozen-shared-fifo-open",
+      "file":"tests/agent-init/evaluation-harness.js",
+      "line":576,
+      "statement":"The direct shared reader still opens without O_NONBLOCK and can block after a concurrent FIFO replacement. No immutable native physical read boundary has been proved.",
+      "sharedFreezeRespected":true
+    },
+    {
+      "id":"historical-machine-path",
+      "file":"tests/codex-live/evidence/08-contributor-context-regression.json",
+      "line":499,
+      "jsonPointer":"/cleanup/earlierNegativeTestRuntimeRetained/ownedRoot",
+      "statement":"A historical field contains an unnormalized absolute machine path. Its value is not copied here. Original evidence remains unchanged under the explicit preservation constraint and must not be called public-safe.",
+      "historicalReceiptPreserved":true,
+      "publicSafe":false,
+      "credentialValueFoundInThatField":false
+    }
+  ],
+  "auditBinding": {
+    "file":".tmp-08-source-binding-3ad6c572/native-observation-20261007-7s0xhiuo/full-review-repairs-4858ac748701/final-main-verification.json",
+    "bytes":9744,
+    "sha256":"c690bb40a28768c868b251cea6c185030aad890bf1ee9ea142b25d2698ef2841"
+  },
+  "preservation": {
+    "historicalEvidenceFilesUnchanged":14,
+    "priorTicketPrefixBytes":98155,
+    "priorTicketPrefixSha256":"2de4ed72c2a53ce9ac3b9ad98d4b19482b317352646792d382aa6c74a6984621",
+    "other11CodexSourcesUnchanged":true,
+    "sharedSourcesUnchangedThisFollowUp":[
+      {"file":"tests/agent-init/evaluation-harness.js","sha256":"d3cb83cb82ef672cd3c719558b5479a9cb2ac160931d5b7d88a8624abb8077af"},
+      {"file":"tests/agent-init/fixture-oracles.test.js","sha256":"961d9d146f121656744eded84dff29af4fee95c2d12f718abb261e5834f7d318"}
+    ],
+    "prdFixturesCorpusPackageReleaseMetadataCiRulesAndOtherTicketsUnchanged":true,
+    "headEqualsBase":true,
+    "stagingEmpty":true,
+    "ownedWorktreeAndUnconfirmedAssetsRetained":true,
+    "wholeEvidenceNamespaceClaimedSanitized":false
+  },
+  "authorizationAndClaimBoundary": {
+    "additionalVMVerificationDeclined":true,
+    "originalBootstrapAttemptsUsed":1,
+    "originalMaximumAuthorizedBootstrapAttempts":1,
+    "additionalBootstrapExecuted":false,
+    "modelOrAccountScopeGrantedByOrdinaryContinuation":false,
+    "ordinaryImplementationApprovalIsNotActualProposalApproval":true,
+    "nativeExecutionDeferredGatesRemoved":false,
+    "effectiveNativeObservableProfileVerified":false,
+    "completeSuccessfulNativeSkillReadUniverseProven":false,
+    "genuineNativeNoLoadProven":false,
+    "missingObservationConvertedToEmptyLoaded":false,
+    "realProposalApprovalApplyReconcileAndRoutingExecuted":false,
+    "realEndToEndRun":false,
+    "nativeExecuted":false,
+    "modelExecuted":false,
+    "liveProof":false,
+    "ticket08Complete":false,
+    "ticket09ThresholdsProven":false,
+    "fullQualification":false,
+    "statusOrEightAcceptanceCheckboxesChanged":false,
+    "gitCommitPushMergePrReleaseOrCiOperationPerformed":false,
+    "nextTicketStarted":false
+  }
+}

@@ -1,0 +1,530 @@
+{
+  "schemaVersion": 1,
+  "kind": "ticket08-owned-vz-pre-start-preparation",
+  "date": "2026-10-03",
+  "baseSha": "e5097877fa4172c8b2eb27b394aff374803b42fe",
+  "synthetic": false,
+  "notNativeCodexAcceptance": true,
+  "claims": {
+    "fixedAssetsDownloadedAndHashed": true,
+    "limitedSignatureProfilesVerified": true,
+    "publicLimaCreateExecuted": true,
+    "rawDiskPreparedAndVerified": true,
+    "vmBooted": false,
+    "containmentProven": false,
+    "escapedDescendantTeardownProven": false,
+    "nativeCodexExecuted": false,
+    "modelExecuted": false,
+    "realHumanProposalApproval": false,
+    "liveEndToEnd": false,
+    "ticket08Complete": false,
+    "qualification": false
+  },
+  "scope": {
+    "singleApprovedOwnedStandaloneVZRoute": true,
+    "globalInstallOrUserConfigurationChanged": false,
+    "realHomeAuthReadOrCopied": false,
+    "credentialsOrModelCalls": 0,
+    "guestDeploymentMigrationStagingDatabaseOperations": 0,
+    "bootstrapAttempts": 0,
+    "instanceName": "i-3ad6c572",
+    "limits": {
+      "cpus": 2,
+      "memoryBytes": 2147483648,
+      "virtualDiskBytes": 17179869184,
+      "allOwnedStorageBytes": 25769803776,
+      "bootstrapPreflightSeconds": 900,
+      "teardownSeconds": 120
+    },
+    "rootsRetained": true
+  },
+  "assets": [
+    {
+      "file": "lima-2.2.1-Darwin-arm64.tar.gz",
+      "url": "https://github.com/lima-vm/lima/releases/download/v2.2.1/lima-2.2.1-Darwin-arm64.tar.gz",
+      "declaredDigest": "sha256:9e9eacce88f37e185c346bad73aa6136f738d8cdf8c3bb23cd42b071824bc66e",
+      "limitBytes": 38328082,
+      "verified": true,
+      "bytes": 38328082,
+      "sha256": "9e9eacce88f37e185c346bad73aa6136f738d8cdf8c3bb23cd42b071824bc66e",
+      "sha512": "kJxlkc+gd7nygm/NPeOh0Uoov3vi2LEb9KS8H+Pgn3eFcD8EztBXrWK7ybhR6uNbMA9L/USwndYDLa5E46fmYg==",
+      "sha1": "a4b09ebc22fb57b80559013e1edc744a2da1c231"
+    },
+    {
+      "file": "ubuntu-24.04-server-cloudimg-arm64.img",
+      "url": "https://cloud-images.ubuntu.com/releases/noble/release/ubuntu-24.04-server-cloudimg-arm64.img",
+      "declaredDigest": "sha256:1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55",
+      "limitBytes": 2147483648,
+      "verified": true,
+      "bytes": 620224512,
+      "sha256": "1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55",
+      "sha512": "T2/wlJAz6kaOKOKqJt7YwHv/hKtPjsAsrxBd560vb0dBB1z0iMJmS7SsIfFmMeWThX/7w8JZNbc5UC2ZHeuFJA==",
+      "sha1": "26a236a90b21fe388f20fb75b8c3bbfb90934bfe"
+    },
+    {
+      "file": "codex-0.159.2-linux-arm64.tgz",
+      "url": "https://registry.npmjs.org/@openai/codex/-/codex-0.159.2-linux-arm64.tgz",
+      "declaredDigest": "sha512-Pm0W2PnFeTEqPx+AOIwgOVB4dBtY24cuD0tx1hjCor60CbSAT7WBPZVNUINSrTCDrMndvQC67p71ZEz+gmPPkA==",
+      "limitBytes": 536870912,
+      "verified": true,
+      "bytes": 155020250,
+      "sha256": "1c4756c2f67f1310ffb03234d61d540ad85916cef5383e46e0e7851f1721c142",
+      "sha512": "Pm0W2PnFeTEqPx+AOIwgOVB4dBtY24cuD0tx1hjCor60CbSAT7WBPZVNUINSrTCDrMndvQC67p71ZEz+gmPPkA==",
+      "sha1": "0664b16f1516a3825b8c0f11ca42de9f131b67a2"
+    },
+    {
+      "file": "node-v24.21.0-linux-arm64.tar.xz",
+      "url": "https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-arm64.tar.xz",
+      "declaredDigest": "sha256:6ad1325edbdb5649c379b75a237147a666c95d4f9ae8d340fef2d1575d289ad2",
+      "limitBytes": 134217728,
+      "verified": true,
+      "bytes": 30843004,
+      "sha256": "6ad1325edbdb5649c379b75a237147a666c95d4f9ae8d340fef2d1575d289ad2",
+      "sha512": "x+CdvcnDB7twXCrGJfk2EqmP9x3P8h6fKhlnTpx5HsRQ6yG5m6l/mo8KTFJ0yyKyISmFe7ce+tlEv+9daTv9FA==",
+      "sha1": "4e63336ced7f6e404a28c10a8885d703a5eb26e8"
+    }
+  ],
+  "signatureVerification": {
+    "allChecksPassed": true,
+    "summary": {
+      "passed": 32,
+      "failed": 0,
+      "fatalError": null
+    },
+    "ubuntuPrimaryFingerprint": "D2EB44626FDDC30B513D5BB71A5D6C4C7DB87C81",
+    "nodePrimaryFingerprint": "5BE8A3F6C8A5C01D106C0AD820B1A390B168D356",
+    "npmRegistryKeyId": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+    "verifierSha256": "1cecd1a9e4801f8f6809b1f6f4a4cdbb5c43c92ae7c5c64c21906990ddf08870",
+    "limits": [
+      "fixed-profile standard-library verifier, not a full OpenPGP trust-policy verifier",
+      "revocation/expiry/certification/key-usage/timestamp policy not verified",
+      "npm build attestation not established",
+      "Lima publisher/build attestation not established",
+      "download hashes/static source checks are not runtime containment"
+    ]
+  },
+  "limaPublicInterface": {
+    "kind": "owned-standalone-lima-public-interface",
+    "programSha256": "6d32fb0f880c0ea750434f2ac855a3f2129126752a301ce4d88adbd2fa599e1e",
+    "commands": [
+      {
+        "label": "lima-version",
+        "args": [
+          "--version"
+        ],
+        "ownedChildPid": 69524,
+        "exitCode": 0,
+        "elapsedSeconds": 0.751936,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 22,
+        "stdoutSha256": "cc3d40a6c7ac3172ad74fd8735aafa70e78c2d3b8bc9d866e05bacb39412cd07",
+        "stderrBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "lima-create-help",
+        "args": [
+          "--tty=false",
+          "create",
+          "--help"
+        ],
+        "ownedChildPid": 69534,
+        "exitCode": 0,
+        "elapsedSeconds": 0.021659,
+        "timedOut": false,
+        "truncated": false,
+        "processGroupConfirmedAbsent": true,
+        "supervisionErrors": [],
+        "stdoutBytes": 4146,
+        "stdoutSha256": "d42d0e1bf6cd6dec4d9875f65987c1431ccaa7f9138ffcdaf3cdc4a5bd10e72f",
+        "stderrBytes": 0,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "downloadedLimaExecuted": true,
+    "vmBootstrapExecuted": false,
+    "nativeCodexExecuted": false,
+    "modelExecuted": false,
+    "inheritedUserEnvironment": false,
+    "successful": true
+  },
+  "supervisor": {
+    "initialReview": {
+      "kind": "owned-vz-supervisor-static-review",
+      "completed": true,
+      "executedByReview": false,
+      "authorizationGrantedByReview": false,
+      "originalHelperSha256": "84cc2b0dcb447ce8f250f105a838b85d5813d8b18041f7c509185244d5b05395",
+      "findings": [
+        {
+          "severity": "P2",
+          "line": 52,
+          "type": "post-spawn-cleanup-gap"
+        },
+        {
+          "severity": "P2",
+          "line": 58,
+          "type": "suppressed-storage-walk-errors"
+        },
+        {
+          "severity": "P2",
+          "line": 100,
+          "type": "unbounded-http-shutdown"
+        }
+      ],
+      "vmBootstrapExecuted": false,
+      "nativeCodexExecuted": false
+    },
+    "finalReview": {
+      "kind": "owned-vz-supervisor-final-static-review",
+      "completed": true,
+      "confirmedResidualFindings": 0,
+      "initialFindingsFixed": 3,
+      "helperSha256": "cb1c1994c137e7a0bed943f7d56f75f91cd96efdafbb03bedd47b50139c76286",
+      "reviewerIndependentlyRehashed": false,
+      "executorActuallyRehashed": true,
+      "reviewerExecutedChecks": false,
+      "localExtractedChecks": 5,
+      "localExtractedChecksAreNotWholeHelperProof": true,
+      "authorizationGrantedByReview": false,
+      "vmBootstrapExecuted": false,
+      "nativeCodexExecuted": false,
+      "modelExecuted": false
+    },
+    "localSafetyChecks": {
+      "kind": "owned-vz-supervisor-local-safety-check",
+      "helperSha256": "cb1c1994c137e7a0bed943f7d56f75f91cd96efdafbb03bedd47b50139c76286",
+      "checks": [
+        {
+          "name": "absolute-header-deadline-defeats-trickled-headers",
+          "passed": true,
+          "elapsedSeconds": 10.056342
+        },
+        {
+          "name": "owned-http-server-bounded-shutdown-with-no-active-connections",
+          "passed": true
+        },
+        {
+          "name": "explicit-ENOENT-walk-error-is-permitted",
+          "passed": true
+        },
+        {
+          "name": "permission-and-IO-storage-traversal-errors-propagate",
+          "passed": true
+        },
+        {
+          "name": "child-launch-is-inside-guaranteed-cleanup-region",
+          "passed": true,
+          "staticOnly": true
+        }
+      ],
+      "allChecksPassed": true,
+      "partsExecuted": [
+        "extracted-owned-loopback-HTTP-server",
+        "storage-error-policy"
+      ],
+      "wholeHelperExecuted": false,
+      "limaExecuted": false,
+      "vmBootstrapExecuted": false,
+      "nativeCodexExecuted": false,
+      "modelExecuted": false,
+      "containmentProven": false,
+      "limits": "AST extraction checks local implementation behavior, not the complete supervisor or any VM lifecycle."
+    },
+    "wholeSupervisorWasNotExecutedByExtractedChecks": true,
+    "localCheckAttempts": 3,
+    "attemptsRetained": [
+      "first extracted checks pass but command/result log-name collision prevents complete wrapper receipt",
+      "second socket-reset termination was initially misclassified as test failure; command receipt retained",
+      "third recognizes EOF or reset, actual exit zero and process-group absence confirmed"
+    ],
+    "noFourthLocalSafetyAttempt": true
+  },
+  "publicCreate": {
+    "kind": "owned-vz-public-instance-preparation",
+    "command": [
+      "--tty=false",
+      "create",
+      "--name=i-3ad6c572",
+      "<owned-runtime>/standalone.yaml"
+    ],
+    "ownedChildPid": 77214,
+    "exitCode": 0,
+    "elapsedSeconds": 6.270523,
+    "timedOut": false,
+    "truncated": false,
+    "storageExceeded": false,
+    "processGroupConfirmedAbsent": true,
+    "supervisionErrors": [],
+    "assetRequests": [
+      {
+        "method": "GET",
+        "path": "/image.qcow2",
+        "bytesSent": 620224512
+      }
+    ],
+    "assetBytesBudget": 1240449024,
+    "assetServerClosed": true,
+    "assetServerErrors": [],
+    "originalQcow2Digest": "1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55",
+    "standaloneConfig": {
+      "minimumLimaVersion": "2.2.1",
+      "vmType": "vz",
+      "os": "Linux",
+      "arch": "aarch64",
+      "plain": true,
+      "base": [],
+      "images": [
+        {
+          "location": "http://127.0.0.1:51154/image.qcow2",
+          "arch": "aarch64",
+          "digest": "sha256:1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55"
+        }
+      ],
+      "cpus": 2,
+      "memory": "2GiB",
+      "disk": "16GiB",
+      "mounts": [],
+      "additionalDisks": [],
+      "networks": [],
+      "portForwards": [],
+      "copyToHost": [],
+      "ssh": {
+        "loadDotSSHPubKeys": false,
+        "forwardAgent": false,
+        "forwardX11": false,
+        "forwardX11Trusted": false,
+        "overVsock": false
+      },
+      "containerd": {
+        "system": false,
+        "user": false
+      },
+      "vmOpts": {
+        "vz": {
+          "diskImageFormat": "raw",
+          "rosetta": {
+            "enabled": false,
+            "binfmt": false
+          }
+        }
+      },
+      "user": {
+        "name": "ticket08ctl",
+        "comment": "Disposable ticket08 controller",
+        "uid": 1000,
+        "home": "/home/ticket08ctl",
+        "shell": "/bin/bash",
+        "passwordlessSudo": true
+      },
+      "upgradePackages": false,
+      "propagateProxyEnv": false,
+      "env": {},
+      "provision": []
+    },
+    "peakAllocatedOwnedBytes": 5593825280,
+    "peakLogicalOwnedBytes": 22464123327,
+    "ownedStorageLimitBytes": 25769803776,
+    "aggregateMonitorIsNotFilesystemQuota": true,
+    "monitorError": null,
+    "preparationDeadlineSeconds": 600,
+    "bootstrapPreflightBudgetSeconds": 900,
+    "vmBootstrapExecuted": false,
+    "nativeCodexExecuted": false,
+    "modelExecuted": false,
+    "remainingNamedInstanceRetained": true,
+    "stdoutBytes": 0,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrBytes": 1340,
+    "stderrSha256": "e8dd3fd6191f099d74edd65154927acb934e1cdba215335b095911fb157e2582",
+    "successful": true
+  },
+  "preparedRawDiskVerification": {
+    "kind": "owned-vz-public-preparation-verification",
+    "successful": true,
+    "instanceName": "i-3ad6c572",
+    "instanceIdentity": {
+      "dev": 16777233,
+      "ino": 123927996
+    },
+    "savedConfigurationEqualsControllerInput": true,
+    "savedConfigurationIsNotResolvedRuntimeIsolationProof": true,
+    "publicCreateExitCode": 0,
+    "publicCreateProcessGroupConfirmedAbsent": true,
+    "assetRequests": [
+      {
+        "method": "GET",
+        "path": "/image.qcow2",
+        "bytesSent": 620224512
+      }
+    ],
+    "originalQcow2Digest": "1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55",
+    "cacheRawImage": {
+      "path": "home/Library/Caches/lima/download/by-url-sha256/69beb0e2de6cb9de8d75cba4da73d4897c397c44c7602c5c20f1c7748181be50/imgconv/raw",
+      "dev": 16777233,
+      "ino": 123928285,
+      "bytes": 3758096384,
+      "allocatedBytes": 2023489536,
+      "mode": 384,
+      "sha256": "384f7eb9976ad155812b48efb1b780024c0748e35b5c3161c82c797578168e7e",
+      "imagePrefixSha256": "384f7eb9976ad155812b48efb1b780024c0748e35b5c3161c82c797578168e7e",
+      "primaryGPTPresent": true,
+      "notQcow2Magic": true,
+      "expandedTailAllZero": null
+    },
+    "preparedRawDisk": {
+      "path": "l/i-3ad6c572/disk",
+      "dev": 16777233,
+      "ino": 123929968,
+      "bytes": 17179869184,
+      "allocatedBytes": 2023489536,
+      "mode": 420,
+      "sha256": "770bdda0c2d2d448b0fc3cb549f9a0a6e3a75f8b0377cc55be14fb876c1145c3",
+      "imagePrefixSha256": "384f7eb9976ad155812b48efb1b780024c0748e35b5c3161c82c797578168e7e",
+      "primaryGPTPresent": true,
+      "notQcow2Magic": true,
+      "expandedTailAllZero": true
+    },
+    "rawDiskPrefixEqualsConvertedImage": true,
+    "verificationElapsedSeconds": 15.471082,
+    "hostAgentRuntimeMarkersAbsent": true,
+    "vmBootstrapExecuted": false,
+    "nativeCodexExecuted": false,
+    "modelExecuted": false,
+    "containmentProven": false,
+    "limit": "Hashes and raw/GPT headers bind the prepared disk to the actual public conversion output, not an independent QCOW2 decoder, build attestation or boot/preflight proof."
+  },
+  "rawVerifierCommand": {
+    "label": "cmd-vz-preparation-verification-attempt-2",
+    "exitCode": 0,
+    "ownedChildPid": 77486,
+    "elapsedSeconds": 15.578277,
+    "timedOut": false,
+    "truncated": false,
+    "processGroupConfirmedAbsent": true,
+    "supervisionErrors": [],
+    "stdoutBytes": 2016,
+    "stdoutSha256": "sha256:57a3426aa8c038f246dec60989254dfa4bfd7bd3e74c3584d454d35fcdca7d10",
+    "stderrBytes": 0,
+    "stderrSha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "storage": {
+    "peakAllocatedOwnedBytes": 5593825280,
+    "peakLogicalOwnedBytes": 22464123327,
+    "ownedStorageLimitBytes": 25769803776,
+    "aggregateMonitorIsNotFilesystemQuota": true
+  },
+  "loggingLimitations": {
+    "firstLocalSafetyWrapperCompleteReceiptMissing": true,
+    "firstRawVerifierWrapperCompleteReceiptMissing": true,
+    "reason": "Inner result and outer command initially used the same JSON filename. Immutable inner results and stdout/stderr remain; separately named final executions preserve complete command receipts. Missing original child-handle/absence records are not invented."
+  },
+  "receipts": [
+    {
+      "path": "owned-preparation/logs/vm-assets-acquisition.json",
+      "bytes": 3457,
+      "sha256": "a46ff1176016065c56a3006457bd3c7e9bb44b64c23b81940d5924920e25ebca"
+    },
+    {
+      "path": "owned-preparation/logs/vm-assets-inspection.json",
+      "bytes": 1258078,
+      "sha256": "1ff4160221d6209411ae5e5572785281cbc34ce2118c02e4448a7395b8c3d982"
+    },
+    {
+      "path": "owned-preparation/logs/signature-verification.json",
+      "bytes": 16731,
+      "sha256": "8c167a57188a0b88614662a685271c6563eac794dd0217a3bc4400ba1f7e3f41"
+    },
+    {
+      "path": "owned-preparation/logs/signature-verification-attempt-2.json",
+      "bytes": 18226,
+      "sha256": "927e43d32f35402ad381b7ac2256bfdc0fe86b613003055f9350204836d9da9c"
+    },
+    {
+      "path": "owned-preparation/logs/signature-safety-review.json",
+      "bytes": 1019,
+      "sha256": "c44ca1a8623d29f347e4c15adf19c1aae193d6b77d3538ec0963cb0548b740aa"
+    },
+    {
+      "path": "owned-preparation/logs/lima-public-interface.json",
+      "bytes": 1443,
+      "sha256": "e56a59443bf3c3605e0848351d5aa59a293a4bed8dc4ad100ea58f597f1d5e2e"
+    },
+    {
+      "path": "owned-preparation/logs/vz-supervisor-initial-review.json",
+      "bytes": 611,
+      "sha256": "4c54b68e282cd8315a96fd41f3b1e53b10ac96bf415c95e37d5f75562bc0f6e3"
+    },
+    {
+      "path": "owned-preparation/logs/vz-supervisor-final-review.json",
+      "bytes": 553,
+      "sha256": "a662ccaa5d24dcef1809505be9fdb3d3bcb81a47fc1b82bca527efb2deceae80"
+    },
+    {
+      "path": "owned-preparation/logs/vz-supervisor-local-safety.json",
+      "bytes": 1147,
+      "sha256": "6d876fc0ba4df6f9ef287c4944732cbc714890d9723e5713fc1a5d8d02d8bc2f"
+    },
+    {
+      "path": "owned-preparation/logs/vz-supervisor-local-safety-execution.json",
+      "bytes": 465,
+      "sha256": "49599576c7d673fd0c0f1b5273cd8188825cd4b07f4c5434b6732f8f8e66f118"
+    },
+    {
+      "path": "owned-preparation/logs/vz-supervisor-local-safety-execution-attempt-3.json",
+      "bytes": 476,
+      "sha256": "0abae1b47aa3dd666b26b2f20aca7555282d479c3300c0ae79272a155a1ddd33"
+    },
+    {
+      "path": "owned-preparation/logs/vz-supervisor-local-safety-checks-attempt-3.json",
+      "bytes": 1147,
+      "sha256": "7c6ab9063caddf2a8c57033237a71bf8cdd2fbd96e9ef5e25fde01e485553b64"
+    },
+    {
+      "path": "owned-preparation/logs/vz-instance-preparation.json",
+      "bytes": 2594,
+      "sha256": "d19215e7221bb7381957647db90e435ca5c8428ea8c55fde72f75266bc00cc9b"
+    },
+    {
+      "path": "owned-preparation/logs/vz-preparation-verification.json",
+      "bytes": 2016,
+      "sha256": "45d6bfda8e941a852f2f663e394abb585a8e4fc168a88ae5244d238c3d181300"
+    },
+    {
+      "path": "owned-preparation/logs/vz-preparation-verification-attempt-2.json",
+      "bytes": 2016,
+      "sha256": "57a3426aa8c038f246dec60989254dfa4bfd7bd3e74c3584d454d35fcdca7d10"
+    },
+    {
+      "path": "owned-preparation/logs/cmd-vz-preparation-verification-attempt-2.json",
+      "bytes": 471,
+      "sha256": "90f6dd3dad3c136544666ff302144628d4832d2ea96ccc6ae16fb76d0a143e4f"
+    }
+  ],
+  "remainingGates": [
+    "one approved supervised VM bootstrap and actual guest containment canaries",
+    "guest actor without sudo/controller secrets and whole-app-server filesystem/PID/loopback-only boundary",
+    "containment-gated offline native Codex protocol probe, at most3sessions/10requests/30seconds each, no turn/start",
+    "read-only native measurement tooling",
+    "complete native contributor-consumption and Skill-selection/no-load evidence",
+    "separate real credential/model/network/cost authorization",
+    "exact human approval of actual dynamic Proposal",
+    "at least one real setup/Apply/fresh-routing/artifact E2E"
+  ],
+  "externalLookup": {
+    "actualEarlierLookup": true,
+    "method": "previously loaded research primary-source method with bounded official HTTPS/Web reads; no new search Skill",
+    "sources": [
+      "https://github.com/lima-vm/lima/releases/tag/v2.2.1",
+      "https://ubuntu.com/docs/public-images/public-images-reference/artifacts/",
+      "https://wiki.ubuntu.com/Security/FAQ",
+      "https://github.com/nodejs/release-keys",
+      "https://nodejs.org/dist/v24.21.0/",
+      "https://registry.npmjs.org/-/npm/v1/keys",
+      "https://www.rfc-editor.org/rfc/rfc9580"
+    ]
+  }
+}
